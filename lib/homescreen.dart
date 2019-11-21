@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'nestCreator.dart';
 import 'nest.dart';
 import 'magpieButton.dart';
 
@@ -10,10 +11,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int count = 0;
 
+  //var nestEntries = List(30);
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> collections =
-        List.generate(count, (int i) => Nest(name: images[i]));
+    //List<Nest> nests = List.generate(count, (int i) => Nest(name: nestEntries[count-1],));
+    List<Nest> nests = List.generate(count, (int i) => Nest(name: images[i]));
 
     return Scaffold(
       appBar: AppBar(
@@ -25,18 +28,32 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         crossAxisCount: 3,
-        children:
-        collections,
+        children: nests,
       ),
       floatingActionButton: MagpieButton(
         onPressed: () {
           setState(() {
             count++;
           });
+          //_openNestCreator();
         },
         title: "Neues Nest anlegen",
       ),
     );
+  }
+
+  Future _openNestCreator() async {
+    Nest nest = await Navigator.of(context).push(MaterialPageRoute<Nest>(
+        builder: (BuildContext context) {
+          return NestCreator();
+        },
+        fullscreenDialog: true));
+    if (nest != null) {
+      setState(() {
+        //nestEntries[count].add(nest.name);
+        count++;
+      });
+    }
   }
 }
 
@@ -54,3 +71,4 @@ List images = [
   "Schatullen",
   "Uhren"
 ];
+

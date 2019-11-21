@@ -20,7 +20,7 @@ class MagpieButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Icon(
-              Icons.spa,
+              Icons.add_circle,
               color: Colors.amber,
             ),
             SizedBox(
