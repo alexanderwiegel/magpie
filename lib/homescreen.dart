@@ -9,33 +9,29 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int count = 0;
-
-  //var nestEntries = List(30);
+  List<Nest> nestEntries = new List();
 
   @override
   Widget build(BuildContext context) {
-    //List<Nest> nests = List.generate(count, (int i) => Nest(name: nestEntries[count-1],));
-    List<Nest> nests = List.generate(count, (int i) => Nest(name: images[i]));
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Übersicht"),
       ),
-      body: GridView.count(
-        primary: false,
+      body:
+      GridView.builder(
         padding: const EdgeInsets.all(10),
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        crossAxisCount: 3,
-        children: nests,
+        itemCount: nestEntries.length,
+        gridDelegate:
+        SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+        itemBuilder: (context, index) {
+          return Nest(name: nestEntries[index].name);
+        },
       ),
       floatingActionButton: MagpieButton(
         onPressed: () {
           setState(() {
-            count++;
+            _openNestCreator();
           });
-          //_openNestCreator();
         },
         title: "Neues Nest anlegen",
       ),
@@ -48,27 +44,11 @@ class _HomeScreenState extends State<HomeScreen> {
           return NestCreator();
         },
         fullscreenDialog: true));
-    if (nest != null) {
+    if (nest.name != null) {
       setState(() {
-        //nestEntries[count].add(nest.name);
-        count++;
+        nestEntries.add(nest);
+        print(nestEntries);
       });
     }
   }
 }
-
-List images = [
-  "Busenhalter",
-  "Buttons",
-  "Bücher",
-  "Fotos",
-  "Kameras",
-  "Kassetten",
-  "Modellautos",
-  "Muscheln",
-  "Rahmen",
-  "Schallplatten",
-  "Schatullen",
-  "Uhren"
-];
-

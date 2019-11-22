@@ -8,12 +8,16 @@ class NestCreator extends StatefulWidget {
 
 class _NestCreatorState extends State<NestCreator> {
   String _name;
-  TextEditingController _textEditingController;
+  String _note;
+
+  TextEditingController _nameEditingController;
+  TextEditingController _noteEditingController;
 
   @override
   void initState() {
     super.initState();
-    _textEditingController = TextEditingController(text: _name);
+    _nameEditingController = TextEditingController(text: _name);
+    _noteEditingController = TextEditingController(text: _note);
   }
 
   @override
@@ -24,7 +28,7 @@ class _NestCreatorState extends State<NestCreator> {
           actions: [
             FlatButton(
               onPressed: () {
-                Navigator.of(context).pop(Nest(name: _name));
+                Navigator.of(context).pop(Nest(name: _name, note: _note,));
               },
               child: Text(
                 'ANLEGEN',
@@ -38,16 +42,30 @@ class _NestCreatorState extends State<NestCreator> {
         ),
         body: Column(children: [
           ListTile(
-            leading: Icon(
-                Icons.speaker_notes,
-                color: Colors.amber
-            ),
+            leading: Icon(Icons.title, color: Colors.amber),
             title: TextField(
+              textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
+                labelText: "Name *",
                 hintText: 'Gib deiner Sammlung einen Namen',
               ),
-              controller: _textEditingController,
+              controller: _nameEditingController,
               onChanged: (value) => _name = value,
+            ),
+          ),
+          ListTile(
+            leading: Icon(Icons.speaker_notes, color: Colors.amber),
+            title: TextField(
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: InputDecoration(
+
+                labelText: "Beschreibung (optional)",
+                border: OutlineInputBorder(),
+              ),
+              controller: _noteEditingController,
+              onChanged: (value) => _note = value,
             ),
           ),
         ]));

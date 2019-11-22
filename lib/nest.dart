@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 class Nest extends StatefulWidget {
-  const Nest({@required this.name});
+  Nest({@required this.name, this.note});
 
-  final String name;
+  String name;
+  String note;
 
   @override
   _NestState createState() => _NestState();
