@@ -29,6 +29,10 @@ class _NestState extends State<Nest> {
         ),
         Text(
           widget.name,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );
