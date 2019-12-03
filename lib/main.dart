@@ -12,6 +12,7 @@ class Magpie extends StatelessWidget {
         primarySwatch: Colors.teal,
       ),
       home: HomeScreen(),
+      //TakePictureScreen(camera: CameraDescription(name: "0"))
     );
   }
 }
