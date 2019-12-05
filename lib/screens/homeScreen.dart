@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'nestCreator.dart';
-import 'nest.dart';
-import 'magpieButton.dart';
+import '../screens/nestCreatorScreen.dart';
+import '../widgets/nest.dart';
+import '../widgets/magpieButton.dart';
 
 class HomeScreen extends StatefulWidget {
   @override

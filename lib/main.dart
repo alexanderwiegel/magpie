@@ -1,5 +1,7 @@
+//import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:magpie_app/homescreen.dart';
+import 'screens/homeScreen.dart';
+//import 'screens/takePictureScreen.dart';
 
 void main() => runApp(Magpie());
 
@@ -12,7 +14,7 @@ class Magpie extends StatelessWidget {
         primarySwatch: Colors.teal,
       ),
       home: HomeScreen(),
-      //TakePictureScreen(camera: CameraDescription(name: "0"))
+      //home: TakePictureScreen(camera: CameraDescription(name: "0")),
     );
   }
 }
