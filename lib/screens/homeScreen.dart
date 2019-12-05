@@ -17,12 +17,11 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text("Magpie"),
       ),
-      body:
-      GridView.builder(
+      body: GridView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: nestEntries.length,
         gridDelegate:
-        SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
         itemBuilder: (context, index) {
           return Nest(name: nestEntries[index].name);
         },
@@ -47,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (nest.name != null) {
       setState(() {
         nestEntries.add(nest);
-        print(nestEntries);
       });
     }
   }
