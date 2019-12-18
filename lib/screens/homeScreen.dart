@@ -13,6 +13,12 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Nest> nestEntries = new List();
 
   @override
+  initState() {
+    super.initState();
+    buildNests();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -24,11 +30,20 @@ class _HomeScreenState extends State<HomeScreen> {
         gridDelegate:
             SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
         itemBuilder: (context, index) {
-          // TODO: Wie komme ich an den Namen in der Datenbank ran? Ich brauche ihn als String
-          //print(DatabaseHelper.instance.queryRow(index).toString());
-          return Nest(name: nestEntries[index].name);
+          //return Nest(name: nestEntries[index].name);
+          return FutureBuilder<Nest>(
+            future: buildNest(index),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              } else {
+                return snapshot.data;
+              }
+            },
+          );
         },
       ),
+
       floatingActionButton: MagpieButton(
         onPressed: () {
           setState(() {
@@ -48,11 +63,20 @@ class _HomeScreenState extends State<HomeScreen> {
         fullscreenDialog: true));
     int id = await DatabaseHelper.instance.insert(nest);
     print("Die ID der Sammlung lautet: $id");
-    //String row = await DatabaseHelper.instance.queryRow(id).toString();
-    //print(row);
     setState(() {
       nestEntries.add(nest);
-
     });
+  }
+
+  Future<Nest> buildNest(int id) async {
+    Nest test = await DatabaseHelper.instance.getNest(id);
+    return test;
+  }
+
+  Future<List<Future<Nest>>> buildNests() async {
+    return List.generate(
+        await DatabaseHelper.instance.getNestCount(),
+            (int index)
+        => buildNest(index));
   }
 }

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class Nest extends StatefulWidget {
   Nest({@required this.name, this.note});
 
-  String name;
-  String note;
+  final String name;
+  final String note;
 
   Map<String, dynamic> toMap() {
     return {
