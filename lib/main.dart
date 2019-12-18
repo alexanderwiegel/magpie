@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'screens/homeScreen.dart';
 //import 'screens/takePictureScreen.dart';
 
-void main() => runApp(Magpie());
+void main() {
+  runApp(Magpie());
+}
 
 class Magpie extends StatelessWidget {
   @override

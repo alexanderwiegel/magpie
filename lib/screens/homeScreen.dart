@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../screens/nestCreatorScreen.dart';
 import '../widgets/nest.dart';
 import '../widgets/magpieButton.dart';
+import 'package:magpie_app/database_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -23,6 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
         gridDelegate:
             SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
         itemBuilder: (context, index) {
+          // TODO: Wie komme ich an den Namen in der Datenbank ran? Ich brauche ihn als String
+          //print(DatabaseHelper.instance.queryRow(index).toString());
           return Nest(name: nestEntries[index].name);
         },
       ),
@@ -43,10 +46,13 @@ class _HomeScreenState extends State<HomeScreen> {
           return NestCreator();
         },
         fullscreenDialog: true));
-    if (nest.name != null) {
-      setState(() {
-        nestEntries.add(nest);
-      });
-    }
+    int id = await DatabaseHelper.instance.insert(nest);
+    print("Die ID der Sammlung lautet: $id");
+    //String row = await DatabaseHelper.instance.queryRow(id).toString();
+    //print(row);
+    setState(() {
+      nestEntries.add(nest);
+
+    });
   }
 }

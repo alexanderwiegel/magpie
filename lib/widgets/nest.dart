@@ -6,6 +6,13 @@ class Nest extends StatefulWidget {
   String name;
   String note;
 
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'note': note,
+    };
+  }
+
   @override
   _NestState createState() => _NestState();
 }
