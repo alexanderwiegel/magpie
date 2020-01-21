@@ -18,7 +18,6 @@ class DatabaseHelper {
 
   // make this a singleton class
   DatabaseHelper._privateConstructor();
-
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
   // only have a single app-wide reference to the database
@@ -48,6 +47,22 @@ class DatabaseHelper {
             $columnNote TEXT
           )
           ''');
+  }
+
+  Future<List<Nest>> getNests() async {
+    var dbClient = await database;
+    String sql;
+    sql = "SELECT * FROM $nests";
+
+    var result = await dbClient.rawQuery(sql);
+    if (result.length == 0) return null;
+
+    List<Nest> list = result.map((item) {
+      return Nest.fromMap(item);
+    }).toList();
+
+    print(result);
+    return list;
   }
 
   Future<Nest> getNest(int id) async {

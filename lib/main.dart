@@ -1,6 +1,6 @@
 //import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:magpie_app/database_helper.dart';
+import 'database_helper.dart';
 import 'screens/homeScreen.dart';
 //import 'screens/takePictureScreen.dart';
 
@@ -13,6 +13,7 @@ class Magpie extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Magpie',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),

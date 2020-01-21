@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../screens/nestCreatorScreen.dart';
 import '../widgets/nest.dart';
 import '../widgets/magpieButton.dart';
-import 'package:magpie_app/database_helper.dart';
+import '../database_helper.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,6 +11,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Nest> nestEntries = new List();
+  DatabaseHelper db = DatabaseHelper.instance;
 
   @override
   initState() {
@@ -24,6 +25,19 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text("Magpie"),
       ),
+        body: FutureBuilder<List<Nest>>(
+          future: db.getNests(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+
+            return GridView.count(
+              padding: const EdgeInsets.all(10),
+                crossAxisCount: 3,
+              children: List.generate(snapshot.data.length, (index) => snapshot.data[index])
+            );
+          },
+        ),
+      /*
       body: GridView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: nestEntries.length,
@@ -43,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
       ),
+      */
 
       floatingActionButton: MagpieButton(
         onPressed: () {

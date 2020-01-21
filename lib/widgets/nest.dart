@@ -3,14 +3,19 @@ import 'package:flutter/material.dart';
 class Nest extends StatefulWidget {
   Nest({@required this.name, this.note});
 
-  final String name;
-  final String note;
+  String name;
+  String note;
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
       'note': note,
     };
+  }
+
+  Nest.fromMap(dynamic obj) {
+    this.name = obj["name"];
+    this.note = obj["note"];
   }
 
   @override
