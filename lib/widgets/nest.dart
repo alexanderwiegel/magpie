@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../database_helper.dart';
-import '../screens/nestDetailScreen.dart';
+import '../screens/nestItemsScreen.dart';
 
 class Nest extends StatefulWidget {
   Nest({this.id, @required this.name, this.note});
@@ -29,14 +29,15 @@ class Nest extends StatefulWidget {
 
 class _NestState extends State<Nest> {
   void openNestDetailScreen() async {
-    print("Übergebene ID ist ${widget.id}");
     Nest nest = await Navigator.push(
       context,
-        MaterialPageRoute(builder: (context) => NestDetail(id: widget.id ,name: widget.name, note: widget.note)),
+        MaterialPageRoute(builder: (context) => NestItems(id: widget.id ,name: widget.name, note: widget.note)),
     );
-    await DatabaseHelper.instance.update(nest);
-    widget.name = nest.name;
-    widget.note = nest.note;
+    if (nest != null) {
+      await DatabaseHelper.instance.update(nest);
+      widget.name = nest.name;
+      widget.note = nest.note;
+    }
   }
 
   @override
@@ -60,20 +61,18 @@ class _NestState extends State<Nest> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
           ),
-          //clipBehavior: Clip.antiAlias,
+          clipBehavior: Clip.antiAlias,
           child: GridTileBar(
             backgroundColor: Colors.black45,
             title: FittedBox(
               fit: BoxFit.scaleDown,
               alignment: AlignmentDirectional.centerStart,
-              child: widget.name != null
-                  ? Text(
+              child: Text(
                       widget.name,
                       style: TextStyle(
                         color: Colors.amber,
                       ),
-                    )
-                  : "",
+                    ),
             ),
             subtitle: FittedBox(
               fit: BoxFit.scaleDown,

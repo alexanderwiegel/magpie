@@ -21,6 +21,7 @@ dependencies:
     sdk: flutter
   sqflite:
   camera:
+  image_picker:
   path_provider:
   path:
 

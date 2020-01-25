@@ -18,6 +18,7 @@ class DatabaseHelper {
 
   // make this a singleton class
   DatabaseHelper._privateConstructor();
+
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
   // only have a single app-wide reference to the database
@@ -61,7 +62,7 @@ class DatabaseHelper {
       return Nest.fromMap(item);
     }).toList();
 
-    print(result);
+    //print(result);
     return list;
   }
 
@@ -70,26 +71,28 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> maps = await db.query(nests);
 
     return Nest(
-        name: maps[id]['name'],
-        note: maps[id]['note'],
+      name: maps[id]['name'],
+      note: maps[id]['note'],
     );
   }
 
   Future<int> getNestCount() async {
     final Database db = await database;
-    return Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM $nests'));
+    return Sqflite.firstIntValue(
+        await db.rawQuery('SELECT COUNT(*) FROM $nests'));
   }
 
   Future<int> insert(Nest nest) async {
     Database db = await instance.database;
-    return await db.insert(nests, nest.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.insert(nests, nest.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<int> update(Nest nest) async {
     Database db = await instance.database;
     int id = nest.id;
-    print("ID während des Updates $id");
-    return await db.update(nests, nest.toMap(), where: '$columnId = ?', whereArgs: [id]);
+    return await db
+        .update(nests, nest.toMap(), where: '$columnId = ?', whereArgs: [id]);
   }
 
   Future<int> delete(int id) async {

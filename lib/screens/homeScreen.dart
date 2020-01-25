@@ -38,9 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisCount: 2,
               childAspectRatio: 1.05,
               children: List.generate(
-                  snapshot.data.length, (index) => snapshot.data[index]
-              )
-          );
+                  snapshot.data.length, (index) => snapshot.data[index]));
         },
       ),
       floatingActionButton: MagpieButton(
@@ -60,10 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
           return NestCreator();
         },
         fullscreenDialog: true));
-    print("Die ID der Sammlung lautet: ${nest.id}");
-    //print("Vor Einfügen: Die ID der Sammlung lautet: ${nest.id}");
-    //nest.id = await DatabaseHelper.instance.insert(nest);
-    //print("Nach Einfügen: Die ID der Sammlung lautet: ${nest.id}");
     setState(() {
       nestEntries.add(nest);
     });

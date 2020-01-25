@@ -31,7 +31,7 @@ class _NestCreatorState extends State<NestCreator> {
     _noteEditingController = TextEditingController(text: _note);
   }
 
-  void insertNest() async{
+  void insertNest() async {
     Nest nest = Nest(
       name: _name,
       note: _note,

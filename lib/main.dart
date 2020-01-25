@@ -6,7 +6,7 @@ import 'screens/homeScreen.dart';
 import 'screens/takePictureScreen.dart';
 
 void main() {
-  DatabaseHelper.instance.clear();
+  //DatabaseHelper.instance.clear();
   runApp(Magpie());
 }
 
@@ -19,9 +19,6 @@ class Magpie extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      routes: {
-        NestDetail.routeName: (context) => NestDetail(),
-      },
       home: HomeScreen(),
       //home: TakePictureScreen(camera: CameraDescription(name: "0")),
     );

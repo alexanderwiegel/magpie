@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:magpie_app/database_helper.dart';
 import '../widgets/nest.dart';
 
@@ -9,7 +10,6 @@ class NestDetail extends StatefulWidget {
   String name;
   String note;
 
-  static const routeName = '/extractNest';
   @override
   _NestDetailState createState() => _NestDetailState();
 }
@@ -30,7 +30,6 @@ class _NestDetailState extends State<NestDetail> {
 
   @override
   Widget build(BuildContext context) {
-    //final Nest nest = ModalRoute.of(context).settings.arguments;
     _nameEditingController = TextEditingController(text: widget.name);
     _noteEditingController = TextEditingController(text: widget.note);
 
@@ -41,7 +40,11 @@ class _NestDetailState extends State<NestDetail> {
             FlatButton(
               onPressed: () {
                 if (_formKey.currentState.validate())
-                  Navigator.of(context).pop(Nest(id: widget.id, name: widget.name, note: widget.note,));
+                  Navigator.of(context).pop(Nest(
+                    id: widget.id,
+                    name: widget.name,
+                    note: widget.note,
+                  ));
               },
               child: Text(
                 'SPEICHERN',
@@ -57,12 +60,16 @@ class _NestDetailState extends State<NestDetail> {
           key: _formKey,
           child: SingleChildScrollView(
             child: Column(children: [
-              Material(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4)),
-                clipBehavior: Clip.antiAlias,
-                child: Image.asset("pics/" + widget.name + ".jpg",
-                  fit: BoxFit.cover,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Material(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.asset(
+                    "pics/" + widget.name + ".jpg",
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               ListTile(
