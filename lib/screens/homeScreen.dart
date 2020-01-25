@@ -25,40 +25,24 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text("Magpie"),
       ),
-        body: FutureBuilder<List<Nest>>(
-          future: db.getNests(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+      body: FutureBuilder<List<Nest>>(
+        future: db.getNests(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData)
+            return Center(child: CircularProgressIndicator());
 
-            return GridView.count(
-              padding: const EdgeInsets.all(10),
-                crossAxisCount: 3,
-              children: List.generate(snapshot.data.length, (index) => snapshot.data[index])
-            );
-          },
-        ),
-      /*
-      body: GridView.builder(
-        padding: const EdgeInsets.all(10),
-        itemCount: nestEntries.length,
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-        itemBuilder: (context, index) {
-          //return Nest(name: nestEntries[index].name);
-          return FutureBuilder<Nest>(
-            future: buildNest(index),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
-              } else {
-                return snapshot.data;
-              }
-            },
+          return GridView.count(
+              padding: const EdgeInsets.all(8),
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              crossAxisCount: 2,
+              childAspectRatio: 1.05,
+              children: List.generate(
+                  snapshot.data.length, (index) => snapshot.data[index]
+              )
           );
         },
       ),
-      */
-
       floatingActionButton: MagpieButton(
         onPressed: () {
           setState(() {
@@ -76,22 +60,17 @@ class _HomeScreenState extends State<HomeScreen> {
           return NestCreator();
         },
         fullscreenDialog: true));
-    int id = await DatabaseHelper.instance.insert(nest);
-    print("Die ID der Sammlung lautet: $id");
+    print("Die ID der Sammlung lautet: ${nest.id}");
+    //print("Vor Einfügen: Die ID der Sammlung lautet: ${nest.id}");
+    //nest.id = await DatabaseHelper.instance.insert(nest);
+    //print("Nach Einfügen: Die ID der Sammlung lautet: ${nest.id}");
     setState(() {
       nestEntries.add(nest);
     });
   }
 
-  Future<Nest> buildNest(int id) async {
-    Nest test = await DatabaseHelper.instance.getNest(id);
-    return test;
-  }
-
   Future<List<Future<Nest>>> buildNests() async {
-    return List.generate(
-        await DatabaseHelper.instance.getNestCount(),
-            (int index)
-        => buildNest(index));
+    return List.generate(await DatabaseHelper.instance.getNestCount(),
+        (int index) => DatabaseHelper.instance.getNest(index));
   }
 }

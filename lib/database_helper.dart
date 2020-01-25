@@ -7,12 +7,12 @@ import 'package:path_provider/path_provider.dart';
 import 'widgets/nest.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "Sammlungen.db";
+  static final _databaseName = "Magpie2.db";
   static final _databaseVersion = 4;
 
   static final nests = 'Nester';
 
-  static final columnId = '_id';
+  static final columnId = 'id';
   static final columnName = 'name';
   static final columnNote = 'note';
 
@@ -87,8 +87,9 @@ class DatabaseHelper {
 
   Future<int> update(Nest nest) async {
     Database db = await instance.database;
-    String name = nest.name;
-    return await db.update(nests, nest.toMap(), where: '$columnName = ?', whereArgs: [name]);
+    int id = nest.id;
+    print("ID während des Updates $id");
+    return await db.update(nests, nest.toMap(), where: '$columnId = ?', whereArgs: [id]);
   }
 
   Future<int> delete(int id) async {

@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import '../database_helper.dart';
+import '../screens/nestDetailScreen.dart';
 
 class Nest extends StatefulWidget {
-  Nest({@required this.name, this.note});
+  Nest({this.id, @required this.name, this.note});
 
+  int id;
   String name;
   String note;
 
   Map<String, dynamic> toMap() {
     return {
+      'id' : id,
       'name': name,
       'note': note,
     };
   }
 
   Nest.fromMap(dynamic obj) {
+    this.id = obj["id"];
     this.name = obj["name"];
     this.note = obj["note"];
   }
@@ -23,30 +28,65 @@ class Nest extends StatefulWidget {
 }
 
 class _NestState extends State<Nest> {
+  void openNestDetailScreen() async {
+    print("Übergebene ID ist ${widget.id}");
+    Nest nest = await Navigator.push(
+      context,
+        MaterialPageRoute(builder: (context) => NestDetail(id: widget.id ,name: widget.name, note: widget.note)),
+    );
+    await DatabaseHelper.instance.update(nest);
+    widget.name = nest.name;
+    widget.note = nest.note;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Container(
-          height: 90,
-          width: 90,
-          decoration: BoxDecoration(
-            border: Border.all(),
-            shape: BoxShape.circle,
-            image: DecorationImage(image: AssetImage("pics/" + widget.name + ".jpg"),
-                fit: BoxFit.cover,
+    final Widget image = Material(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      clipBehavior: Clip.antiAlias,
+      child: Image.asset(
+        "pics/" + widget.name + ".jpg",
+        fit: BoxFit.cover,
+      ),
+    );
+
+    return GestureDetector(
+      onTap: () {
+        openNestDetailScreen();
+      },
+      child: GridTile(
+        footer: Material(
+          color: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(4)),
+          ),
+          //clipBehavior: Clip.antiAlias,
+          child: GridTileBar(
+            backgroundColor: Colors.black45,
+            title: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: AlignmentDirectional.centerStart,
+              child: widget.name != null
+                  ? Text(
+                      widget.name,
+                      style: TextStyle(
+                        color: Colors.amber,
+                      ),
+                    )
+                  : "",
+            ),
+            subtitle: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: AlignmentDirectional.centerStart,
+              // TODO Anzahl Items aus Datenbank holen
+              child: Text(
+                "Anzahl Items",
+              ),
             ),
           ),
         ),
-        Text(
-          widget.name,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
+        child: image,
+      ),
     );
   }
 }

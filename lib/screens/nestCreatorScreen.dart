@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../database_helper.dart';
 import '../widgets/nest.dart';
 
 class NestCreator extends StatefulWidget {
@@ -8,6 +9,7 @@ class NestCreator extends StatefulWidget {
 
 class _NestCreatorState extends State<NestCreator> {
   final _formKey = GlobalKey<FormState>();
+  int _id;
   String _name;
   String _note;
 
@@ -29,6 +31,19 @@ class _NestCreatorState extends State<NestCreator> {
     _noteEditingController = TextEditingController(text: _note);
   }
 
+  void insertNest() async{
+    Nest nest = Nest(
+      name: _name,
+      note: _note,
+    );
+    _id = await DatabaseHelper.instance.insert(nest);
+    Navigator.of(context).pop(Nest(
+      id: _id,
+      name: _name,
+      note: _note,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,11 +52,9 @@ class _NestCreatorState extends State<NestCreator> {
           actions: [
             FlatButton(
               onPressed: () {
-                if (_formKey.currentState.validate())
-                  Navigator.of(context).pop(Nest(
-                    name: _name,
-                    note: _note,
-                  ));
+                if (_formKey.currentState.validate()) {
+                  insertNest();
+                }
               },
               child: Text(
                 'ANLEGEN',
@@ -68,6 +81,7 @@ class _NestCreatorState extends State<NestCreator> {
                   hintText: 'Gib Deiner Sammlung einen Namen',
                 ),
                 controller: _nameEditingController,
+                // TODO Kein Duplikat erlauben -> Datenbank durchsuchen
                 onChanged: (value) => _name = value,
               ),
             ),
