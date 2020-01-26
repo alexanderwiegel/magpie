@@ -3,7 +3,7 @@ import 'database_helper.dart';
 import 'screens/homeScreen.dart';
 
 void main() {
-  DatabaseHelper.instance.clear();
+  //DatabaseHelper.instance.clear();
   runApp(Magpie());
 }
 
