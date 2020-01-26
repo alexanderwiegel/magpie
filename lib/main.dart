@@ -1,12 +1,9 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:magpie_app/screens/nestDetailScreen.dart';
 import 'database_helper.dart';
 import 'screens/homeScreen.dart';
-import 'screens/takePictureScreen.dart';
 
 void main() {
-  //DatabaseHelper.instance.clear();
+  DatabaseHelper.instance.clear();
   runApp(Magpie());
 }
 

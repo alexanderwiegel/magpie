@@ -7,12 +7,13 @@ import 'package:path_provider/path_provider.dart';
 import 'widgets/nest.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "Magpie2.db";
+  static final _databaseName = "Magpie10.db";
   static final _databaseVersion = 4;
 
   static final nests = 'Nester';
 
   static final columnId = 'id';
+  static final columnAlbumCover = 'albumCover';
   static final columnName = 'name';
   static final columnNote = 'note';
 
@@ -44,6 +45,7 @@ class DatabaseHelper {
     await db.execute('''
           CREATE TABLE $nests (
             $columnId INTEGER PRIMARY KEY,
+            $columnAlbumCover BLOB,
             $columnName TEXT NOT NULL,
             $columnNote TEXT
           )
@@ -52,17 +54,11 @@ class DatabaseHelper {
 
   Future<List<Nest>> getNests() async {
     var dbClient = await database;
-    String sql;
-    sql = "SELECT * FROM $nests";
-
-    var result = await dbClient.rawQuery(sql);
+    var result = await dbClient.rawQuery("SELECT * FROM $nests");
     if (result.length == 0) return null;
-
     List<Nest> list = result.map((item) {
       return Nest.fromMap(item);
     }).toList();
-
-    //print(result);
     return list;
   }
 
@@ -71,6 +67,7 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> maps = await db.query(nests);
 
     return Nest(
+      albumCover: maps[id]['albumCover'],
       name: maps[id]['name'],
       note: maps[id]['note'],
     );
@@ -84,15 +81,37 @@ class DatabaseHelper {
 
   Future<int> insert(Nest nest) async {
     Database db = await instance.database;
-    return await db.insert(nests, nest.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+
+    File albumCover = nest.albumCover;
+    return await db.rawInsert(
+        'INSERT INTO $nests'
+        '($columnAlbumCover, $columnName, $columnNote)'
+        'VALUES(?,?,?)',
+        ['LOAD_FILE($albumCover)', nest.name, nest.note]);
+
+    //return await db.insert(nests, nest.toMap(),
+    //   conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<int> update(Nest nest) async {
     Database db = await instance.database;
-    int id = nest.id;
-    return await db
-        .update(nests, nest.toMap(), where: '$columnId = ?', whereArgs: [id]);
+    File albumCover = nest.albumCover;
+    await db.rawUpdate(
+        'UPDATE $nests'
+        ' SET $columnAlbumCover = ?'
+        ' WHERE $columnId = ?',
+        ['LOAD_FILE($albumCover)', nest.id]);
+    await db.rawUpdate(
+        'UPDATE $nests'
+            ' SET $columnName = ?'
+            ' WHERE $columnId = ?',
+        [nest.name, nest.id]);
+    return await db.rawUpdate(
+        'UPDATE $nests'
+            ' SET $columnNote = ?'
+            ' WHERE $columnId = ?',
+        [nest.note, nest.id]);
+    //    .update(nests, nest.toMap(), where: '$columnId = ?', whereArgs: [id]);
   }
 
   Future<int> delete(int id) async {

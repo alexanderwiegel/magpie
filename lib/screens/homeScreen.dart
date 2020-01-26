@@ -10,7 +10,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Nest> nestEntries = new List();
   DatabaseHelper db = DatabaseHelper.instance;
 
   @override
@@ -53,14 +52,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future _openNestCreator() async {
-    Nest nest = await Navigator.of(context).push(MaterialPageRoute<Nest>(
+    await Navigator.of(context).push(MaterialPageRoute<Nest>(
         builder: (BuildContext context) {
           return NestCreator();
         },
         fullscreenDialog: true));
-    setState(() {
-      nestEntries.add(nest);
-    });
   }
 
   Future<List<Future<Nest>>> buildNests() async {

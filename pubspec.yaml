@@ -22,6 +22,7 @@ dependencies:
   sqflite:
   camera:
   image_picker:
+  permission_handler:
   path_provider:
   path:
 

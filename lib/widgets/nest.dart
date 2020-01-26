@@ -1,17 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../database_helper.dart';
 import '../screens/nestItemsScreen.dart';
 
 class Nest extends StatefulWidget {
-  Nest({this.id, @required this.name, this.note});
+  Nest({this.id, this.albumCover, @required this.name, this.note});
 
   int id;
+  File albumCover;
   String name;
   String note;
 
   Map<String, dynamic> toMap() {
     return {
       'id' : id,
+      'albumCover' : albumCover,
       'name': name,
       'note': note,
     };
@@ -19,6 +23,9 @@ class Nest extends StatefulWidget {
 
   Nest.fromMap(dynamic obj) {
     this.id = obj["id"];
+    String path = obj["albumCover"].toString();
+    path = path.substring(path.indexOf("s"), path.length - 2);
+    this.albumCover = File(path);
     this.name = obj["name"];
     this.note = obj["note"];
   }
@@ -29,14 +36,16 @@ class Nest extends StatefulWidget {
 
 class _NestState extends State<Nest> {
   void openNestDetailScreen() async {
-    Nest nest = await Navigator.push(
+    Nest oldNest = Nest(id: widget.id, albumCover: widget.albumCover, name: widget.name, note: widget.note);
+    Nest newNest = await Navigator.push(
       context,
-        MaterialPageRoute(builder: (context) => NestItems(id: widget.id ,name: widget.name, note: widget.note)),
+        MaterialPageRoute(builder: (context) => NestItems(nest: oldNest)),
     );
-    if (nest != null) {
-      await DatabaseHelper.instance.update(nest);
-      widget.name = nest.name;
-      widget.note = nest.note;
+    if (newNest != null) {
+      await DatabaseHelper.instance.update(newNest);
+      //widget.albumCover = newNest.albumCover;
+      //widget.name = newNest.name;
+      //widget.note = newNest.note;
     }
   }
 
@@ -45,8 +54,8 @@ class _NestState extends State<Nest> {
     final Widget image = Material(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       clipBehavior: Clip.antiAlias,
-      child: Image.asset(
-        "pics/" + widget.name + ".jpg",
+      child: Image.file(
+        widget.albumCover,
         fit: BoxFit.cover,
       ),
     );
