@@ -49,6 +49,7 @@ class _NestDetailState extends State<NestDetail> {
             FlatButton(
               onPressed: () {
                 if (_formKey.currentState.validate())
+                  DatabaseHelper.instance.update(widget.nest);
                   Navigator.of(context).pop(widget.nest);
               },
               child: Text(
