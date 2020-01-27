@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MagpieButton extends StatelessWidget {
-  const MagpieButton({@required this.onPressed, @required this.title, this.icon});
+  const MagpieButton({@required this.onPressed, @required this.title, @required this.icon});
 
   final GestureTapCallback onPressed;
   final String title;
