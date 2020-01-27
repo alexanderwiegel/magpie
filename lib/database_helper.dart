@@ -5,17 +5,24 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'widgets/nest.dart';
+import 'widgets/nestItem.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "Magpie10.db";
+  static final _databaseName = "Magpie13.db";
   static final _databaseVersion = 4;
 
   static final nests = 'Nester';
-
   static final columnId = 'id';
   static final columnAlbumCover = 'albumCover';
   static final columnName = 'name';
   static final columnNote = 'note';
+
+  static final nestItems = 'NestItems';
+  static final id = 'id';
+  static final nestId = 'nestId';
+  static final photo = 'photo';
+  static final name = 'name';
+  static final note = 'note';
 
   // make this a singleton class
   DatabaseHelper._privateConstructor();
@@ -50,6 +57,15 @@ class DatabaseHelper {
             $columnNote TEXT
           )
           ''');
+    await db.execute('''
+          CREATE TABLE $nestItems (
+            $id INTEGER PRIMARY KEY,
+            $nestId INTEGER,
+            $photo BLOB,
+            $name TEXT NOT NULL,
+            $note TEXT
+          )
+          ''');
   }
 
   Future<List<Nest>> getNests() async {
@@ -59,6 +75,21 @@ class DatabaseHelper {
     List<Nest> list = result.map((item) {
       return Nest.fromMap(item);
     }).toList();
+    return list;
+  }
+
+  Future<List<NestItem>> getNestItems(int id) async {
+    var dbClient = await database;
+    print("NestID: $id");
+    var result = await dbClient
+        .rawQuery("SELECT * FROM $nestItems WHERE $nestId = ?", [id]);
+    if (result.length == 0) return null;
+    print("Test1: $result");
+    print("Test2: ${result.length}");
+    List<NestItem> list = result.map((item) {
+      return NestItem.fromMap(item);
+    }).toList();
+    print("Test3: $list");
     return list;
   }
 
@@ -73,10 +104,28 @@ class DatabaseHelper {
     );
   }
 
+  Future<NestItem> getNestItem(int id) async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(nestItems);
+
+    return NestItem(
+      nestId: maps[id]['nestId'],
+      photo: maps[id]['photo'],
+      name: maps[id]['name'],
+      note: maps[id]['note'],
+    );
+  }
+
   Future<int> getNestCount() async {
     final Database db = await database;
     return Sqflite.firstIntValue(
         await db.rawQuery('SELECT COUNT(*) FROM $nests'));
+  }
+
+  Future<int> getNestItemCount(int id) async {
+    final Database db = await database;
+    return Sqflite.firstIntValue(await db
+        .rawQuery('SELECT COUNT(*) FROM $nestItems WHERE $nestId = ?', [id]));
   }
 
   Future<int> insert(Nest nest) async {
@@ -93,6 +142,19 @@ class DatabaseHelper {
     //   conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  Future<int> insertItem(NestItem nestItem) async {
+    Database db = await instance.database;
+    File pic = nestItem.photo;
+
+    return await db.rawInsert(
+        'INSERT INTO $nestItems'
+            '($nestId, $photo, $name, $note)'
+            'VALUES(?,?,?,?)',
+        [nestItem.nestId, 'LOAD_FILE($pic)', nestItem.name, nestItem.note]);
+    //return await db.insert(nests, nest.toMap(),
+    //   conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
   Future<int> update(Nest nest) async {
     Database db = await instance.database;
     File albumCover = nest.albumCover;
@@ -103,14 +165,36 @@ class DatabaseHelper {
         ['LOAD_FILE($albumCover)', nest.id]);
     await db.rawUpdate(
         'UPDATE $nests'
-            ' SET $columnName = ?'
-            ' WHERE $columnId = ?',
+        ' SET $columnName = ?'
+        ' WHERE $columnId = ?',
         [nest.name, nest.id]);
     return await db.rawUpdate(
         'UPDATE $nests'
-            ' SET $columnNote = ?'
-            ' WHERE $columnId = ?',
+        ' SET $columnNote = ?'
+        ' WHERE $columnId = ?',
         [nest.note, nest.id]);
+    //    .update(nests, nest.toMap(), where: '$columnId = ?', whereArgs: [id]);
+  }
+
+  Future<int> updateItem(NestItem nestItem) async {
+    Database db = await instance.database;
+    File pic = nestItem.photo;
+
+    await db.rawUpdate(
+        'UPDATE $nestItems'
+            ' SET $photo = ?'
+            ' WHERE $id = ?',
+        ['LOAD_FILE($pic)', nestItem.id]);
+    await db.rawUpdate(
+        'UPDATE $nestItems'
+            ' SET $name = ?'
+            ' WHERE $id = ?',
+        [nestItem.name, nestItem.id]);
+    return await db.rawUpdate(
+        'UPDATE $nestItems'
+            ' SET $note = ?'
+            ' WHERE $id = ?',
+        [nestItem.note, nestItem.id]);
     //    .update(nests, nest.toMap(), where: '$columnId = ?', whereArgs: [id]);
   }
 

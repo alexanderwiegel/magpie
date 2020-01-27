@@ -1,22 +1,22 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:magpie_app/database_helper.dart';
+import '../widgets/nestItem.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../database_helper.dart';
-import '../widgets/nest.dart';
 
-class NestCreator extends StatefulWidget {
+class NestItemDetail extends StatefulWidget {
+  NestItemDetail({@required this.nestItem});
+
+  NestItem nestItem;
+
   @override
-  _NestCreatorState createState() => _NestCreatorState();
+  _NestItemDetailState createState() => _NestItemDetailState();
 }
 
-class _NestCreatorState extends State<NestCreator> {
+class _NestItemDetailState extends State<NestItemDetail> {
   PermissionStatus _status;
   final _formKey = GlobalKey<FormState>();
-  int _id;
-  File _albumCover;
-  String _name;
-  String _note;
 
   TextEditingController _nameEditingController;
   TextEditingController _noteEditingController;
@@ -32,44 +32,28 @@ class _NestCreatorState extends State<NestCreator> {
   @override
   void initState() {
     super.initState();
-
     PermissionHandler()
         .checkPermissionStatus(PermissionGroup.camera)
         .then(_updateStatus);
-
-    _nameEditingController = TextEditingController(text: _name);
-    _noteEditingController = TextEditingController(text: _note);
-  }
-
-  void insertNest() async {
-    Nest nest = Nest(
-      albumCover: _albumCover,
-      name: _name,
-      note: _note,
-    );
-    _id = await DatabaseHelper.instance.insert(nest);
-    Navigator.of(context).pop(Nest(
-      id: _id,
-      albumCover: _albumCover,
-      name: _name,
-      note: _note,
-    ));
   }
 
   @override
   Widget build(BuildContext context) {
+    _nameEditingController = TextEditingController(text: widget.nestItem.name);
+    _noteEditingController = TextEditingController(text: widget.nestItem.note);
+
     return Scaffold(
         appBar: AppBar(
-          title: Text("Neues Nest"),
+          title: Text(widget.nestItem.name),
           actions: [
             FlatButton(
               onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  insertNest();
-                }
+                if (_formKey.currentState.validate())
+                  DatabaseHelper.instance.updateItem(widget.nestItem);
+                  Navigator.of(context).pop(widget.nestItem);
               },
               child: Text(
-                'ANLEGEN',
+                'SPEICHERN',
                 style: Theme.of(context)
                     .textTheme
                     .subhead
@@ -92,12 +76,10 @@ class _NestCreatorState extends State<NestCreator> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4)),
                     clipBehavior: Clip.antiAlias,
-                    child: _albumCover != null
-                        ? Image.file(_albumCover, fit: BoxFit.cover)
-                        : Image.asset(
-                            "pics/placeholder.jpg",
-                            fit: BoxFit.cover,
-                          ),
+                    child: Image.file(
+                      widget.nestItem.photo,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
@@ -105,16 +87,15 @@ class _NestCreatorState extends State<NestCreator> {
                 leading: Icon(Icons.title, color: Colors.amber),
                 title: TextFormField(
                   validator: (value) => value.isEmpty
-                      ? "Bitte gib Deiner Sammlung einen Namen"
+                      ? "Bitte gib dem Gegenstand einen Namen"
                       : null,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     labelText: "Name *",
-                    hintText: 'Gib Deiner Sammlung einen Namen',
                   ),
                   controller: _nameEditingController,
                   // TODO Kein Duplikat erlauben -> Datenbank durchsuchen
-                  onChanged: (value) => _name = value,
+                  onChanged: (value) => widget.nestItem.name = value,
                 ),
               ),
               ListTile(
@@ -128,7 +109,7 @@ class _NestCreatorState extends State<NestCreator> {
                     border: OutlineInputBorder(),
                   ),
                   controller: _noteEditingController,
-                  onChanged: (value) => _note = value,
+                  onChanged: (value) => widget.nestItem.note = value,
                 ),
               ),
             ]),
@@ -220,6 +201,7 @@ class _NestCreatorState extends State<NestCreator> {
   }
 
   void changeImage(var image) {
-    _albumCover = image;
+    widget.nestItem.photo = image;
+    DatabaseHelper.instance.updateItem(widget.nestItem);
   }
 }

@@ -1,20 +1,26 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:magpie_app/widgets/nestItem.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../database_helper.dart';
 import '../widgets/nest.dart';
 
-class NestCreator extends StatefulWidget {
+class NestItemCreator extends StatefulWidget {
+  NestItemCreator({@required this.nest});
+
+  Nest nest;
+
   @override
-  _NestCreatorState createState() => _NestCreatorState();
+  _NestItemCreatorState createState() => _NestItemCreatorState();
 }
 
-class _NestCreatorState extends State<NestCreator> {
+class _NestItemCreatorState extends State<NestItemCreator> {
   PermissionStatus _status;
   final _formKey = GlobalKey<FormState>();
+  int _nestId;
   int _id;
-  File _albumCover;
+  File _photo;
   String _name;
   String _note;
 
@@ -41,31 +47,37 @@ class _NestCreatorState extends State<NestCreator> {
     _noteEditingController = TextEditingController(text: _note);
   }
 
-  void insertNest() async {
-    Nest nest = Nest(
-      albumCover: _albumCover,
+  void insertNestItem() async {
+    _nestId = widget.nest.id;
+    NestItem nestItem = NestItem(
+      nestId: _nestId,
+      photo: _photo,
       name: _name,
       note: _note,
     );
-    _id = await DatabaseHelper.instance.insert(nest);
-    Navigator.of(context).pop(Nest(
+    _id = await DatabaseHelper.instance.insertItem(nestItem);
+    /*
+    Navigator.of(context).pop(NestItem(
       id: _id,
-      albumCover: _albumCover,
+      nestId: _nestId,
+      photo: _photo,
       name: _name,
       note: _note,
     ));
+     */
+    Navigator.of(context).pop(widget.nest);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Neues Nest"),
+          title: Text("Neuer Gegenstand"),
           actions: [
             FlatButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  insertNest();
+                  insertNestItem();
                 }
               },
               child: Text(
@@ -92,8 +104,8 @@ class _NestCreatorState extends State<NestCreator> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4)),
                     clipBehavior: Clip.antiAlias,
-                    child: _albumCover != null
-                        ? Image.file(_albumCover, fit: BoxFit.cover)
+                    child: _photo != null
+                        ? Image.file(_photo, fit: BoxFit.cover)
                         : Image.asset(
                             "pics/placeholder.jpg",
                             fit: BoxFit.cover,
@@ -105,12 +117,12 @@ class _NestCreatorState extends State<NestCreator> {
                 leading: Icon(Icons.title, color: Colors.amber),
                 title: TextFormField(
                   validator: (value) => value.isEmpty
-                      ? "Bitte gib Deiner Sammlung einen Namen"
+                      ? "Bitte gib dem Gegenstand einen Namen"
                       : null,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     labelText: "Name *",
-                    hintText: 'Gib Deiner Sammlung einen Namen',
+                    hintText: 'Gib dem Gegenstand einen Namen',
                   ),
                   controller: _nameEditingController,
                   // TODO Kein Duplikat erlauben -> Datenbank durchsuchen
@@ -220,6 +232,6 @@ class _NestCreatorState extends State<NestCreator> {
   }
 
   void changeImage(var image) {
-    _albumCover = image;
+    _photo = image;
   }
 }
