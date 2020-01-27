@@ -290,7 +290,9 @@ class _NestDetailState extends State<NestDetail> {
   }
 
   void changeImage(var image) {
-    widget.nest.albumCover = image;
+    setState(() {
+      widget.nest.albumCover = image;
+    });
     DatabaseHelper.instance.update(widget.nest);
   }
 }

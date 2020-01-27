@@ -97,7 +97,11 @@ class _NestItemDetailState extends State<NestItemDetail> {
                     labelText: "Name *",
                   ),
                   controller: _nameEditingController,
-                  onChanged: (value) => widget.nestItem.name = value,
+                  onChanged: (value) {
+                    setState(() {
+                      widget.nestItem.name = value;
+                    });
+                  },
                 ),
               ),
               ListTile(
@@ -111,7 +115,11 @@ class _NestItemDetailState extends State<NestItemDetail> {
                     border: OutlineInputBorder(),
                   ),
                   controller: _noteEditingController,
-                  onChanged: (value) => widget.nestItem.note = value,
+                  onChanged: (value) {
+                    setState(() {
+                      widget.nestItem.note = value;
+                    });
+                  },
                 ),
               ),
             ]),
@@ -291,7 +299,9 @@ class _NestItemDetailState extends State<NestItemDetail> {
   }
 
   void changeImage(var image) {
-    widget.nestItem.photo = image;
+    setState(() {
+      widget.nestItem.photo = image;
+    });
     DatabaseHelper.instance.updateItem(widget.nestItem);
   }
 }

@@ -113,7 +113,11 @@ class _NestCreatorState extends State<NestCreator> {
                     hintText: 'Gib Deiner Sammlung einen Namen',
                   ),
                   controller: _nameEditingController,
-                  onChanged: (value) => _name = value,
+                  onChanged: (value) {
+                    setState(() {
+                      _name = value;
+                    });
+                  },
                 ),
               ),
               ListTile(
@@ -127,7 +131,11 @@ class _NestCreatorState extends State<NestCreator> {
                     border: OutlineInputBorder(),
                   ),
                   controller: _noteEditingController,
-                  onChanged: (value) => _note = value,
+                  onChanged: (value) {
+                    setState(() {
+                      _note = value;
+                    });
+                  },
                 ),
               ),
             ]),
@@ -219,6 +227,8 @@ class _NestCreatorState extends State<NestCreator> {
   }
 
   void changeImage(var image) {
-    _albumCover = image;
+    setState(() {
+      _albumCover = image;
+    });
   }
 }

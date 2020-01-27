@@ -115,7 +115,11 @@ class _NestItemCreatorState extends State<NestItemCreator> {
                     hintText: 'Gib dem Gegenstand einen Namen',
                   ),
                   controller: _nameEditingController,
-                  onChanged: (value) => _name = value,
+                  onChanged: (value) {
+                    setState(() {
+                      _name = value;
+                    });
+                  },
                 ),
               ),
               ListTile(
@@ -129,7 +133,11 @@ class _NestItemCreatorState extends State<NestItemCreator> {
                     border: OutlineInputBorder(),
                   ),
                   controller: _noteEditingController,
-                  onChanged: (value) => _note = value,
+                  onChanged: (value) {
+                    setState(() {
+                      _note = value;
+                    });
+                  },
                 ),
               ),
             ]),
@@ -221,6 +229,8 @@ class _NestItemCreatorState extends State<NestItemCreator> {
   }
 
   void changeImage(var image) {
-    _photo = image;
+    setState(() {
+      _photo = image;
+    });
   }
 }
