@@ -8,7 +8,7 @@ import 'widgets/nest.dart';
 import 'widgets/nestItem.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "Magpie13.db";
+  static final _databaseName = "MagpiePrototype.db";
   static final _databaseVersion = 4;
 
   static final nests = 'Nester';
@@ -80,16 +80,12 @@ class DatabaseHelper {
 
   Future<List<NestItem>> getNestItems(int id) async {
     var dbClient = await database;
-    print("NestID: $id");
     var result = await dbClient
         .rawQuery("SELECT * FROM $nestItems WHERE $nestId = ?", [id]);
     if (result.length == 0) return null;
-    print("Test1: $result");
-    print("Test2: ${result.length}");
     List<NestItem> list = result.map((item) {
       return NestItem.fromMap(item);
     }).toList();
-    print("Test3: $list");
     return list;
   }
 
@@ -198,9 +194,15 @@ class DatabaseHelper {
     //    .update(nests, nest.toMap(), where: '$columnId = ?', whereArgs: [id]);
   }
 
-  Future<int> delete(int id) async {
+  Future<int> deleteNest(int id) async {
     Database db = await instance.database;
-    return await db.delete(nests, where: '$columnId = ?', whereArgs: [id]);
+    await db.delete(nests, where: '$columnId = ?', whereArgs: [id]);
+    return db.delete(nestItems, where: '$nestId = ?', whereArgs: [id]);
+  }
+
+  Future<int> deleteNestItem(int itemId) async {
+    Database db = await instance.database;
+    return await db.delete(nestItems, where: '$id = ?', whereArgs: [itemId]);
   }
 
   Future<int> clear() async {

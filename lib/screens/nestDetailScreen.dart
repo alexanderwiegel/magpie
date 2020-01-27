@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:magpie_app/database_helper.dart';
+import 'package:magpie_app/screens/homeScreen.dart';
+import 'package:magpie_app/widgets/magpieButton.dart';
 import '../widgets/nest.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -8,7 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 class NestDetail extends StatefulWidget {
   NestDetail({@required this.nest});
 
-  Nest nest;
+  final Nest nest;
 
   @override
   _NestDetailState createState() => _NestDetailState();
@@ -43,78 +45,165 @@ class _NestDetailState extends State<NestDetail> {
     _noteEditingController = TextEditingController(text: widget.nest.note);
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.nest.name),
-          actions: [
-            FlatButton(
-              onPressed: () {
-                if (_formKey.currentState.validate())
-                  DatabaseHelper.instance.update(widget.nest);
-                  Navigator.of(context).pop(widget.nest);
+      appBar: AppBar(
+        title: Text(widget.nest.name),
+        actions: [
+          FlatButton(
+            onPressed: () {
+              if (_formKey.currentState.validate())
+                DatabaseHelper.instance.update(widget.nest);
+              Navigator.of(context).pop(widget.nest);
+            },
+            child: Text(
+              'SPEICHERN',
+              style: Theme.of(context)
+                  .textTheme
+                  .subhead
+                  .copyWith(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(children: [
+            GestureDetector(
+              onTap: () {
+                _displayOptionsDialog();
               },
-              child: Text(
-                'SPEICHERN',
-                style: Theme.of(context)
-                    .textTheme
-                    .subhead
-                    .copyWith(color: Colors.white),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Material(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.file(
+                    widget.nest.albumCover,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
-          ],
+            ListTile(
+              leading: Icon(Icons.title, color: Colors.amber),
+              title: TextFormField(
+                validator: (value) => value.isEmpty
+                    ? "Bitte gib Deiner Sammlung einen Namen"
+                    : null,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: InputDecoration(
+                  labelText: "Name *",
+                ),
+                controller: _nameEditingController,
+                onChanged: (value) => widget.nest.name = value,
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.speaker_notes, color: Colors.amber),
+              title: TextField(
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: InputDecoration(
+                  labelText: "Beschreibung (optional)",
+                  border: OutlineInputBorder(),
+                ),
+                controller: _noteEditingController,
+                onChanged: (value) => widget.nest.note = value,
+              ),
+            ),
+          ]),
         ),
-        body: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(children: [
-              GestureDetector(
-                onTap: () {
-                  _displayOptionsDialog();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4)),
-                    clipBehavior: Clip.antiAlias,
-                    child: Image.file(
-                      widget.nest.albumCover,
-                      fit: BoxFit.cover,
-                    ),
+      ),
+      floatingActionButton: MagpieButton(
+        onPressed: () {
+          setState(() {
+            _displayDeleteDialogue();
+          });
+        },
+        title: "Nest löschen",
+        icon: Icons.delete,
+      ),
+    );
+  }
+
+  void _displayDeleteDialogue() async {
+    await _deleteDialogueBox();
+  }
+
+  Future<void> _deleteDialogueBox() {
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                  "Dieses Nest für immer löschen?",
+                  style: TextStyle(color: Colors.red),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                ),
+                GestureDetector(
+                  onTap: _delete,
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.delete_forever,
+                        color: Colors.amber,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                      ),
+                      Text(
+                        "Ja, ich bin mir sicher.",
+                        style: TextStyle(),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              ListTile(
-                leading: Icon(Icons.title, color: Colors.amber),
-                title: TextFormField(
-                  validator: (value) => value.isEmpty
-                      ? "Bitte gib Deiner Sammlung einen Namen"
-                      : null,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    labelText: "Name *",
-                  ),
-                  controller: _nameEditingController,
-                  // TODO Kein Duplikat erlauben -> Datenbank durchsuchen
-                  onChanged: (value) => widget.nest.name = value,
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
-              ),
-              ListTile(
-                leading: Icon(Icons.speaker_notes, color: Colors.amber),
-                title: TextField(
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    labelText: "Beschreibung (optional)",
-                    border: OutlineInputBorder(),
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.cancel,
+                        color: Colors.amber,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                      ),
+                      Text(
+                        "Nein, lieber doch nicht.",
+                        style: TextStyle(),
+                      ),
+                    ],
                   ),
-                  controller: _noteEditingController,
-                  onChanged: (value) => widget.nest.note = value,
                 ),
-              ),
-            ]),
+              ],
+            ),
           ),
-        ));
+        );
+      },
+    );
+  }
+
+  Future _delete() async {
+    DatabaseHelper.instance.deleteNest(widget.nest.id);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return HomeScreen();
+        }
+      )
+    );
   }
 
   void _displayOptionsDialog() async {

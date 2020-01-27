@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:magpie_app/database_helper.dart';
 import 'package:magpie_app/widgets/magpieButton.dart';
 import 'package:magpie_app/widgets/nestItem.dart';
@@ -10,7 +9,7 @@ import 'nestItemCreatorScreen.dart';
 class NestItems extends StatefulWidget {
   NestItems({@required this.nest});
 
-  Nest nest;
+  final Nest nest;
 
   @override
   _NestItemsState createState() => _NestItemsState();
@@ -72,6 +71,7 @@ class _NestItemsState extends State<NestItems> {
           });
         },
         title: "Neuen Gegenstand anlegen",
+        icon: Icons.add_circle,
       ),
     );
   }

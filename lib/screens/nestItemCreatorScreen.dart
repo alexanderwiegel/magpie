@@ -9,7 +9,7 @@ import '../widgets/nest.dart';
 class NestItemCreator extends StatefulWidget {
   NestItemCreator({@required this.nest});
 
-  Nest nest;
+  final Nest nest;
 
   @override
   _NestItemCreatorState createState() => _NestItemCreatorState();
@@ -19,7 +19,6 @@ class _NestItemCreatorState extends State<NestItemCreator> {
   PermissionStatus _status;
   final _formKey = GlobalKey<FormState>();
   int _nestId;
-  int _id;
   File _photo;
   String _name;
   String _note;
@@ -55,16 +54,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
       name: _name,
       note: _note,
     );
-    _id = await DatabaseHelper.instance.insertItem(nestItem);
-    /*
-    Navigator.of(context).pop(NestItem(
-      id: _id,
-      nestId: _nestId,
-      photo: _photo,
-      name: _name,
-      note: _note,
-    ));
-     */
+    await DatabaseHelper.instance.insertItem(nestItem);
     Navigator.of(context).pop(widget.nest);
   }
 
@@ -125,7 +115,6 @@ class _NestItemCreatorState extends State<NestItemCreator> {
                     hintText: 'Gib dem Gegenstand einen Namen',
                   ),
                   controller: _nameEditingController,
-                  // TODO Kein Duplikat erlauben -> Datenbank durchsuchen
                   onChanged: (value) => _name = value,
                 ),
               ),

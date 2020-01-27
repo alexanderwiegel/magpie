@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:magpie_app/database_helper.dart';
+import 'package:magpie_app/widgets/magpieButton.dart';
 import '../widgets/nestItem.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import 'homeScreen.dart';
+
 class NestItemDetail extends StatefulWidget {
   NestItemDetail({@required this.nestItem});
 
-  NestItem nestItem;
+  final NestItem nestItem;
 
   @override
   _NestItemDetailState createState() => _NestItemDetailState();
@@ -94,7 +97,6 @@ class _NestItemDetailState extends State<NestItemDetail> {
                     labelText: "Name *",
                   ),
                   controller: _nameEditingController,
-                  // TODO Kein Duplikat erlauben -> Datenbank durchsuchen
                   onChanged: (value) => widget.nestItem.name = value,
                 ),
               ),
@@ -114,7 +116,95 @@ class _NestItemDetailState extends State<NestItemDetail> {
               ),
             ]),
           ),
-        ));
+        ),
+      floatingActionButton: MagpieButton(
+        onPressed: () {
+          setState(() {
+            _displayDeleteDialogue();
+          });
+        },
+        title: "Gegenstand löschen",
+        icon: Icons.delete,
+      ),
+    );
+  }
+
+  void _displayDeleteDialogue() async {
+    await _deleteDialogueBox();
+  }
+
+  Future<void> _deleteDialogueBox() {
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                  "Diesen Gegenstand für immer löschen?",
+                  style: TextStyle(color: Colors.red),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                ),
+                GestureDetector(
+                  onTap: _delete,
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.delete_forever,
+                        color: Colors.amber,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                      ),
+                      Text(
+                        "Ja, ich bin mir sicher.",
+                        style: TextStyle(),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                ),
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.cancel,
+                        color: Colors.amber,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                      ),
+                      Text(
+                        "Nein, lieber doch nicht.",
+                        style: TextStyle(),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future _delete() async {
+    DatabaseHelper.instance.deleteNestItem(widget.nestItem.id);
+    Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (BuildContext context) {
+              return HomeScreen();
+            }
+        )
+    );
   }
 
   void _displayOptionsDialog() async {

@@ -47,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         title: "Neues Nest anlegen",
+        icon: Icons.add_circle,
       ),
     );
   }

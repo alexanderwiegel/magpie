@@ -113,7 +113,6 @@ class _NestCreatorState extends State<NestCreator> {
                     hintText: 'Gib Deiner Sammlung einen Namen',
                   ),
                   controller: _nameEditingController,
-                  // TODO Kein Duplikat erlauben -> Datenbank durchsuchen
                   onChanged: (value) => _name = value,
                 ),
               ),

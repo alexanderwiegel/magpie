@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:magpie_app/screens/nestItemDetailScreen.dart';
 import '../database_helper.dart';
-import '../screens/nestItemsScreen.dart';
 
+// ignore: must_be_immutable
 class NestItem extends StatefulWidget {
   NestItem({@required this.nestId, this.id, this.photo, @required this.name, this.note});
 
@@ -91,7 +91,7 @@ class _NestItemState extends State<NestItem> {
               fit: BoxFit.scaleDown,
               alignment: AlignmentDirectional.centerStart,
               child: Text(
-                "Beschreibung/Wert",
+                widget.note != null ? widget.note : " ",
               ),
             ),
           ),

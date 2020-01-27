@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'database_helper.dart';
+//import 'database_helper.dart';
 import 'screens/homeScreen.dart';
 
 void main() {
@@ -17,7 +17,6 @@ class Magpie extends StatelessWidget {
         primarySwatch: Colors.teal,
       ),
       home: HomeScreen(),
-      //home: TakePictureScreen(camera: CameraDescription(name: "0")),
     );
   }
 }

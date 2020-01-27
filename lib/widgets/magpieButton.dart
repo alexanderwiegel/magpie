@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 class MagpieButton extends StatelessWidget {
-  const MagpieButton({@required this.onPressed, @required this.title});
+  const MagpieButton({@required this.onPressed, @required this.title, this.icon});
 
   final GestureTapCallback onPressed;
   final String title;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class MagpieButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Icon(
-              Icons.add_circle,
+              icon,
               color: Colors.amber,
             ),
             SizedBox(

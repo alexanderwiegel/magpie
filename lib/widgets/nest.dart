@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../database_helper.dart';
 import '../screens/nestItemsScreen.dart';
 
+// ignore: must_be_immutable
 class Nest extends StatefulWidget {
   Nest({this.id, this.albumCover, @required this.name, this.note});
 
@@ -14,8 +15,8 @@ class Nest extends StatefulWidget {
 
   Map<String, dynamic> toMap() {
     return {
-      'id' : id,
-      'albumCover' : albumCover,
+      'id': id,
+      'albumCover': albumCover,
       'name': name,
       'note': note,
     };
@@ -36,10 +37,14 @@ class Nest extends StatefulWidget {
 
 class _NestState extends State<Nest> {
   void openNestDetailScreen() async {
-    Nest oldNest = Nest(id: widget.id, albumCover: widget.albumCover, name: widget.name, note: widget.note);
+    Nest oldNest = Nest(
+        id: widget.id,
+        albumCover: widget.albumCover,
+        name: widget.name,
+        note: widget.note);
     Nest newNest = await Navigator.push(
       context,
-        MaterialPageRoute(builder: (context) => NestItems(nest: oldNest)),
+      MaterialPageRoute(builder: (context) => NestItems(nest: oldNest)),
     );
     if (newNest != null) {
       await DatabaseHelper.instance.update(newNest);
@@ -77,18 +82,21 @@ class _NestState extends State<Nest> {
               fit: BoxFit.scaleDown,
               alignment: AlignmentDirectional.centerStart,
               child: Text(
-                      widget.name,
-                      style: TextStyle(
-                        color: Colors.amber,
-                      ),
-                    ),
+                widget.name,
+                style: TextStyle(
+                  color: Colors.amber,
+                ),
+              ),
             ),
             subtitle: FittedBox(
               fit: BoxFit.scaleDown,
               alignment: AlignmentDirectional.centerStart,
-              // TODO Anzahl Items aus Datenbank holen
-              child: Text(
-                "Anzahl Items",
+              child: FutureBuilder<Text>(
+                future: getText(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return Text("0 Gegenstände");
+                  return snapshot.data;
+                },
               ),
             ),
           ),
@@ -96,5 +104,14 @@ class _NestState extends State<Nest> {
         child: image,
       ),
     );
+  }
+
+  Future<Text> getText() async {
+    int count = await DatabaseHelper.instance.getNestItemCount(widget.id);
+    Text text;
+    count == 1
+        ? text = Text("$count Gegenstand")
+        : text = Text("$count Gegenstände");
+    return text;
   }
 }
