@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:magpie_app/widgets/nestItem.dart';
+import '../widgets/nestItem.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../database_helper.dart';
 import '../widgets/nest.dart';
@@ -58,6 +58,26 @@ class _NestItemCreatorState extends State<NestItemCreator> {
     Navigator.of(context).pop(widget.nest);
   }
 
+  void _displayPhotoAlert() async {
+    await _photoAlert();
+  }
+
+  Future<void> _photoAlert() {
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: Text(
+              "Du musst ein eigenes Bild benutzen.",
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +87,10 @@ class _NestItemCreatorState extends State<NestItemCreator> {
             FlatButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  insertNestItem();
+                  if (_photo != null)
+                    insertNestItem();
+                  else
+                    _displayPhotoAlert();
                 }
               },
               child: Text(
