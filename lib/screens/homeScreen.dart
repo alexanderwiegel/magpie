@@ -5,6 +5,8 @@ import '../widgets/magpieButton.dart';
 import '../database_helper.dart';
 
 class HomeScreen extends StatefulWidget {
+  static const routeName = "/home";
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -28,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
         future: db.getNests(),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-            return Center(child: CircularProgressIndicator());
+            return Container();
 
           return GridView.count(
               padding: const EdgeInsets.all(8),

@@ -1,32 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:magpie_app/screens/nestCreatorScreen.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../database_helper.dart';
 import 'nest.dart';
 import 'nestItem.dart';
 
-class PhotoDialog extends StatefulWidget {
-  PhotoDialog({this.nest, this.nestItem});
+class PhotoDialog extends StatelessWidget {
+  PhotoDialog({@required this.context, this.nest, this.nestItem});
 
+  final BuildContext context;
   final Nest nest;
   final NestItem nestItem;
-
-  @override
-  State<StatefulWidget> createState() => _PhotoDialogState();
-}
-
-class _PhotoDialogState extends State<PhotoDialog> {
   PermissionStatus _status;
+
   @override
   Widget build(BuildContext context) {
-    _displayOptionsDialog();
+    optionsDialogBox();
   }
 
-  void _displayOptionsDialog() async {
-    await _optionsDialogBox();
-  }
-
-  Future<void> _optionsDialogBox() {
+  Future<void> optionsDialogBox() {
     return showDialog(
         context: context,
         barrierDismissible: true,
@@ -83,9 +76,7 @@ class _PhotoDialogState extends State<PhotoDialog> {
 
   _updateStatus(PermissionStatus value) {
     if (value != _status) {
-      setState(() {
         _status = value;
-      });
     }
   }
 
@@ -106,17 +97,14 @@ class _PhotoDialogState extends State<PhotoDialog> {
   }
 
   void changeImage(var image) {
-    if (widget.nest != null) {
-      setState(() {
-        widget.nest.albumCover = image;
-      });
-      DatabaseHelper.instance.update(widget.nest);
+    //Navigator.pop(context);
+    if (nest != null) {
+        nest.albumCover = image;
+      DatabaseHelper.instance.update(nest);
     }
-    else if (widget.nestItem != null) {
-      setState(() {
-        widget.nestItem.photo = image;
-      });
-      DatabaseHelper.instance.updateItem(widget.nestItem);
+    else if (nestItem != null) {
+        nestItem.photo = image;
+      DatabaseHelper.instance.updateItem(nestItem);
     }
   }
 }

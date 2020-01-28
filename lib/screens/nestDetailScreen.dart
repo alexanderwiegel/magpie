@@ -199,13 +199,7 @@ class _NestDetailState extends State<NestDetail> {
 
   Future _delete() async {
     DatabaseHelper.instance.deleteNest(widget.nest.id);
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (BuildContext context) {
-          return HomeScreen();
-        }
-      )
-    );
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   void _displayOptionsDialog() async {

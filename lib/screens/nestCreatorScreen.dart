@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:magpie_app/widgets/photoDialog.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../database_helper.dart';
 import '../widgets/nest.dart';
@@ -56,6 +57,26 @@ class _NestCreatorState extends State<NestCreator> {
     ));
   }
 
+  void _displayPhotoAlert() async {
+    await _photoAlert();
+  }
+
+  Future<void> _photoAlert() {
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: Text(
+                "Du musst ein eigenes Bild benutzen.",
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,12 +86,16 @@ class _NestCreatorState extends State<NestCreator> {
             FlatButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  insertNest();
+                  if (_albumCover != null) {
+                    insertNest();
+                  }
+                  else _displayPhotoAlert();
                 }
               },
               child: Text(
                 'ANLEGEN',
-                style: Theme.of(context)
+                style: Theme
+                    .of(context)
                     .textTheme
                     .subhead
                     .copyWith(color: Colors.white),
@@ -95,16 +120,17 @@ class _NestCreatorState extends State<NestCreator> {
                     child: _albumCover != null
                         ? Image.file(_albumCover, fit: BoxFit.cover)
                         : Image.asset(
-                            "pics/placeholder.jpg",
-                            fit: BoxFit.cover,
-                          ),
+                      "pics/placeholder.jpg",
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),
               ListTile(
                 leading: Icon(Icons.title, color: Colors.amber),
                 title: TextFormField(
-                  validator: (value) => value.isEmpty
+                  validator: (value) =>
+                  value.isEmpty
                       ? "Bitte gib Deiner Sammlung einen Namen"
                       : null,
                   textCapitalization: TextCapitalization.sentences,
@@ -144,6 +170,22 @@ class _NestCreatorState extends State<NestCreator> {
   }
 
   void _displayOptionsDialog() async {
+    /*
+    Nest nest = Nest(
+      name: _name,
+      albumCover: _albumCover,
+      id: _id,
+      note: _note,
+    );
+      nest = await Navigator.push(context, MaterialPageRoute<Nest>(
+        builder: (BuildContext context) {
+          return PhotoDialog(context: context, nest: nest,);
+        }
+      ));
+      setState(() {
+        _albumCover = nest.albumCover;
+      });
+     */
     await _optionsDialogBox();
   }
 

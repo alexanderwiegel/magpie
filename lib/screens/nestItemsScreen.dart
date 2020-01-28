@@ -52,7 +52,7 @@ class _NestItemsState extends State<NestItems> {
         future: db.getNestItems(widget.nest.id),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-            return Center(child: CircularProgressIndicator());
+            return Container();
 
           return GridView.count(
               padding: const EdgeInsets.all(8),
