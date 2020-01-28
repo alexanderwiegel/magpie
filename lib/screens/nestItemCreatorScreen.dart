@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:magpie_app/widgets/nestItem.dart';
+import '../widgets/nestItem.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../database_helper.dart';
 import '../widgets/nest.dart';

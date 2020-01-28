@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:magpie_app/database_helper.dart';
-import 'package:magpie_app/widgets/magpieButton.dart';
-import 'package:magpie_app/widgets/nestItem.dart';
+import '../database_helper.dart';
+import '../widgets/magpieButton.dart';
+import '../widgets/nestItem.dart';
 import '../widgets/nest.dart';
 import 'nestDetailScreen.dart';
 import 'nestItemCreatorScreen.dart';

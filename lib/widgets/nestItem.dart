@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:magpie_app/screens/nestItemDetailScreen.dart';
+import '../screens/nestItemDetailScreen.dart';
 import '../database_helper.dart';
 
 // ignore: must_be_immutable

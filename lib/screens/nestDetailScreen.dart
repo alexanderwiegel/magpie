@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:magpie_app/database_helper.dart';
-import 'package:magpie_app/screens/homeScreen.dart';
-import 'package:magpie_app/widgets/magpieButton.dart';
-import 'package:magpie_app/widgets/photoDialog.dart';
+import '../database_helper.dart';
+import '../screens/homeScreen.dart';
+import '../widgets/magpieButton.dart';
+import '../widgets/photoDialog.dart';
 import '../widgets/nest.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
