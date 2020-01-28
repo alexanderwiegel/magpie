@@ -5,6 +5,7 @@ import '../widgets/nestItem.dart';
 import '../widgets/nest.dart';
 import 'nestDetailScreen.dart';
 import 'nestItemCreatorScreen.dart';
+import '../widgets/startMessage.dart';
 
 class NestItems extends StatefulWidget {
   NestItems({@required this.nest});
@@ -52,8 +53,16 @@ class _NestItemsState extends State<NestItems> {
         future: db.getNestItems(widget.nest.id),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-            // TODO: Hinweis anzeigen
-            return Container();
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  new StartMessage(message: "Du hast noch kein Nest angelegt."),
+                  new StartMessage(message: "Klicke auf den Button,"),
+                  new StartMessage(message: "um dein erstes Nest anzulegen."),
+                ],
+              )
+            );
 
           return GridView.count(
               padding: const EdgeInsets.all(8),

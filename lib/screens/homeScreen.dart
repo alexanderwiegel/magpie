@@ -3,6 +3,7 @@ import '../screens/nestCreatorScreen.dart';
 import '../widgets/nest.dart';
 import '../widgets/magpieButton.dart';
 import '../database_helper.dart';
+import '../widgets/startMessage.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = "/home";
@@ -30,8 +31,16 @@ class _HomeScreenState extends State<HomeScreen> {
         future: db.getNests(),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
-            // TODO: Hinweis anzeigen
-            return Container();
+            return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    new StartMessage(message: "Du hast noch kein Nest angelegt."),
+                    new StartMessage(message: "Klicke auf den Button,"),
+                    new StartMessage(message: "um dein erstes Nest anzulegen."),
+                  ],
+                )
+            );
 
           return GridView.count(
               padding: const EdgeInsets.all(8),
