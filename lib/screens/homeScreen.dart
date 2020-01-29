@@ -28,6 +28,27 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Magpie"),
+        actions: <Widget>[
+          PopupMenuButton<SortMode>(
+            onSelected: (SortMode result) {
+              setState(() {
+                sortMode = result;
+              });
+            },
+            initialValue: sortMode,
+            itemBuilder: (BuildContext contect) => <PopupMenuEntry<SortMode>>[
+              const PopupMenuItem<SortMode>(
+                  value: SortMode.SortById,
+                  child: Text("Nach Erstelldatum sortieren")),
+              const PopupMenuItem<SortMode>(
+                  value: SortMode.SortByName,
+                  child: Text("Nach Name sortieren")),
+              const PopupMenuItem<SortMode>(
+                  value: SortMode.SortByWorth,
+                  child: Text("Nach Wert sortieren")),
+            ],
+          ),
+        ],
       ),
       body: FutureBuilder<List<Nest>>(
         future: db.getNests(sortMode),
@@ -35,14 +56,13 @@ class _HomeScreenState extends State<HomeScreen> {
           if (!snapshot.hasData)
             return Center(
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    new StartMessage(message: "Du hast noch kein Nest angelegt."),
-                    new StartMessage(message: "Klicke auf den Button,"),
-                    new StartMessage(message: "um dein erstes Nest anzulegen."),
-                  ],
-                )
-            );
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                new StartMessage(message: "Du hast noch kein Nest angelegt."),
+                new StartMessage(message: "Klicke auf den Button,"),
+                new StartMessage(message: "um dein erstes Nest anzulegen."),
+              ],
+            ));
 
           return GridView.count(
               padding: const EdgeInsets.all(8),

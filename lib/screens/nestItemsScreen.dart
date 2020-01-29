@@ -49,6 +49,25 @@ class _NestItemsState extends State<NestItems> {
                   .copyWith(color: Colors.white),
             ),
           ),
+          PopupMenuButton<SortMode>(
+            onSelected: (SortMode result) {
+              setState(() {
+                sortMode = result;
+              });
+            },
+            initialValue: sortMode,
+            itemBuilder: (BuildContext contect) => <PopupMenuEntry<SortMode>>[
+              const PopupMenuItem<SortMode>(
+                  value: SortMode.SortById,
+                  child: Text("Nach Erstelldatum sortieren")),
+              const PopupMenuItem<SortMode>(
+                  value: SortMode.SortByName,
+                  child: Text("Nach Name sortieren")),
+              const PopupMenuItem<SortMode>(
+                  value: SortMode.SortByWorth,
+                  child: Text("Nach Wert sortieren")),
+            ],
+          ),
         ],
       ),
       body: FutureBuilder<List<NestItem>>(
