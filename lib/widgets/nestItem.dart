@@ -1,13 +1,19 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import '../screens/nestItemDetailScreen.dart';
+
 import '../database_helper.dart';
+import '../screens/nestItemDetailScreen.dart';
 
 // ignore: must_be_immutable
 class NestItem extends StatefulWidget {
   NestItem(
-      {@required this.nestId, this.id, this.photo, @required this.name, this.note, this.worth});
+      {@required this.nestId,
+      this.id,
+      this.photo,
+      @required this.name,
+      this.note,
+      this.worth});
 
   int nestId;
   int id;
@@ -18,13 +24,14 @@ class NestItem extends StatefulWidget {
 
   Map<String, dynamic> toMap() {
     return {
-    'nestId' : nestId,
-    'id' : id,
-    'albumCover' : photo,
-    'name': name,
-    'note': note,
-    'worth': worth,
-  };}
+      'nestId': nestId,
+      'id': id,
+      'albumCover': photo,
+      'name': name,
+      'note': note,
+      'worth': worth,
+    };
+  }
 
   NestItem.fromMap(dynamic obj) {
     this.nestId = obj["nestId"];
@@ -43,12 +50,14 @@ class NestItem extends StatefulWidget {
 
 class _NestItemState extends State<NestItem> {
   void openNestItemDetailScreen() async {
-    NestItem oldNestItem = NestItem(nestId: widget.nestId,
+    NestItem oldNestItem = NestItem(
+      nestId: widget.nestId,
       id: widget.id,
       photo: widget.photo,
       name: widget.name,
       note: widget.note,
-      worth: widget.worth,);
+      worth: widget.worth,
+    );
     NestItem newNestItem = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -98,6 +107,15 @@ class _NestItemState extends State<NestItem> {
               alignment: AlignmentDirectional.centerStart,
               child: Text(
                 widget.note != null ? widget.note : " ",
+              ),
+            ),
+            trailing: FittedBox(
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(
+                "${widget.worth}€",
+                style: TextStyle(
+                  color: Colors.amber,
+                ),
               ),
             ),
           ),

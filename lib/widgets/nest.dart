@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-//import 'package:magpie_app/sortMode.dart';
+
 import '../database_helper.dart';
 import '../screens/nestItemsScreen.dart';
 
@@ -105,6 +105,15 @@ class _NestState extends State<Nest> {
                   if (!snapshot.hasData) return Text("0 Gegenstände");
                   return snapshot.data;
                 },
+              ),
+            ),
+            trailing: FittedBox(
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(
+                "${widget.totalWorth}€",
+                style: TextStyle(
+                  color: Colors.amber,
+                ),
               ),
             ),
           ),
