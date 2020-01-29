@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:magpie_app/sortMode.dart';
+
 import '../database_helper.dart';
 import '../widgets/magpieButton.dart';
-import '../widgets/nestItem.dart';
 import '../widgets/nest.dart';
+import '../widgets/nestItem.dart';
+import '../widgets/startMessage.dart';
 import 'nestDetailScreen.dart';
 import 'nestItemCreatorScreen.dart';
-import '../widgets/startMessage.dart';
 
 class NestItems extends StatefulWidget {
   NestItems({@required this.nest});
@@ -75,15 +76,16 @@ class _NestItemsState extends State<NestItems> {
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  new StartMessage(message: "Du hast noch kein Nest angelegt."),
-                  new StartMessage(message: "Klicke auf den Button,"),
-                  new StartMessage(message: "um dein erstes Nest anzulegen."),
-                ],
-              )
-            );
+                child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                new StartMessage(
+                    message: "Du hast noch keinen Gegenstand angelegt."),
+                new StartMessage(message: "Klicke auf den Button,"),
+                new StartMessage(
+                    message: "um deinen ersten Gegenstand anzulegen."),
+              ],
+            ));
 
           return GridView.count(
               padding: const EdgeInsets.all(8),
@@ -116,7 +118,8 @@ class _NestItemsState extends State<NestItems> {
   }
 
   Future<List<Future<NestItem>>> buildNestItems() async {
-    return List.generate(await DatabaseHelper.instance.getNestItemCount(widget.nest.id),
-            (int index) => DatabaseHelper.instance.getNestItem(index));
+    return List.generate(
+        await DatabaseHelper.instance.getNestItemCount(widget.nest.id),
+        (int index) => DatabaseHelper.instance.getNestItem(index));
   }
 }
