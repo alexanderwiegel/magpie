@@ -6,23 +6,25 @@ import '../database_helper.dart';
 
 // ignore: must_be_immutable
 class NestItem extends StatefulWidget {
-  NestItem({@required this.nestId, this.id, this.photo, @required this.name, this.note});
+  NestItem(
+      {@required this.nestId, this.id, this.photo, @required this.name, this.note, this.worth});
 
   int nestId;
   int id;
   File photo;
   String name;
   String note;
+  int worth;
 
   Map<String, dynamic> toMap() {
     return {
-      'nestId' : nestId,
-      'id' : id,
-      'albumCover' : photo,
-      'name': name,
-      'note': note,
-    };
-  }
+    'nestId' : nestId,
+    'id' : id,
+    'albumCover' : photo,
+    'name': name,
+    'note': note,
+    'worth': worth,
+  };}
 
   NestItem.fromMap(dynamic obj) {
     this.nestId = obj["nestId"];
@@ -32,6 +34,7 @@ class NestItem extends StatefulWidget {
     this.photo = File(path);
     this.name = obj["name"];
     this.note = obj["note"];
+    this.worth = obj["worth"];
   }
 
   @override
@@ -40,16 +43,19 @@ class NestItem extends StatefulWidget {
 
 class _NestItemState extends State<NestItem> {
   void openNestItemDetailScreen() async {
-    NestItem oldNestItem = NestItem(nestId: widget.nestId, id: widget.id, photo: widget.photo, name: widget.name, note: widget.note);
+    NestItem oldNestItem = NestItem(nestId: widget.nestId,
+      id: widget.id,
+      photo: widget.photo,
+      name: widget.name,
+      note: widget.note,
+      worth: widget.worth,);
     NestItem newNestItem = await Navigator.push(
       context,
-        MaterialPageRoute(builder: (context) => NestItemDetail(nestItem: oldNestItem)),
+      MaterialPageRoute(
+          builder: (context) => NestItemDetail(nestItem: oldNestItem)),
     );
     if (newNestItem != null) {
       await DatabaseHelper.instance.updateItem(newNestItem);
-      //widget.albumCover = newNest.albumCover;
-      //widget.name = newNest.name;
-      //widget.note = newNest.note;
     }
   }
 
@@ -81,11 +87,11 @@ class _NestItemState extends State<NestItem> {
               fit: BoxFit.scaleDown,
               alignment: AlignmentDirectional.centerStart,
               child: Text(
-                      widget.name,
-                      style: TextStyle(
-                        color: Colors.amber,
-                      ),
-                    ),
+                widget.name,
+                style: TextStyle(
+                  color: Colors.amber,
+                ),
+              ),
             ),
             subtitle: FittedBox(
               fit: BoxFit.scaleDown,

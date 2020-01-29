@@ -127,7 +127,6 @@ class _NestCreatorState extends State<NestCreator> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.title, color: Colors.amber),
                 title: TextFormField(
                   validator: (value) =>
                   value.isEmpty
@@ -136,6 +135,10 @@ class _NestCreatorState extends State<NestCreator> {
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     labelText: "Name *",
+                    icon: Icon(
+                        Icons.title,
+                        color: Colors.amber
+                    ),
                     hintText: 'Gib Deiner Sammlung einen Namen',
                   ),
                   controller: _nameEditingController,
@@ -147,13 +150,16 @@ class _NestCreatorState extends State<NestCreator> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.speaker_notes, color: Colors.amber),
                 title: TextField(
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     labelText: "Beschreibung (optional)",
+                    icon: Icon(
+                      Icons.speaker_notes,
+                      color: Colors.amber
+                    ),
                     border: OutlineInputBorder(),
                   ),
                   controller: _noteEditingController,

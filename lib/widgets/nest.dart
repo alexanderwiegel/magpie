@@ -1,17 +1,24 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+//import 'package:magpie_app/sortMode.dart';
 import '../database_helper.dart';
 import '../screens/nestItemsScreen.dart';
 
 // ignore: must_be_immutable
 class Nest extends StatefulWidget {
-  Nest({this.id, this.albumCover, @required this.name, this.note});
+  Nest(
+      {this.id,
+      this.albumCover,
+      @required this.name,
+      this.note,
+      this.totalWorth});
 
   int id;
   File albumCover;
   String name;
   String note;
+  int totalWorth;
 
   Map<String, dynamic> toMap() {
     return {
@@ -19,6 +26,7 @@ class Nest extends StatefulWidget {
       'albumCover': albumCover,
       'name': name,
       'note': note,
+      'totalWorth': totalWorth,
     };
   }
 
@@ -29,6 +37,7 @@ class Nest extends StatefulWidget {
     this.albumCover = File(path);
     this.name = obj["name"];
     this.note = obj["note"];
+    this.totalWorth = obj["totalWorth"];
   }
 
   @override
@@ -38,19 +47,18 @@ class Nest extends StatefulWidget {
 class _NestState extends State<Nest> {
   void openNestDetailScreen() async {
     Nest oldNest = Nest(
-        id: widget.id,
-        albumCover: widget.albumCover,
-        name: widget.name,
-        note: widget.note);
+      id: widget.id,
+      albumCover: widget.albumCover,
+      name: widget.name,
+      note: widget.note,
+      totalWorth: widget.totalWorth,
+    );
     Nest newNest = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => NestItems(nest: oldNest)),
     );
     if (newNest != null) {
       await DatabaseHelper.instance.update(newNest);
-      //widget.albumCover = newNest.albumCover;
-      //widget.name = newNest.name;
-      //widget.note = newNest.note;
     }
   }
 

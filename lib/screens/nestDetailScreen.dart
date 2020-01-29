@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../database_helper.dart';
 import '../widgets/magpieButton.dart';
+
 //import '../widgets/photoDialog.dart';
 import '../widgets/nest.dart';
 import 'package:image_picker/image_picker.dart';
@@ -87,27 +88,40 @@ class _NestDetailState extends State<NestDetail> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.title, color: Colors.amber),
               title: TextFormField(
                 validator: (value) => value.isEmpty
                     ? "Bitte gib Deiner Sammlung einen Namen"
                     : null,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
-                  labelText: "Name *",
-                ),
+                    labelText: "Name *",
+                    icon: Icon(Icons.title, color: Colors.amber)),
                 controller: _nameEditingController,
                 onChanged: (value) => widget.nest.name = value,
               ),
             ),
             ListTile(
-              leading: Icon(Icons.speaker_notes, color: Colors.amber),
+              title: TextFormField(
+                enabled: false,
+                initialValue: widget.nest.totalWorth == null
+                    ? "?"
+                    : "${widget.nest.totalWorth}",
+                decoration: InputDecoration(
+                    labelText: "Gesamtwert",
+                    icon: Icon(Icons.euro_symbol, color: Colors.amber)),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3),
+            ),
+            ListTile(
               title: TextField(
                 maxLines: null,
                 keyboardType: TextInputType.multiline,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
                   labelText: "Beschreibung (optional)",
+                  icon: Icon(Icons.speaker_notes, color: Colors.amber),
                   border: OutlineInputBorder(),
                 ),
                 controller: _noteEditingController,

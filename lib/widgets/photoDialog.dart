@@ -6,6 +6,7 @@ import '../database_helper.dart';
 import 'nest.dart';
 import 'nestItem.dart';
 
+// ignore: must_be_immutable
 class PhotoDialog extends StatelessWidget {
   PhotoDialog({@required this.context, this.nest, this.nestItem});
 
@@ -15,6 +16,7 @@ class PhotoDialog extends StatelessWidget {
   PermissionStatus _status;
 
   @override
+  // ignore: missing_return
   Widget build(BuildContext context) {
     optionsDialogBox();
   }

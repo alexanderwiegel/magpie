@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import '../widgets/nestItem.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -22,15 +23,18 @@ class _NestItemCreatorState extends State<NestItemCreator> {
   File _photo;
   String _name;
   String _note;
+  int _worth;
 
   TextEditingController _nameEditingController;
   TextEditingController _noteEditingController;
+  TextEditingController _worthEditingController;
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     _nameEditingController.dispose();
     _noteEditingController.dispose();
+    _worthEditingController.dispose();
     super.dispose();
   }
 
@@ -44,6 +48,9 @@ class _NestItemCreatorState extends State<NestItemCreator> {
 
     _nameEditingController = TextEditingController(text: _name);
     _noteEditingController = TextEditingController(text: _note);
+    //int worth = 0;
+    //String worthString = "$worth";
+    _worthEditingController = TextEditingController(text: _worth != null ? "$_worth" : "");
   }
 
   void insertNestItem() async {
@@ -53,8 +60,13 @@ class _NestItemCreatorState extends State<NestItemCreator> {
       photo: _photo,
       name: _name,
       note: _note,
+      worth: _worth,
     );
     await DatabaseHelper.instance.insertItem(nestItem);
+    print("Gesamtwert des Nestes vor Neuberechnung: ${widget.nest.totalWorth}");
+    widget.nest.totalWorth = await DatabaseHelper.instance.getTotalWorth(widget.nest);
+    print("Gesamtwert des Nestes nach Neuberechnung: ${widget.nest.totalWorth}");
+    DatabaseHelper.instance.update(widget.nest);
     Navigator.of(context).pop(widget.nest);
   }
 
@@ -127,7 +139,6 @@ class _NestItemCreatorState extends State<NestItemCreator> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.title, color: Colors.amber),
                 title: TextFormField(
                   validator: (value) => value.isEmpty
                       ? "Bitte gib dem Gegenstand einen Namen"
@@ -135,6 +146,9 @@ class _NestItemCreatorState extends State<NestItemCreator> {
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     labelText: "Name *",
+                    icon: Icon(
+                        Icons.title, color: Colors.amber
+                    ),
                     hintText: 'Gib dem Gegenstand einen Namen',
                   ),
                   controller: _nameEditingController,
@@ -146,13 +160,38 @@ class _NestItemCreatorState extends State<NestItemCreator> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.speaker_notes, color: Colors.amber),
+                title: TextFormField(
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    WhitelistingTextInputFormatter.digitsOnly
+                  ],
+                  decoration: InputDecoration(
+                      labelText: "Wert (optional)",
+                      icon: Icon(
+                          Icons.euro_symbol, color: Colors.amber
+                      )
+                  ),
+                  controller: _worthEditingController,
+                  onChanged: (value) {
+                    setState(() {
+                      _worth = int.parse(value);
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 3),
+              ),
+              ListTile(
                 title: TextField(
                   maxLines: null,
                   keyboardType: TextInputType.multiline,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     labelText: "Beschreibung (optional)",
+                      icon: Icon(
+                          Icons.speaker_notes, color: Colors.amber
+                      ),
                     border: OutlineInputBorder(),
                   ),
                   controller: _noteEditingController,

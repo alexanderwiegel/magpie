@@ -5,6 +5,7 @@ import '../widgets/magpieButton.dart';
 import '../widgets/nestItem.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../widgets/nest.dart';
 
 class NestItemDetail extends StatefulWidget {
   NestItemDetail({@required this.nestItem});
@@ -21,12 +22,14 @@ class _NestItemDetailState extends State<NestItemDetail> {
 
   TextEditingController _nameEditingController;
   TextEditingController _noteEditingController;
+  TextEditingController _worthEditingController;
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     _nameEditingController.dispose();
     _noteEditingController.dispose();
+    _worthEditingController.dispose();
     super.dispose();
   }
 
@@ -38,91 +41,125 @@ class _NestItemDetailState extends State<NestItemDetail> {
         .then(_updateStatus);
   }
 
+  void _updateNest() async {
+    print("Test");
+    // TODO: Fehler suchen
+    print(widget.nestItem.nestId);
+    Nest nest = await DatabaseHelper.instance.getNest(widget.nestItem.nestId);
+    print("Nest $nest");
+    print("Gesamtwert des Nestes vor Neuberechnung: ${nest.totalWorth}");
+    nest.totalWorth = await DatabaseHelper.instance.getTotalWorth(nest);
+    print("Gesamtwert des Nestes nach Neuberechnung: ${nest.totalWorth}");
+    DatabaseHelper.instance.update(nest);
+  }
+
   @override
   Widget build(BuildContext context) {
     _nameEditingController = TextEditingController(text: widget.nestItem.name);
     _noteEditingController = TextEditingController(text: widget.nestItem.note);
+    _worthEditingController = TextEditingController(
+        text: widget.nestItem.worth != null ? "${widget.nestItem.worth}" : "");
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.nestItem.name),
-          actions: [
-            FlatButton(
-              onPressed: () {
-                if (_formKey.currentState.validate())
-                  DatabaseHelper.instance.updateItem(widget.nestItem);
-                  Navigator.of(context).pop(widget.nestItem);
+      appBar: AppBar(
+        title: Text(widget.nestItem.name),
+        actions: [
+          FlatButton(
+            onPressed: () {
+              if (_formKey.currentState.validate())
+                DatabaseHelper.instance.updateItem(widget.nestItem);
+              _updateNest();
+              Navigator.of(context).pop(widget.nestItem);
+            },
+            child: Text(
+              'SPEICHERN',
+              style: Theme.of(context)
+                  .textTheme
+                  .subhead
+                  .copyWith(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(children: [
+            GestureDetector(
+              onTap: () {
+                _displayOptionsDialog();
               },
-              child: Text(
-                'SPEICHERN',
-                style: Theme.of(context)
-                    .textTheme
-                    .subhead
-                    .copyWith(color: Colors.white),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Material(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.file(
+                    widget.nestItem.photo,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
-          ],
-        ),
-        body: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(children: [
-              GestureDetector(
-                onTap: () {
-                  _displayOptionsDialog();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4)),
-                    clipBehavior: Clip.antiAlias,
-                    child: Image.file(
-                      widget.nestItem.photo,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: Icon(Icons.title, color: Colors.amber),
-                title: TextFormField(
-                  validator: (value) => value.isEmpty
-                      ? "Bitte gib dem Gegenstand einen Namen"
-                      : null,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
+            ListTile(
+              title: TextFormField(
+                validator: (value) => value.isEmpty
+                    ? "Bitte gib dem Gegenstand einen Namen"
+                    : null,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: InputDecoration(
                     labelText: "Name *",
-                  ),
-                  controller: _nameEditingController,
-                  onChanged: (value) {
-                    setState(() {
-                      widget.nestItem.name = value;
-                    });
-                  },
-                ),
+                    icon: Icon(Icons.title, color: Colors.amber)),
+                controller: _nameEditingController,
+                onChanged: (value) {
+                  setState(() {
+                    widget.nestItem.name = value;
+                  });
+                },
               ),
-              ListTile(
-                leading: Icon(Icons.speaker_notes, color: Colors.amber),
-                title: TextField(
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    labelText: "Beschreibung (optional)",
-                    border: OutlineInputBorder(),
-                  ),
-                  controller: _noteEditingController,
-                  onChanged: (value) {
-                    setState(() {
-                      widget.nestItem.note = value;
-                    });
-                  },
-                ),
+            ),
+            ListTile(
+              title: TextFormField(
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  WhitelistingTextInputFormatter.digitsOnly
+                ],
+                decoration: InputDecoration(
+                    labelText: "Wert (optional)",
+                    icon: Icon(Icons.euro_symbol, color: Colors.amber)),
+                controller: _worthEditingController,
+                onChanged: (value) {
+                  setState(() {
+                    widget.nestItem.worth = int.parse(value);
+                  });
+                },
               ),
-            ]),
-          ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3),
+            ),
+            ListTile(
+              title: TextField(
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: InputDecoration(
+                  labelText: "Beschreibung (optional)",
+                  icon: Icon(Icons.speaker_notes, color: Colors.amber),
+                  border: OutlineInputBorder(),
+                ),
+                controller: _noteEditingController,
+                onChanged: (value) {
+                  setState(() {
+                    widget.nestItem.note = value;
+                  });
+                },
+              ),
+            ),
+          ]),
         ),
+      ),
       floatingActionButton: MagpieButton(
         onPressed: () {
           setState(() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:magpie_app/sortMode.dart';
 import '../screens/nestCreatorScreen.dart';
 import '../widgets/nest.dart';
 import '../widgets/magpieButton.dart';
@@ -14,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   DatabaseHelper db = DatabaseHelper.instance;
+  SortMode sortMode = SortMode.SortById;
 
   @override
   initState() {
@@ -28,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text("Magpie"),
       ),
       body: FutureBuilder<List<Nest>>(
-        future: db.getNests(),
+        future: db.getNests(sortMode),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(

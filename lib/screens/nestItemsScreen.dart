@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:magpie_app/sortMode.dart';
 import '../database_helper.dart';
 import '../widgets/magpieButton.dart';
 import '../widgets/nestItem.dart';
@@ -18,6 +19,7 @@ class NestItems extends StatefulWidget {
 
 class _NestItemsState extends State<NestItems> {
   DatabaseHelper db = DatabaseHelper.instance;
+  SortMode sortMode = SortMode.SortById;
 
   @override
   initState() {
@@ -50,7 +52,7 @@ class _NestItemsState extends State<NestItems> {
         ],
       ),
       body: FutureBuilder<List<NestItem>>(
-        future: db.getNestItems(widget.nest.id),
+        future: db.getNestItems(widget.nest.id, sortMode),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(
