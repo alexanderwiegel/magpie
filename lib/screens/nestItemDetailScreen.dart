@@ -79,6 +79,7 @@ class _NestItemDetailState extends State<NestItemDetail> {
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 70),
           child: Column(children: [
             GestureDetector(
               onTap: () {
