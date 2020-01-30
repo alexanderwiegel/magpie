@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-//import 'database_helper.dart';
+
 import 'screens/homeScreen.dart';
 
 void main() {
   //DatabaseHelper.instance.clear();
   runApp(Magpie());
+  //DatabaseHelper.instance.vacuum();
 }
 
 class Magpie extends StatelessWidget {

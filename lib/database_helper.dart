@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
 
+import 'sortMode.dart';
 import 'widgets/nest.dart';
 import 'widgets/nestItem.dart';
-import 'sortMode.dart';
 
 class DatabaseHelper {
   static final _databaseName = "MagpiePrototype5.db";
@@ -90,7 +90,6 @@ class DatabaseHelper {
 
     var result =
         await dbClient.rawQuery("SELECT * FROM $nests ORDER BY $sortModeSql");
-    print(result);
     if (result.length == 0) return null;
     List<Nest> list = result.map((item) {
       return Nest.fromMap(item);
@@ -116,7 +115,6 @@ class DatabaseHelper {
     var result = await dbClient.rawQuery(
         "SELECT * FROM $nestItems WHERE $nestId = ? ORDER BY $sortModeSql",
         [givenID]);
-    print(result);
     if (result.length == 0) return null;
     List<NestItem> list = result.map((item) {
       return NestItem.fromMap(item);
@@ -127,20 +125,23 @@ class DatabaseHelper {
   Future<Nest> getNest(int id) async {
     final Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query(nests);
-    print("All good");
-    // TODO: Fehler suchen
+    return Nest.fromMap(maps[id]);
+    /*
     return Nest(
       albumCover: maps[id]['albumCover'],
       name: maps[id]['name'],
       note: maps[id]['note'],
       totalWorth: maps[id]['totalWorth'],
     );
+     */
   }
 
   Future<NestItem> getNestItem(int id) async {
     final Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query(nestItems);
 
+    return NestItem.fromMap(maps[id]);
+    /*
     return NestItem(
       nestId: maps[id]['nestId'],
       photo: maps[id]['photo'],
@@ -148,12 +149,19 @@ class DatabaseHelper {
       note: maps[id]['note'],
       worth: maps[id]['worth'],
     );
+
+     */
+  }
+
+  Future<void> vacuum() async {
+    final Database db = await database;
+    await db.execute("VACUUM");
   }
 
   Future<int> getTotalWorth(Nest nest) async {
     final Database db = await database;
-    return Sqflite.firstIntValue(
-        await db.rawQuery('SELECT SUM($worth) FROM $nestItems WHERE $nestId = ?', [nest.id]));
+    return Sqflite.firstIntValue(await db.rawQuery(
+        'SELECT SUM($worth) FROM $nestItems WHERE $nestId = ?', [nest.id]));
   }
 
   Future<int> getNestCount() async {
@@ -204,7 +212,6 @@ class DatabaseHelper {
   Future<int> update(Nest nest) async {
     Database db = await instance.database;
     File albumCover = nest.albumCover;
-    //int total = await getTotalWorth(nest);
 
     await db.rawUpdate(
         'UPDATE $nests'

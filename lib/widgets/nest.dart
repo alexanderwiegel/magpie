@@ -45,7 +45,7 @@ class Nest extends StatefulWidget {
 }
 
 class _NestState extends State<Nest> {
-  void openNestDetailScreen() async {
+  void openNestItemsScreen() async {
     Nest oldNest = Nest(
       id: widget.id,
       albumCover: widget.albumCover,
@@ -58,6 +58,11 @@ class _NestState extends State<Nest> {
       MaterialPageRoute(builder: (context) => NestItems(nest: oldNest)),
     );
     if (newNest != null) {
+      /*
+      widget.name = newNest.name;
+      widget.note = newNest.note;
+      widget.totalWorth = newNest.totalWorth;
+       */
       await DatabaseHelper.instance.update(newNest);
     }
   }
@@ -75,7 +80,7 @@ class _NestState extends State<Nest> {
 
     return GestureDetector(
       onTap: () {
-        openNestDetailScreen();
+        openNestItemsScreen();
       },
       child: GridTile(
         footer: Material(

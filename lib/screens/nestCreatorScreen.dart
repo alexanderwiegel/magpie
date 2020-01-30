@@ -1,8 +1,9 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-//import '../widgets/photoDialog.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 import '../database_helper.dart';
 import '../widgets/nest.dart';
 
@@ -69,7 +70,7 @@ class _NestCreatorState extends State<NestCreator> {
         return AlertDialog(
           content: SingleChildScrollView(
             child: Text(
-                "Du musst ein eigenes Bild benutzen.",
+              "Du musst ein eigenes Bild benutzen.",
             ),
           ),
         );
@@ -88,14 +89,13 @@ class _NestCreatorState extends State<NestCreator> {
                 if (_formKey.currentState.validate()) {
                   if (_albumCover != null) {
                     insertNest();
-                  }
-                  else _displayPhotoAlert();
+                  } else
+                    _displayPhotoAlert();
                 }
               },
               child: Text(
                 'ANLEGEN',
-                style: Theme
-                    .of(context)
+                style: Theme.of(context)
                     .textTheme
                     .subhead
                     .copyWith(color: Colors.white),
@@ -120,25 +120,21 @@ class _NestCreatorState extends State<NestCreator> {
                     child: _albumCover != null
                         ? Image.file(_albumCover, fit: BoxFit.cover)
                         : Image.asset(
-                      "pics/placeholder.jpg",
-                      fit: BoxFit.cover,
-                    ),
+                            "pics/placeholder.jpg",
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
               ),
               ListTile(
                 title: TextFormField(
-                  validator: (value) =>
-                  value.isEmpty
+                  validator: (value) => value.isEmpty
                       ? "Bitte gib Deiner Sammlung einen Namen"
                       : null,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     labelText: "Name *",
-                    icon: Icon(
-                        Icons.title,
-                        color: Colors.amber
-                    ),
+                    icon: Icon(Icons.title, color: Colors.amber),
                     hintText: 'Gib Deiner Sammlung einen Namen',
                   ),
                   controller: _nameEditingController,
@@ -156,10 +152,7 @@ class _NestCreatorState extends State<NestCreator> {
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     labelText: "Beschreibung (optional)",
-                    icon: Icon(
-                      Icons.speaker_notes,
-                      color: Colors.amber
-                    ),
+                    icon: Icon(Icons.speaker_notes, color: Colors.amber),
                     border: OutlineInputBorder(),
                   ),
                   controller: _noteEditingController,
@@ -177,21 +170,15 @@ class _NestCreatorState extends State<NestCreator> {
 
   void _displayOptionsDialog() async {
     /*
-    Nest nest = Nest(
-      name: _name,
-      albumCover: _albumCover,
-      id: _id,
-      note: _note,
-    );
-      nest = await Navigator.push(context, MaterialPageRoute<Nest>(
-        builder: (BuildContext context) {
-          return PhotoDialog(context: context, nest: nest,);
-        }
-      ));
-      setState(() {
-        _albumCover = nest.albumCover;
-      });
-     */
+    File file = await Navigator.push(context,
+        MaterialPageRoute(builder: (BuildContext context) {
+      return PhotoDialog(context: context);
+    }));
+    setState(() {
+      _albumCover = file;
+    });
+    */
+
     await _optionsDialogBox();
   }
 

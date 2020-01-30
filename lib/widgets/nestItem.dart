@@ -64,6 +64,11 @@ class _NestItemState extends State<NestItem> {
           builder: (context) => NestItemDetail(nestItem: oldNestItem)),
     );
     if (newNestItem != null) {
+      /*
+      widget.name = newNestItem.name;
+      widget.note = newNestItem.note;
+      widget.worth = newNestItem.worth;
+       */
       await DatabaseHelper.instance.updateItem(newNestItem);
     }
   }

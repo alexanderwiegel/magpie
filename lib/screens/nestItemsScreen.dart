@@ -12,7 +12,7 @@ import 'nestItemCreatorScreen.dart';
 class NestItems extends StatefulWidget {
   NestItems({@required this.nest});
 
-  final Nest nest;
+  Nest nest;
 
   @override
   _NestItemsState createState() => _NestItemsState();
@@ -28,8 +28,14 @@ class _NestItemsState extends State<NestItems> {
     buildNestItems();
   }
 
+  Future<void> _initiateNest() async {
+    widget.nest = await DatabaseHelper.instance.getNest(widget.nest.id - 1);
+  }
+
   @override
   Widget build(BuildContext context) {
+    _initiateNest();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.nest.name),

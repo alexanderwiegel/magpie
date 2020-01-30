@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../database_helper.dart';
-import '../widgets/magpieButton.dart';
-import '../widgets/nestItem.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../database_helper.dart';
+import '../widgets/magpieButton.dart';
 import '../widgets/nest.dart';
+import '../widgets/nestItem.dart';
 
 class NestItemDetail extends StatefulWidget {
   NestItemDetail({@required this.nestItem});
@@ -42,15 +43,12 @@ class _NestItemDetailState extends State<NestItemDetail> {
   }
 
   void _updateNest() async {
-    print("Test");
-    // TODO: Fehler suchen
-    print(widget.nestItem.nestId);
-    Nest nest = await DatabaseHelper.instance.getNest(widget.nestItem.nestId);
-    print("Nest $nest");
-    print("Gesamtwert des Nestes vor Neuberechnung: ${nest.totalWorth}");
+    await DatabaseHelper.instance.updateItem(widget.nestItem);
+    Nest nest =
+        await DatabaseHelper.instance.getNest(widget.nestItem.nestId - 1);
     nest.totalWorth = await DatabaseHelper.instance.getTotalWorth(nest);
-    print("Gesamtwert des Nestes nach Neuberechnung: ${nest.totalWorth}");
-    DatabaseHelper.instance.update(nest);
+    await DatabaseHelper.instance.update(nest);
+    Navigator.of(context).pop(widget.nestItem);
   }
 
   @override
@@ -66,10 +64,7 @@ class _NestItemDetailState extends State<NestItemDetail> {
         actions: [
           FlatButton(
             onPressed: () {
-              if (_formKey.currentState.validate())
-                DatabaseHelper.instance.updateItem(widget.nestItem);
-              _updateNest();
-              Navigator.of(context).pop(widget.nestItem);
+              if (_formKey.currentState.validate()) _updateNest();
             },
             child: Text(
               'SPEICHERN',
