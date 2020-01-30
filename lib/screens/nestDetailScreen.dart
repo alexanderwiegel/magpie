@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../database_helper.dart';
-import '../widgets/magpieButton.dart';
-
-//import '../widgets/photoDialog.dart';
-import '../widgets/nest.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../database_helper.dart';
+import '../widgets/magpieButton.dart';
+import '../widgets/nest.dart';
+
+// ignore: must_be_immutable
 class NestDetail extends StatefulWidget {
   NestDetail({@required this.nest});
 
-  final Nest nest;
+  Nest nest;
 
   @override
   _NestDetailState createState() => _NestDetailState();
@@ -40,8 +40,13 @@ class _NestDetailState extends State<NestDetail> {
         .then(_updateStatus);
   }
 
+  Future<void> _initiateNest() async {
+    widget.nest = await DatabaseHelper.instance.getNest(widget.nest.id - 1);
+  }
+
   @override
   Widget build(BuildContext context) {
+    _initiateNest();
     _nameEditingController = TextEditingController(text: widget.nest.name);
     _noteEditingController = TextEditingController(text: widget.nest.note);
 
@@ -68,6 +73,7 @@ class _NestDetailState extends State<NestDetail> {
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 70),
           child: Column(children: [
             GestureDetector(
               onTap: () {
