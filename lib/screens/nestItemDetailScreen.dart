@@ -62,17 +62,11 @@ class _NestItemDetailState extends State<NestItemDetail> {
       appBar: AppBar(
         title: Text(widget.nestItem.name),
         actions: [
-          FlatButton(
+          IconButton(
+            icon: Icon(Icons.save),
             onPressed: () {
               if (_formKey.currentState.validate()) _updateNest();
             },
-            child: Text(
-              'SPEICHERN',
-              style: Theme.of(context)
-                  .textTheme
-                  .subhead
-                  .copyWith(color: Colors.white),
-            ),
           ),
         ],
       ),

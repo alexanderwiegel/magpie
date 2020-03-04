@@ -54,19 +54,13 @@ class _NestDetailState extends State<NestDetail> {
       appBar: AppBar(
         title: Text(widget.nest.name),
         actions: [
-          FlatButton(
+          IconButton(
+            icon: Icon(Icons.save),
             onPressed: () {
               if (_formKey.currentState.validate())
                 DatabaseHelper.instance.update(widget.nest);
               Navigator.of(context).pop(widget.nest);
             },
-            child: Text(
-              'SPEICHERN',
-              style: Theme.of(context)
-                  .textTheme
-                  .subhead
-                  .copyWith(color: Colors.white),
-            ),
           ),
         ],
       ),

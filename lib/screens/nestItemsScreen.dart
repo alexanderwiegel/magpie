@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:magpie_app/sortMode.dart';
 
 import '../database_helper.dart';
-import '../widgets/magpieButton.dart';
 import '../widgets/nest.dart';
 import '../widgets/nestItem.dart';
 import '../widgets/startMessage.dart';
@@ -21,12 +20,39 @@ class NestItems extends StatefulWidget {
 
 class _NestItemsState extends State<NestItems> {
   DatabaseHelper db = DatabaseHelper.instance;
+
+  Icon _searchIcon = Icon(
+    Icons.search,
+    color: Colors.amber,
+  );
+  final TextEditingController _filter = new TextEditingController();
+  String _searchText = "";
+  List<NestItem> names = new List();
+  List<NestItem> filteredNames = new List();
+
+  Widget searchTitle = Text("");
+
   SortMode sortMode = SortMode.SortById;
 
   @override
   initState() {
     super.initState();
     buildNestItems();
+  }
+
+  _NestItemsState() {
+    _filter.addListener(() {
+      if (_filter.text.isEmpty) {
+        setState(() {
+          _searchText = "";
+          filteredNames = names;
+        });
+      } else {
+        setState(() {
+          _searchText = _filter.text;
+        });
+      }
+    });
   }
 
   Future<void> _initiateNest() async {
@@ -41,7 +67,8 @@ class _NestItemsState extends State<NestItems> {
       appBar: AppBar(
         title: Text(widget.nest.name),
         actions: [
-          FlatButton(
+          IconButton(
+            icon: Icon(Icons.info_outline),
             onPressed: () {
               Navigator.push(
                 context,
@@ -49,32 +76,6 @@ class _NestItemsState extends State<NestItems> {
                     builder: (context) => NestDetail(nest: widget.nest)),
               );
             },
-            child: Text(
-              'DETAILS',
-              style: Theme.of(context)
-                  .textTheme
-                  .subhead
-                  .copyWith(color: Colors.white),
-            ),
-          ),
-          PopupMenuButton<SortMode>(
-            onSelected: (SortMode result) {
-              setState(() {
-                sortMode = result;
-              });
-            },
-            initialValue: sortMode,
-            itemBuilder: (BuildContext contect) => <PopupMenuEntry<SortMode>>[
-              const PopupMenuItem<SortMode>(
-                  value: SortMode.SortById,
-                  child: Text("Nach Erstelldatum sortieren")),
-              const PopupMenuItem<SortMode>(
-                  value: SortMode.SortByName,
-                  child: Text("Nach Name sortieren")),
-              const PopupMenuItem<SortMode>(
-                  value: SortMode.SortByWorth,
-                  child: Text("Nach Wert sortieren")),
-            ],
           ),
         ],
       ),
@@ -93,27 +94,112 @@ class _NestItemsState extends State<NestItems> {
                     message: "um deinen ersten Gegenstand anzulegen."),
               ],
             ));
-
+          fillList(snapshot);
           return GridView.count(
               padding: const EdgeInsets.all(8),
               mainAxisSpacing: 8,
               crossAxisSpacing: 8,
               crossAxisCount: 2,
               childAspectRatio: 1.05,
-              children: List.generate(
-                  snapshot.data.length, (index) => snapshot.data[index]));
+              children: filterList());
         },
       ),
-      floatingActionButton: MagpieButton(
+      bottomNavigationBar: Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: BottomAppBar(
+            clipBehavior: Clip.antiAlias,
+            color: Colors.teal,
+            shape: CircularNotchedRectangle(),
+            notchMargin: 4.0,
+            child: Row(children: <Widget>[
+              PopupMenuButton<SortMode>(
+                icon: Icon(
+                  Icons.sort_by_alpha,
+                  color: Colors.amber,
+                ),
+                onSelected: (SortMode result) {
+                  setState(() {
+                    sortMode = result;
+                  });
+                },
+                initialValue: sortMode,
+                itemBuilder: (BuildContext contect) =>
+                    <PopupMenuEntry<SortMode>>[
+                  const PopupMenuItem<SortMode>(
+                      value: SortMode.SortById,
+                      child: Text("Nach Erstelldatum sortieren")),
+                  const PopupMenuItem<SortMode>(
+                      value: SortMode.SortByName,
+                      child: Text("Nach Name sortieren")),
+                  const PopupMenuItem<SortMode>(
+                      value: SortMode.SortByWorth,
+                      child: Text("Nach Wert sortieren")),
+                ],
+              ),
+              IconButton(
+                color: Colors.amber,
+                padding: const EdgeInsets.only(left: 12.0),
+                alignment: Alignment.centerLeft,
+                icon: _searchIcon,
+                onPressed: _searchPressed,
+              ),
+              Expanded(child: searchTitle)
+            ])),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
-          setState(() {
-            _openNestCreator();
-          });
+          _openNestCreator();
         },
-        title: "Neuen Gegenstand anlegen",
-        icon: Icons.add_circle,
+        child: Icon(
+          Icons.add,
+          color: Colors.amber,
+        ),
       ),
     );
+  }
+
+  List<NestItem> filterList() {
+    if (_searchText.isNotEmpty) {
+      List<NestItem> tempList = new List();
+      for (int i = 0; i < filteredNames.length; i++) {
+        if (filteredNames[i]
+            .name
+            .toLowerCase()
+            .contains(_searchText.toLowerCase())) {
+          tempList.add(filteredNames[i]);
+        }
+      }
+      filteredNames = tempList;
+    }
+    return filteredNames;
+  }
+
+  void fillList(snapshot) {
+    names =
+        List.generate(snapshot.data.length, (index) => snapshot.data[index]);
+    filteredNames = names;
+  }
+
+  void _searchPressed() {
+    setState(() {
+      if (this._searchIcon.icon == Icons.search) {
+        this._searchIcon = new Icon(Icons.close);
+        this.searchTitle = new TextField(
+            style: TextStyle(color: Colors.white),
+            controller: _filter,
+            decoration: new InputDecoration(
+              hintText: 'Gegenstand suchen...',
+              hintStyle: TextStyle(color: Colors.white),
+            ));
+      } else {
+        this._searchIcon = new Icon(Icons.search);
+        this.searchTitle = new Text('');
+        filteredNames = names;
+        _filter.clear();
+      }
+    });
   }
 
   Future _openNestCreator() async {
