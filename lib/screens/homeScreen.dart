@@ -18,6 +18,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   DatabaseHelper db = DatabaseHelper.instance;
 
+  SortMode sortMode = SortMode.SortById;
+  bool onlyFavored = false;
+
   Icon _searchIcon = Icon(
     Icons.search,
     color: Colors.amber,
@@ -26,10 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _searchText = "";
   List<Nest> names = new List();
   List<Nest> filteredNames = new List();
-
   Widget searchTitle = Text("");
-
-  SortMode sortMode = SortMode.SortById;
 
   @override
   initState() {
@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: FutureBuilder<List<Nest>>(
-        future: db.getNests(sortMode),
+        future: db.getNests(sortMode, onlyFavored),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(
@@ -98,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Icons.sort_by_alpha,
                   color: Colors.amber,
                 ),
+                tooltip: "Sortiermodus auswählen",
                 onSelected: (SortMode result) {
                   setState(() {
                     sortMode = result;
@@ -115,10 +116,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   const PopupMenuItem<SortMode>(
                       value: SortMode.SortByWorth,
                       child: Text("Nach Wert sortieren")),
+                  const PopupMenuItem<SortMode>(
+                      value: SortMode.SortByFavored,
+                      child: Text("Nach Favoriten sortieren")),
                 ],
               ),
               IconButton(
                 color: Colors.amber,
+                tooltip: "Nur Favoriten anzeigen",
+                icon: onlyFavored
+                    ? Icon(Icons.favorite)
+                    : Icon(Icons.favorite_border),
+                onPressed: showFavorites,
+              ),
+              IconButton(
+                color: Colors.amber,
+                tooltip: "Nest suchen",
                 padding: const EdgeInsets.only(left: 12.0),
                 alignment: Alignment.centerLeft,
                 icon: _searchIcon,
@@ -129,6 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
+        tooltip: "Neues Nest anlegen",
         onPressed: () {
           _openNestCreator();
         },
@@ -138,6 +152,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void showFavorites() {
+    setState(() {
+      onlyFavored ^= true;
+    });
   }
 
   List<Nest> filterList() {
@@ -183,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
             style: TextStyle(color: Colors.white),
             controller: _filter,
             decoration: new InputDecoration(
-              hintText: 'Nest suchen...',
+              hintText: 'Suchen...',
               hintStyle: TextStyle(color: Colors.white),
             ));
       } else {

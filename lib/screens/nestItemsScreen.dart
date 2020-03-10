@@ -21,6 +21,9 @@ class NestItems extends StatefulWidget {
 class _NestItemsState extends State<NestItems> {
   DatabaseHelper db = DatabaseHelper.instance;
 
+  SortMode sortMode = SortMode.SortById;
+  bool onlyFavored = false;
+
   Icon _searchIcon = Icon(
     Icons.search,
     color: Colors.amber,
@@ -31,8 +34,6 @@ class _NestItemsState extends State<NestItems> {
   List<NestItem> filteredNames = new List();
 
   Widget searchTitle = Text("");
-
-  SortMode sortMode = SortMode.SortById;
 
   @override
   initState() {
@@ -69,6 +70,7 @@ class _NestItemsState extends State<NestItems> {
         actions: [
           IconButton(
             icon: Icon(Icons.info_outline),
+            tooltip: "Details anzeigen",
             onPressed: () {
               Navigator.push(
                 context,
@@ -80,7 +82,7 @@ class _NestItemsState extends State<NestItems> {
         ],
       ),
       body: FutureBuilder<List<NestItem>>(
-        future: db.getNestItems(widget.nest.id, sortMode),
+        future: db.getNestItems(widget.nest.id, sortMode, onlyFavored),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(
@@ -118,6 +120,7 @@ class _NestItemsState extends State<NestItems> {
                   Icons.sort_by_alpha,
                   color: Colors.amber,
                 ),
+                tooltip: "Sortiermodus auswählen",
                 onSelected: (SortMode result) {
                   setState(() {
                     sortMode = result;
@@ -135,10 +138,22 @@ class _NestItemsState extends State<NestItems> {
                   const PopupMenuItem<SortMode>(
                       value: SortMode.SortByWorth,
                       child: Text("Nach Wert sortieren")),
+                  const PopupMenuItem<SortMode>(
+                      value: SortMode.SortByFavored,
+                      child: Text("Nach Favoriten sortieren")),
                 ],
               ),
               IconButton(
                 color: Colors.amber,
+                tooltip: "Nur Favoriten anzeigen",
+                icon: onlyFavored
+                    ? Icon(Icons.favorite)
+                    : Icon(Icons.favorite_border),
+                onPressed: showFavorites,
+              ),
+              IconButton(
+                color: Colors.amber,
+                tooltip: "Gegenstand suchen",
                 padding: const EdgeInsets.only(left: 12.0),
                 alignment: Alignment.centerLeft,
                 icon: _searchIcon,
@@ -149,6 +164,7 @@ class _NestItemsState extends State<NestItems> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
+        tooltip: "Neuen Gegenstand anlegen",
         onPressed: () {
           _openNestCreator();
         },
@@ -158,6 +174,12 @@ class _NestItemsState extends State<NestItems> {
         ),
       ),
     );
+  }
+
+  void showFavorites() {
+    setState(() {
+      onlyFavored ^= true;
+    });
   }
 
   List<NestItem> filterList() {
@@ -190,7 +212,7 @@ class _NestItemsState extends State<NestItems> {
             style: TextStyle(color: Colors.white),
             controller: _filter,
             decoration: new InputDecoration(
-              hintText: 'Gegenstand suchen...',
+              hintText: 'Suchen...',
               hintStyle: TextStyle(color: Colors.white),
             ));
       } else {

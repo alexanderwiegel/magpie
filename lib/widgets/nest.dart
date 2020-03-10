@@ -12,13 +12,15 @@ class Nest extends StatefulWidget {
       this.albumCover,
       @required this.name,
       this.note,
-      this.totalWorth});
+      this.totalWorth,
+      this.favored});
 
   int id;
   File albumCover;
   String name;
   String note;
   int totalWorth;
+  bool favored;
 
   Map<String, dynamic> toMap() {
     return {
@@ -27,6 +29,7 @@ class Nest extends StatefulWidget {
       'name': name,
       'note': note,
       'totalWorth': totalWorth,
+      'favored': favored
     };
   }
 
@@ -38,6 +41,7 @@ class Nest extends StatefulWidget {
     this.name = obj["name"];
     this.note = obj["note"];
     this.totalWorth = obj["totalWorth"];
+    this.favored = obj["favored"] == 0 ? false : true;
   }
 
   @override
@@ -52,17 +56,13 @@ class _NestState extends State<Nest> {
       name: widget.name,
       note: widget.note,
       totalWorth: widget.totalWorth,
+      favored: widget.favored,
     );
     Nest newNest = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => NestItems(nest: oldNest)),
     );
     if (newNest != null) {
-      /*
-      widget.name = newNest.name;
-      widget.note = newNest.note;
-      widget.totalWorth = newNest.totalWorth;
-       */
       await DatabaseHelper.instance.update(newNest);
     }
   }
@@ -124,8 +124,37 @@ class _NestState extends State<Nest> {
           ),
         ),
         child: image,
+        header: IconButton(
+          tooltip: "Als Favorit markieren",
+          alignment: AlignmentDirectional.centerStart,
+          icon: widget.favored
+              ? Icon(
+                  Icons.favorite,
+                  color: Colors.amber,
+                )
+              : Icon(
+                  Icons.favorite_border,
+                  color: Colors.amber,
+                ),
+          onPressed: toggleFavored,
+        ),
       ),
     );
+  }
+
+  void toggleFavored() async {
+    setState(() {
+      widget.favored ^= true;
+    });
+    Nest nest = Nest(
+      id: widget.id,
+      albumCover: widget.albumCover,
+      name: widget.name,
+      note: widget.note,
+      totalWorth: widget.totalWorth,
+      favored: widget.favored,
+    );
+    await DatabaseHelper.instance.update(nest);
   }
 
   Future<Text> getText() async {

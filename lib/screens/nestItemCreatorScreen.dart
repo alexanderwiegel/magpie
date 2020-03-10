@@ -1,11 +1,13 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import '../widgets/nestItem.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 import '../database_helper.dart';
 import '../widgets/nest.dart';
+import '../widgets/nestItem.dart';
 
 class NestItemCreator extends StatefulWidget {
   NestItemCreator({@required this.nest});
@@ -50,7 +52,8 @@ class _NestItemCreatorState extends State<NestItemCreator> {
     _noteEditingController = TextEditingController(text: _note);
     //int worth = 0;
     //String worthString = "$worth";
-    _worthEditingController = TextEditingController(text: _worth != null ? "$_worth" : "");
+    _worthEditingController =
+        TextEditingController(text: _worth != null ? "$_worth" : "");
   }
 
   void insertNestItem() async {
@@ -60,12 +63,14 @@ class _NestItemCreatorState extends State<NestItemCreator> {
       photo: _photo,
       name: _name,
       note: _note,
-      worth: _worth,
+      worth: _worth != null ? _worth : 0,
     );
     await DatabaseHelper.instance.insertItem(nestItem);
     print("Gesamtwert des Nestes vor Neuberechnung: ${widget.nest.totalWorth}");
-    widget.nest.totalWorth = await DatabaseHelper.instance.getTotalWorth(widget.nest);
-    print("Gesamtwert des Nestes nach Neuberechnung: ${widget.nest.totalWorth}");
+    widget.nest.totalWorth =
+        await DatabaseHelper.instance.getTotalWorth(widget.nest);
+    print(
+        "Gesamtwert des Nestes nach Neuberechnung: ${widget.nest.totalWorth}");
     DatabaseHelper.instance.update(widget.nest);
     Navigator.of(context).pop(widget.nest);
   }
@@ -146,9 +151,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     labelText: "Name *",
-                    icon: Icon(
-                        Icons.title, color: Colors.amber
-                    ),
+                    icon: Icon(Icons.title, color: Colors.amber),
                     hintText: 'Gib dem Gegenstand einen Namen',
                   ),
                   controller: _nameEditingController,
@@ -167,10 +170,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
                   ],
                   decoration: InputDecoration(
                       labelText: "Wert (optional)",
-                      icon: Icon(
-                          Icons.euro_symbol, color: Colors.amber
-                      )
-                  ),
+                      icon: Icon(Icons.euro_symbol, color: Colors.amber)),
                   controller: _worthEditingController,
                   onChanged: (value) {
                     setState(() {
@@ -189,9 +189,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     labelText: "Beschreibung (optional)",
-                      icon: Icon(
-                          Icons.speaker_notes, color: Colors.amber
-                      ),
+                    icon: Icon(Icons.speaker_notes, color: Colors.amber),
                     border: OutlineInputBorder(),
                   ),
                   controller: _noteEditingController,

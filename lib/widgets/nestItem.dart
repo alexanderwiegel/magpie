@@ -13,7 +13,8 @@ class NestItem extends StatefulWidget {
       this.photo,
       @required this.name,
       this.note,
-      this.worth});
+      this.worth,
+      this.favored});
 
   int nestId;
   int id;
@@ -21,6 +22,7 @@ class NestItem extends StatefulWidget {
   String name;
   String note;
   int worth;
+  bool favored;
 
   Map<String, dynamic> toMap() {
     return {
@@ -30,6 +32,7 @@ class NestItem extends StatefulWidget {
       'name': name,
       'note': note,
       'worth': worth,
+      'favored': favored
     };
   }
 
@@ -42,6 +45,7 @@ class NestItem extends StatefulWidget {
     this.name = obj["name"];
     this.note = obj["note"];
     this.worth = obj["worth"];
+    this.favored = obj["favored"] == 0 ? false : true;
   }
 
   @override
@@ -57,6 +61,7 @@ class _NestItemState extends State<NestItem> {
       name: widget.name,
       note: widget.note,
       worth: widget.worth,
+      favored: widget.favored,
     );
     NestItem newNestItem = await Navigator.push(
       context,
@@ -64,11 +69,6 @@ class _NestItemState extends State<NestItem> {
           builder: (context) => NestItemDetail(nestItem: oldNestItem)),
     );
     if (newNestItem != null) {
-      /*
-      widget.name = newNestItem.name;
-      widget.note = newNestItem.note;
-      widget.worth = newNestItem.worth;
-       */
       await DatabaseHelper.instance.updateItem(newNestItem);
     }
   }
@@ -126,7 +126,36 @@ class _NestItemState extends State<NestItem> {
           ),
         ),
         child: image,
+        header: IconButton(
+          alignment: AlignmentDirectional.centerStart,
+          tooltip: "Als Favorit markieren",
+          icon: widget.favored
+              ? Icon(
+                  Icons.favorite,
+                  color: Colors.amber,
+                )
+              : Icon(
+                  Icons.favorite_border,
+                  color: Colors.amber,
+                ),
+          onPressed: toggleFavored,
+        ),
       ),
     );
+  }
+
+  void toggleFavored() async {
+    setState(() {
+      widget.favored ^= true;
+    });
+    NestItem nestItem = NestItem(
+      id: widget.id,
+      photo: widget.photo,
+      name: widget.name,
+      note: widget.note,
+      worth: widget.worth,
+      favored: widget.favored,
+    );
+    await DatabaseHelper.instance.updateItem(nestItem);
   }
 }

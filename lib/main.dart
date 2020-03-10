@@ -11,6 +11,7 @@ void main() {
 class Magpie extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    precacheImage(AssetImage("pics/placeholder.jpg"), context);
     return MaterialApp(
       title: 'Magpie',
       debugShowCheckedModeBanner: false,
