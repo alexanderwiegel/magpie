@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../database_helper.dart';
@@ -18,17 +19,20 @@ class NestDetail extends StatefulWidget {
 }
 
 class _NestDetailState extends State<NestDetail> {
+  final formatter = DateFormat("dd.MM.yyyy");
   PermissionStatus _status;
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _nameEditingController;
   TextEditingController _noteEditingController;
+  TextEditingController _dateController;
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     _nameEditingController.dispose();
     _noteEditingController.dispose();
+    _dateController.dispose();
     super.dispose();
   }
 
@@ -49,6 +53,8 @@ class _NestDetailState extends State<NestDetail> {
     _initiateNest();
     _nameEditingController = TextEditingController(text: widget.nest.name);
     _noteEditingController = TextEditingController(text: widget.nest.note);
+    _dateController =
+        TextEditingController(text: formatter.format(widget.nest.date));
 
     return Scaffold(
       appBar: AppBar(
@@ -128,6 +134,18 @@ class _NestDetailState extends State<NestDetail> {
                 onChanged: (value) => widget.nest.note = value,
               ),
             ),
+            ListTile(
+                title: TextFormField(
+              onTap: () => _selectDate(context),
+              controller: _dateController,
+              decoration: InputDecoration(
+                labelText: "Aufnahmedatum (optional)",
+                icon: Icon(
+                  Icons.date_range,
+                  color: Colors.amber,
+                ),
+              ),
+            ))
           ]),
         ),
       ),
@@ -141,6 +159,21 @@ class _NestDetailState extends State<NestDetail> {
         icon: Icons.delete,
       ),
     );
+  }
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        locale: Locale("de", "DE"),
+        context: context,
+        initialDate: widget.nest.date,
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now());
+    if (picked != null && picked != widget.nest.date) {
+      widget.nest.date = picked;
+      setState(() {
+        _dateController.text = formatter.format(widget.nest.date);
+      });
+    }
   }
 
   void _displayDeleteDialogue() async {

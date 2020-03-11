@@ -13,7 +13,8 @@ class Nest extends StatefulWidget {
       @required this.name,
       this.note,
       this.totalWorth,
-      this.favored});
+      this.favored,
+      this.date});
 
   int id;
   File albumCover;
@@ -21,6 +22,7 @@ class Nest extends StatefulWidget {
   String note;
   int totalWorth;
   bool favored;
+  DateTime date;
 
   Map<String, dynamic> toMap() {
     return {
@@ -29,7 +31,8 @@ class Nest extends StatefulWidget {
       'name': name,
       'note': note,
       'totalWorth': totalWorth,
-      'favored': favored
+      'favored': favored,
+      'date': date
     };
   }
 
@@ -42,6 +45,7 @@ class Nest extends StatefulWidget {
     this.note = obj["note"];
     this.totalWorth = obj["totalWorth"];
     this.favored = obj["favored"] == 0 ? false : true;
+    this.date = DateTime.fromMillisecondsSinceEpoch(obj["date"]);
   }
 
   @override
@@ -51,13 +55,13 @@ class Nest extends StatefulWidget {
 class _NestState extends State<Nest> {
   void openNestItemsScreen() async {
     Nest oldNest = Nest(
-      id: widget.id,
-      albumCover: widget.albumCover,
-      name: widget.name,
-      note: widget.note,
-      totalWorth: widget.totalWorth,
-      favored: widget.favored,
-    );
+        id: widget.id,
+        albumCover: widget.albumCover,
+        name: widget.name,
+        note: widget.note,
+        totalWorth: widget.totalWorth,
+        favored: widget.favored,
+        date: widget.date);
     Nest newNest = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => NestItems(nest: oldNest)),
@@ -159,6 +163,7 @@ class _NestState extends State<Nest> {
       note: widget.note,
       totalWorth: widget.totalWorth,
       favored: widget.favored,
+      date: widget.date,
     );
     await DatabaseHelper.instance.update(nest);
   }

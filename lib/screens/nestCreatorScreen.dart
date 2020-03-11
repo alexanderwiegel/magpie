@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../database_helper.dart';
@@ -13,21 +14,26 @@ class NestCreator extends StatefulWidget {
 }
 
 class _NestCreatorState extends State<NestCreator> {
+  final formatter = DateFormat("dd.MM.yyyy");
   PermissionStatus _status;
   final _formKey = GlobalKey<FormState>();
+
   int _id;
   File _albumCover;
   String _name;
   String _note;
+  DateTime _date = DateTime.now();
 
   TextEditingController _nameEditingController;
   TextEditingController _noteEditingController;
+  TextEditingController _dateController;
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     _nameEditingController.dispose();
     _noteEditingController.dispose();
+    _dateController.dispose();
     super.dispose();
   }
 
@@ -41,6 +47,7 @@ class _NestCreatorState extends State<NestCreator> {
 
     _nameEditingController = TextEditingController(text: _name);
     _noteEditingController = TextEditingController(text: _note);
+    _dateController = TextEditingController(text: formatter.format(_date));
   }
 
   void insertNest() async {
@@ -48,6 +55,7 @@ class _NestCreatorState extends State<NestCreator> {
       albumCover: _albumCover,
       name: _name,
       note: _note,
+      date: _date,
     );
     _id = await DatabaseHelper.instance.insert(nest);
     Navigator.of(context).pop(Nest(
@@ -55,6 +63,7 @@ class _NestCreatorState extends State<NestCreator> {
       albumCover: _albumCover,
       name: _name,
       note: _note,
+      date: _date,
     ));
   }
 
@@ -164,9 +173,36 @@ class _NestCreatorState extends State<NestCreator> {
                   },
                 ),
               ),
+              ListTile(
+                  title: TextFormField(
+                onTap: () => _selectDate(context),
+                controller: _dateController,
+                decoration: InputDecoration(
+                  labelText: "Aufnahmedatum (optional)",
+                  icon: Icon(
+                    Icons.date_range,
+                    color: Colors.amber,
+                  ),
+                ),
+              ))
             ]),
           ),
         ));
+  }
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        locale: Locale("de", "DE"),
+        context: context,
+        initialDate: _date,
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now());
+    if (picked != null && picked != _date) {
+      _date = picked;
+      setState(() {
+        _dateController.text = formatter.format(_date);
+      });
+    }
   }
 
   void _displayOptionsDialog() async {

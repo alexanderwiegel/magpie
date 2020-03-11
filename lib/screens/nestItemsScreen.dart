@@ -133,6 +133,9 @@ class _NestItemsState extends State<NestItems> {
                       value: SortMode.SortById,
                       child: Text("Nach Erstelldatum sortieren")),
                   const PopupMenuItem<SortMode>(
+                      value: SortMode.SortByDate,
+                      child: Text("Nach Aufnahmedatum sortieren")),
+                  const PopupMenuItem<SortMode>(
                       value: SortMode.SortByName,
                       child: Text("Nach Name sortieren")),
                   const PopupMenuItem<SortMode>(

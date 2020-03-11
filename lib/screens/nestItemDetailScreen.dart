@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../database_helper.dart';
@@ -18,12 +19,14 @@ class NestItemDetail extends StatefulWidget {
 }
 
 class _NestItemDetailState extends State<NestItemDetail> {
+  final formatter = DateFormat("dd.MM.yyyy");
   PermissionStatus _status;
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController _nameEditingController;
   TextEditingController _noteEditingController;
   TextEditingController _worthEditingController;
+  TextEditingController _dateController;
 
   @override
   void dispose() {
@@ -31,6 +34,7 @@ class _NestItemDetailState extends State<NestItemDetail> {
     _nameEditingController.dispose();
     _noteEditingController.dispose();
     _worthEditingController.dispose();
+    _dateController.dispose();
     super.dispose();
   }
 
@@ -57,6 +61,8 @@ class _NestItemDetailState extends State<NestItemDetail> {
     _noteEditingController = TextEditingController(text: widget.nestItem.note);
     _worthEditingController = TextEditingController(
         text: widget.nestItem.worth != null ? "${widget.nestItem.worth}" : "");
+    _dateController =
+        TextEditingController(text: formatter.format(widget.nestItem.date));
 
     return Scaffold(
       appBar: AppBar(
@@ -147,6 +153,18 @@ class _NestItemDetailState extends State<NestItemDetail> {
                 },
               ),
             ),
+            ListTile(
+                title: TextFormField(
+              onTap: () => _selectDate(context),
+              controller: _dateController,
+              decoration: InputDecoration(
+                labelText: "Aufnahmedatum (optional)",
+                icon: Icon(
+                  Icons.date_range,
+                  color: Colors.amber,
+                ),
+              ),
+            ))
           ]),
         ),
       ),
@@ -160,6 +178,21 @@ class _NestItemDetailState extends State<NestItemDetail> {
         icon: Icons.delete,
       ),
     );
+  }
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        locale: Locale("de", "DE"),
+        context: context,
+        initialDate: widget.nestItem.date,
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now());
+    if (picked != null && picked != widget.nestItem.date) {
+      widget.nestItem.date = picked;
+      setState(() {
+        _dateController.text = formatter.format(widget.nestItem.date);
+      });
+    }
   }
 
   void _displayDeleteDialogue() async {

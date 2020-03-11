@@ -14,7 +14,8 @@ class NestItem extends StatefulWidget {
       @required this.name,
       this.note,
       this.worth,
-      this.favored});
+      this.favored,
+      this.date});
 
   int nestId;
   int id;
@@ -23,6 +24,7 @@ class NestItem extends StatefulWidget {
   String note;
   int worth;
   bool favored;
+  DateTime date;
 
   Map<String, dynamic> toMap() {
     return {
@@ -32,7 +34,8 @@ class NestItem extends StatefulWidget {
       'name': name,
       'note': note,
       'worth': worth,
-      'favored': favored
+      'favored': favored,
+      'date': date
     };
   }
 
@@ -46,6 +49,7 @@ class NestItem extends StatefulWidget {
     this.note = obj["note"];
     this.worth = obj["worth"];
     this.favored = obj["favored"] == 0 ? false : true;
+    this.date = DateTime.fromMillisecondsSinceEpoch(obj["date"]);
   }
 
   @override
@@ -55,14 +59,14 @@ class NestItem extends StatefulWidget {
 class _NestItemState extends State<NestItem> {
   void openNestItemDetailScreen() async {
     NestItem oldNestItem = NestItem(
-      nestId: widget.nestId,
-      id: widget.id,
-      photo: widget.photo,
-      name: widget.name,
-      note: widget.note,
-      worth: widget.worth,
-      favored: widget.favored,
-    );
+        nestId: widget.nestId,
+        id: widget.id,
+        photo: widget.photo,
+        name: widget.name,
+        note: widget.note,
+        worth: widget.worth,
+        favored: widget.favored,
+        date: widget.date);
     NestItem newNestItem = await Navigator.push(
       context,
       MaterialPageRoute(

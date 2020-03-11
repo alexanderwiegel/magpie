@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../database_helper.dart';
@@ -19,17 +20,21 @@ class NestItemCreator extends StatefulWidget {
 }
 
 class _NestItemCreatorState extends State<NestItemCreator> {
+  final formatter = DateFormat("dd.MM.yyyy");
   PermissionStatus _status;
   final _formKey = GlobalKey<FormState>();
+
   int _nestId;
   File _photo;
   String _name;
   String _note;
   int _worth;
+  DateTime _date = DateTime.now();
 
   TextEditingController _nameEditingController;
   TextEditingController _noteEditingController;
   TextEditingController _worthEditingController;
+  TextEditingController _dateController;
 
   @override
   void dispose() {
@@ -37,6 +42,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
     _nameEditingController.dispose();
     _noteEditingController.dispose();
     _worthEditingController.dispose();
+    _dateController.dispose();
     super.dispose();
   }
 
@@ -50,10 +56,9 @@ class _NestItemCreatorState extends State<NestItemCreator> {
 
     _nameEditingController = TextEditingController(text: _name);
     _noteEditingController = TextEditingController(text: _note);
-    //int worth = 0;
-    //String worthString = "$worth";
     _worthEditingController =
         TextEditingController(text: _worth != null ? "$_worth" : "");
+    _dateController = TextEditingController(text: formatter.format(_date));
   }
 
   void insertNestItem() async {
@@ -64,13 +69,11 @@ class _NestItemCreatorState extends State<NestItemCreator> {
       name: _name,
       note: _note,
       worth: _worth != null ? _worth : 0,
+      date: _date,
     );
     await DatabaseHelper.instance.insertItem(nestItem);
-    print("Gesamtwert des Nestes vor Neuberechnung: ${widget.nest.totalWorth}");
     widget.nest.totalWorth =
         await DatabaseHelper.instance.getTotalWorth(widget.nest);
-    print(
-        "Gesamtwert des Nestes nach Neuberechnung: ${widget.nest.totalWorth}");
     DatabaseHelper.instance.update(widget.nest);
     Navigator.of(context).pop(widget.nest);
   }
@@ -201,9 +204,36 @@ class _NestItemCreatorState extends State<NestItemCreator> {
                   },
                 ),
               ),
+              ListTile(
+                  title: TextFormField(
+                onTap: () => _selectDate(context),
+                controller: _dateController,
+                decoration: InputDecoration(
+                  labelText: "Aufnahmedatum (optional)",
+                  icon: Icon(
+                    Icons.date_range,
+                    color: Colors.amber,
+                  ),
+                ),
+              ))
             ]),
           ),
         ));
+  }
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        locale: Locale("de", "DE"),
+        context: context,
+        initialDate: _date,
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now());
+    if (picked != null && picked != _date) {
+      _date = picked;
+      setState(() {
+        _dateController.text = formatter.format(_date);
+      });
+    }
   }
 
   void _displayOptionsDialog() async {
