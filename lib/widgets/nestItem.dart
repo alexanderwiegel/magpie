@@ -130,7 +130,9 @@ class _NestItemState extends State<NestItem> {
           fit: BoxFit.scaleDown,
           alignment: AlignmentDirectional.topStart,
           child: IconButton(
-            tooltip: "Als Favorit markieren",
+            tooltip: widget.favored
+                ? "Als Favorit entfernen"
+                : "Als Favorit markieren",
             alignment: AlignmentDirectional.centerStart,
             icon: widget.favored
                 ? Icon(
@@ -153,6 +155,7 @@ class _NestItemState extends State<NestItem> {
       widget.favored ^= true;
     });
     NestItem nestItem = NestItem(
+      nestId: widget.nestId,
       id: widget.id,
       photo: widget.photo,
       name: widget.name,
