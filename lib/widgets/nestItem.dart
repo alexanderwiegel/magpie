@@ -126,19 +126,23 @@ class _NestItemState extends State<NestItem> {
           ),
         ),
         child: image,
-        header: IconButton(
-          alignment: AlignmentDirectional.centerStart,
-          tooltip: "Als Favorit markieren",
-          icon: widget.favored
-              ? Icon(
-                  Icons.favorite,
-                  color: Colors.amber,
-                )
-              : Icon(
-                  Icons.favorite_border,
-                  color: Colors.amber,
-                ),
-          onPressed: toggleFavored,
+        header: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: AlignmentDirectional.topStart,
+          child: IconButton(
+            tooltip: "Als Favorit markieren",
+            alignment: AlignmentDirectional.centerStart,
+            icon: widget.favored
+                ? Icon(
+                    Icons.favorite,
+                    color: Colors.amber,
+                  )
+                : Icon(
+                    Icons.favorite_border,
+                    color: Colors.amber,
+                  ),
+            onPressed: toggleFavored,
+          ),
         ),
       ),
     );
