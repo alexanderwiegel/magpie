@@ -114,16 +114,17 @@ class _NestCreatorState extends State<NestCreator> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4)),
-                    clipBehavior: Clip.antiAlias,
-                    child: _albumCover != null
-                        ? Image.file(_albumCover, fit: BoxFit.cover)
-                        : Image.asset(
-                            "pics/placeholder.jpg",
-                            fit: BoxFit.cover,
-                          ),
-                  ),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4)),
+                      clipBehavior: Clip.antiAlias,
+                      child: _albumCover != null
+                          ? Image.file(_albumCover, fit: BoxFit.cover)
+                          : FadeInImage.assetNetwork(
+                              width: 400.0,
+                              height: 250.0,
+                              placeholder: 'pics/placeholder.jpg',
+                              fit: BoxFit.cover,
+                              image: 'pics/placeholder.jpg')),
                 ),
               ),
               ListTile(
