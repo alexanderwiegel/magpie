@@ -22,6 +22,7 @@ class _NestItemsState extends State<NestItems> {
   DatabaseHelper db = DatabaseHelper.instance;
 
   SortMode sortMode = SortMode.SortByDate;
+  bool asc = true;
   bool onlyFavored = false;
 
   Icon _searchIcon = Icon(
@@ -123,27 +124,21 @@ class _NestItemsState extends State<NestItems> {
                 tooltip: "Sortiermodus auswählen",
                 onSelected: (SortMode result) {
                   setState(() {
-                    sortMode = result;
+                    if (sortMode != result) {
+                      asc = true;
+                      sortMode = result;
+                    } else {
+                      asc ^= true;
+                    }
                   });
                 },
                 initialValue: sortMode,
                 itemBuilder: (BuildContext contect) =>
                     <PopupMenuEntry<SortMode>>[
-                  //const PopupMenuItem<SortMode>(
-                  //    value: SortMode.SortById,
-                  //    child: Text("Nach Erstelldatum sortieren")),
-                  const PopupMenuItem<SortMode>(
-                      value: SortMode.SortByDate,
-                      child: Text("Nach Erstelldatum sortieren")),
-                  const PopupMenuItem<SortMode>(
-                      value: SortMode.SortByName,
-                      child: Text("Nach Name sortieren")),
-                  const PopupMenuItem<SortMode>(
-                      value: SortMode.SortByWorth,
-                      child: Text("Nach Wert sortieren")),
-                  const PopupMenuItem<SortMode>(
-                      value: SortMode.SortByFavored,
-                      child: Text("Nach Favoriten sortieren")),
+                  menuItem(SortMode.SortByDate, "Nach Erstelldatum sortieren"),
+                  menuItem(SortMode.SortByName, "Nach Name sortieren"),
+                  menuItem(SortMode.SortByWorth, "Nach Wert sortieren"),
+                  menuItem(SortMode.SortByFavored, "Nach Favoriten sortieren"),
                 ],
               ),
               IconButton(
@@ -175,6 +170,24 @@ class _NestItemsState extends State<NestItems> {
           Icons.add,
           color: Colors.amber,
         ),
+      ),
+    );
+  }
+
+  Widget menuItem(SortMode value, String txt) {
+    return PopupMenuItem<SortMode>(
+      value: value,
+      child: Row(
+        children: <Widget>[
+          sortMode == value
+              ? Icon(asc ? Icons.arrow_upward : Icons.arrow_downward,
+                  color: Colors.amber)
+              : Icon(null),
+          Padding(
+            padding: const EdgeInsets.only(left: 2.0),
+          ),
+          Text(txt)
+        ],
       ),
     );
   }

@@ -81,7 +81,8 @@ class DatabaseHelper {
           ''');
   }
 
-  Future<List<Nest>> getNests(SortMode sortMode, bool onlyFavored) async {
+  Future<List<Nest>> getNests(
+      SortMode sortMode, bool asc, bool onlyFavored) async {
     var dbClient = await database;
 
     var sortModeSql;
@@ -110,6 +111,9 @@ class DatabaseHelper {
           "SELECT * FROM $nests WHERE $columnFavored = -1 ORDER BY $sortModeSql";
       // "'SELECT * FROM $nests WHERE $columnFavored = ? ORDER BY $sortModeSql', [1]";
       //TODO: Parametrisierung funktioniert nicht, Lösung finden
+    }
+    if (!asc) {
+      sql += " DESC";
     }
     var result = await dbClient.rawQuery(sql);
     if (result.length == 0) return null;
