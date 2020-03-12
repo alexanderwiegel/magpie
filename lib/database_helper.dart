@@ -86,9 +86,9 @@ class DatabaseHelper {
 
     var sortModeSql;
     switch (sortMode) {
-      case SortMode.SortById:
-        sortModeSql = columnId;
-        break;
+      //case SortMode.SortById:
+      //  sortModeSql = columnId;
+      //  break;
       case SortMode.SortByName:
         sortModeSql = columnName;
         break;
@@ -125,9 +125,9 @@ class DatabaseHelper {
 
     var sortModeSql;
     switch (sortMode) {
-      case SortMode.SortById:
-        sortModeSql = id;
-        break;
+      //case SortMode.SortById:
+      //  sortModeSql = id;
+      //  break;
       case SortMode.SortByName:
         sortModeSql = name;
         break;

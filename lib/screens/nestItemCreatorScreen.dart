@@ -34,7 +34,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
   TextEditingController _nameEditingController;
   TextEditingController _noteEditingController;
   TextEditingController _worthEditingController;
-  TextEditingController _dateController;
+  //TextEditingController _dateController;
 
   @override
   void dispose() {
@@ -42,7 +42,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
     _nameEditingController.dispose();
     _noteEditingController.dispose();
     _worthEditingController.dispose();
-    _dateController.dispose();
+    //_dateController.dispose();
     super.dispose();
   }
 
@@ -58,7 +58,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
     _noteEditingController = TextEditingController(text: _note);
     _worthEditingController =
         TextEditingController(text: _worth != null ? "$_worth" : "");
-    _dateController = TextEditingController(text: formatter.format(_date));
+    //_dateController = TextEditingController(text: formatter.format(_date));
   }
 
   void insertNestItem() async {
@@ -206,10 +206,12 @@ class _NestItemCreatorState extends State<NestItemCreator> {
               ),
               ListTile(
                   title: TextFormField(
-                onTap: () => _selectDate(context),
-                controller: _dateController,
+                //onTap: () => _selectDate(context),
+                //controller: _dateController,
+                initialValue: formatter.format(_date),
+                enabled: false,
                 decoration: InputDecoration(
-                  labelText: "Aufnahmedatum (optional)",
+                  labelText: "Erstelldatum",
                   icon: Icon(
                     Icons.date_range,
                     color: Colors.amber,
@@ -221,6 +223,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
         ));
   }
 
+  /*
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         locale: Locale("de", "DE"),
@@ -235,6 +238,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
       });
     }
   }
+   */
 
   void _displayOptionsDialog() async {
     await _optionsDialogBox();

@@ -21,7 +21,7 @@ class NestItems extends StatefulWidget {
 class _NestItemsState extends State<NestItems> {
   DatabaseHelper db = DatabaseHelper.instance;
 
-  SortMode sortMode = SortMode.SortById;
+  SortMode sortMode = SortMode.SortByDate;
   bool onlyFavored = false;
 
   Icon _searchIcon = Icon(
@@ -129,12 +129,12 @@ class _NestItemsState extends State<NestItems> {
                 initialValue: sortMode,
                 itemBuilder: (BuildContext contect) =>
                     <PopupMenuEntry<SortMode>>[
-                  const PopupMenuItem<SortMode>(
-                      value: SortMode.SortById,
-                      child: Text("Nach Erstelldatum sortieren")),
+                  //const PopupMenuItem<SortMode>(
+                  //    value: SortMode.SortById,
+                  //    child: Text("Nach Erstelldatum sortieren")),
                   const PopupMenuItem<SortMode>(
                       value: SortMode.SortByDate,
-                      child: Text("Nach Aufnahmedatum sortieren")),
+                      child: Text("Nach Erstelldatum sortieren")),
                   const PopupMenuItem<SortMode>(
                       value: SortMode.SortByName,
                       child: Text("Nach Name sortieren")),

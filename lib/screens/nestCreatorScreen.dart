@@ -26,14 +26,14 @@ class _NestCreatorState extends State<NestCreator> {
 
   TextEditingController _nameEditingController;
   TextEditingController _noteEditingController;
-  TextEditingController _dateController;
+  //TextEditingController _dateController;
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     _nameEditingController.dispose();
     _noteEditingController.dispose();
-    _dateController.dispose();
+    //_dateController.dispose();
     super.dispose();
   }
 
@@ -47,7 +47,7 @@ class _NestCreatorState extends State<NestCreator> {
 
     _nameEditingController = TextEditingController(text: _name);
     _noteEditingController = TextEditingController(text: _note);
-    _dateController = TextEditingController(text: formatter.format(_date));
+    //_dateController = TextEditingController(text: formatter.format(_date));
   }
 
   void insertNest() async {
@@ -175,10 +175,12 @@ class _NestCreatorState extends State<NestCreator> {
               ),
               ListTile(
                   title: TextFormField(
-                onTap: () => _selectDate(context),
-                controller: _dateController,
+                //onTap: () => _selectDate(context),
+                //controller: _dateController,
+                initialValue: formatter.format(_date),
+                enabled: false,
                 decoration: InputDecoration(
-                  labelText: "Aufnahmedatum (optional)",
+                  labelText: "Erstelldatum",
                   icon: Icon(
                     Icons.date_range,
                     color: Colors.amber,
@@ -190,6 +192,7 @@ class _NestCreatorState extends State<NestCreator> {
         ));
   }
 
+  /*
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         locale: Locale("de", "DE"),
@@ -204,6 +207,7 @@ class _NestCreatorState extends State<NestCreator> {
       });
     }
   }
+   */
 
   void _displayOptionsDialog() async {
     /*

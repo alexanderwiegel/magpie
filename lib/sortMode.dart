@@ -1,1 +1,1 @@
-enum SortMode { SortById, SortByName, SortByWorth, SortByFavored, SortByDate }
+enum SortMode { SortByName, SortByWorth, SortByFavored, SortByDate }

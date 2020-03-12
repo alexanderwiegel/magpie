@@ -25,14 +25,14 @@ class _NestDetailState extends State<NestDetail> {
 
   TextEditingController _nameEditingController;
   TextEditingController _noteEditingController;
-  TextEditingController _dateController;
+  //TextEditingController _dateController;
 
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
     _nameEditingController.dispose();
     _noteEditingController.dispose();
-    _dateController.dispose();
+    //_dateController.dispose();
     super.dispose();
   }
 
@@ -53,8 +53,8 @@ class _NestDetailState extends State<NestDetail> {
     _initiateNest();
     _nameEditingController = TextEditingController(text: widget.nest.name);
     _noteEditingController = TextEditingController(text: widget.nest.note);
-    _dateController =
-        TextEditingController(text: formatter.format(widget.nest.date));
+    //_dateController =
+    //    TextEditingController(text: formatter.format(widget.nest.date));
 
     return Scaffold(
       appBar: AppBar(
@@ -136,10 +136,12 @@ class _NestDetailState extends State<NestDetail> {
             ),
             ListTile(
                 title: TextFormField(
-              onTap: () => _selectDate(context),
-              controller: _dateController,
+              //onTap: () => _selectDate(context),
+              //controller: _dateController,
+              initialValue: formatter.format(widget.nest.date),
+              enabled: false,
               decoration: InputDecoration(
-                labelText: "Aufnahmedatum (optional)",
+                labelText: "Erstelldatum",
                 icon: Icon(
                   Icons.date_range,
                   color: Colors.amber,
@@ -161,6 +163,7 @@ class _NestDetailState extends State<NestDetail> {
     );
   }
 
+  /*
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         locale: Locale("de", "DE"),
@@ -175,6 +178,7 @@ class _NestDetailState extends State<NestDetail> {
       });
     }
   }
+   */
 
   void _displayDeleteDialogue() async {
     await _deleteDialogueBox();
