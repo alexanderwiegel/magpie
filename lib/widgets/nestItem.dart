@@ -166,6 +166,7 @@ class _NestItemState extends State<NestItem> {
       note: widget.note,
       worth: widget.worth,
       favored: widget.favored,
+      date: widget.date,
     );
     await DatabaseHelper.instance.updateItem(nestItem);
   }

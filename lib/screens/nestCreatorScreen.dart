@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:magpie_app/sortMode.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../database_helper.dart';
@@ -56,6 +57,10 @@ class _NestCreatorState extends State<NestCreator> {
       name: _name,
       note: _note,
       date: _date,
+      totalWorth: 0,
+      favored: false,
+      sortMode: SortMode.SortByDate,
+      asc: true,
     );
     _id = await DatabaseHelper.instance.insert(nest);
     Navigator.of(context).pop(Nest(
@@ -64,6 +69,10 @@ class _NestCreatorState extends State<NestCreator> {
       name: _name,
       note: _note,
       date: _date,
+      totalWorth: 0,
+      favored: false,
+      sortMode: SortMode.SortByDate,
+      asc: true,
     ));
   }
 
@@ -149,9 +158,11 @@ class _NestCreatorState extends State<NestCreator> {
                   ),
                   controller: _nameEditingController,
                   onChanged: (value) {
-                    setState(() {
-                      _name = value;
-                    });
+                    if (_name != value) {
+                      setState(() {
+                        _name = value;
+                      });
+                    }
                   },
                 ),
               ),
@@ -167,9 +178,11 @@ class _NestCreatorState extends State<NestCreator> {
                   ),
                   controller: _noteEditingController,
                   onChanged: (value) {
-                    setState(() {
-                      _note = value;
-                    });
+                    if (_note != value) {
+                      setState(() {
+                        _note = value;
+                      });
+                    }
                   },
                 ),
               ),
@@ -303,8 +316,10 @@ class _NestCreatorState extends State<NestCreator> {
   }
 
   void changeImage(var image) {
-    setState(() {
-      _albumCover = image;
-    });
+    if (_albumCover != image) {
+      setState(() {
+        _albumCover = image;
+      });
+    }
   }
 }

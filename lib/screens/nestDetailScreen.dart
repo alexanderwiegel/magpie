@@ -63,9 +63,10 @@ class _NestDetailState extends State<NestDetail> {
           IconButton(
             icon: Icon(Icons.save),
             onPressed: () {
-              if (_formKey.currentState.validate())
+              if (_formKey.currentState.validate()) {
                 DatabaseHelper.instance.update(widget.nest);
-              Navigator.of(context).pop(widget.nest);
+                Navigator.of(context).pop(widget.nest);
+              }
             },
           ),
         ],
@@ -153,9 +154,7 @@ class _NestDetailState extends State<NestDetail> {
       ),
       floatingActionButton: MagpieButton(
         onPressed: () {
-          setState(() {
-            _displayDeleteDialogue();
-          });
+          _displayDeleteDialogue();
         },
         title: "Nest löschen",
         icon: Icons.delete,
@@ -336,9 +335,11 @@ class _NestDetailState extends State<NestDetail> {
   }
 
   void changeImage(var image) {
-    setState(() {
-      widget.nest.albumCover = image;
-    });
-    DatabaseHelper.instance.update(widget.nest);
+    if (widget.nest.albumCover != image) {
+      setState(() {
+        widget.nest.albumCover = image;
+      });
+      DatabaseHelper.instance.update(widget.nest);
+    }
   }
 }

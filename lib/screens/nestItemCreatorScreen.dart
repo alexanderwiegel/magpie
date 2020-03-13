@@ -324,8 +324,10 @@ class _NestItemCreatorState extends State<NestItemCreator> {
   }
 
   void changeImage(var image) {
-    setState(() {
-      _photo = image;
-    });
+    if (_photo != image) {
+      setState(() {
+        _photo = image;
+      });
+    }
   }
 }

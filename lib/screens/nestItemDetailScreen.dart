@@ -109,9 +109,11 @@ class _NestItemDetailState extends State<NestItemDetail> {
                     icon: Icon(Icons.title, color: Colors.amber)),
                 controller: _nameEditingController,
                 onChanged: (value) {
-                  setState(() {
-                    widget.nestItem.name = value;
-                  });
+                  if (widget.nestItem.name != value) {
+                    setState(() {
+                      widget.nestItem.name = value;
+                    });
+                  }
                 },
               ),
             ),
@@ -126,9 +128,11 @@ class _NestItemDetailState extends State<NestItemDetail> {
                     icon: Icon(Icons.euro_symbol, color: Colors.amber)),
                 controller: _worthEditingController,
                 onChanged: (value) {
-                  setState(() {
-                    widget.nestItem.worth = int.parse(value);
-                  });
+                  if (widget.nestItem.worth != int.parse(value)) {
+                    setState(() {
+                      widget.nestItem.worth = int.parse(value);
+                    });
+                  }
                 },
               ),
             ),
@@ -147,9 +151,11 @@ class _NestItemDetailState extends State<NestItemDetail> {
                 ),
                 controller: _noteEditingController,
                 onChanged: (value) {
-                  setState(() {
-                    widget.nestItem.note = value;
-                  });
+                  if (widget.nestItem.note != value) {
+                    setState(() {
+                      widget.nestItem.note = value;
+                    });
+                  }
                 },
               ),
             ),
@@ -172,9 +178,7 @@ class _NestItemDetailState extends State<NestItemDetail> {
       ),
       floatingActionButton: MagpieButton(
         onPressed: () {
-          setState(() {
-            _displayDeleteDialogue();
-          });
+          _displayDeleteDialogue();
         },
         title: "Gegenstand löschen",
         icon: Icons.delete,
@@ -355,9 +359,11 @@ class _NestItemDetailState extends State<NestItemDetail> {
   }
 
   void changeImage(var image) {
-    setState(() {
-      widget.nestItem.photo = image;
-    });
-    DatabaseHelper.instance.updateItem(widget.nestItem);
+    if (widget.nestItem.photo != image) {
+      setState(() {
+        widget.nestItem.photo = image;
+      });
+      DatabaseHelper.instance.updateItem(widget.nestItem);
+    }
   }
 }

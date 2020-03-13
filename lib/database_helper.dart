@@ -9,7 +9,7 @@ import 'widgets/nest.dart';
 import 'widgets/nestItem.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "MagpiePrototype24.db";
+  static final _databaseName = "MagpiePrototype25.db";
   static final _databaseVersion = 4;
 
   static final nests = 'Nester';
@@ -17,19 +17,16 @@ class DatabaseHelper {
   static final columnAlbumCover = 'albumCover';
   static final columnName = 'name';
   static final columnNote = 'note';
-  static final totalWorth = 'totalWorth';
+  static final columnTotalWorth = 'totalWorth';
   static final columnFavored = 'favored';
   static final columnDate = 'date';
+  static final columnSortMode = 'sortMode';
+  static final columnAsc = 'asc';
 
   static final nestItems = 'NestItems';
-  static final id = 'id';
-  static final nestId = 'nestId';
-  static final photo = 'photo';
-  static final name = 'name';
-  static final note = 'note';
-  static final worth = 'worth';
-  static final favored = 'favored';
-  static final date = 'date';
+  static final columnNestId = 'nestId';
+  static final columnPhoto = 'photo';
+  static final columnWorth = 'worth';
 
   // make this a singleton class
   DatabaseHelper._privateConstructor();
@@ -62,21 +59,23 @@ class DatabaseHelper {
             $columnAlbumCover BLOB,
             $columnName TEXT NOT NULL,
             $columnNote TEXT,
-            $totalWorth INTEGER,
+            $columnTotalWorth INTEGER,
             $columnFavored BOOL,
-            $columnDate INTEGER
+            $columnDate INTEGER,
+            $columnSortMode TEXT,
+            $columnAsc BOOL
           )
           ''');
     await db.execute('''
           CREATE TABLE $nestItems (
-            $id INTEGER PRIMARY KEY,
-            $nestId INTEGER,
-            $photo BLOB,
-            $name TEXT NOT NULL,
-            $note TEXT,
-            $worth INTEGER,
-            $favored BOOL,
-            $date INTEGER
+            $columnId INTEGER PRIMARY KEY,
+            $columnNestId INTEGER,
+            $columnPhoto BLOB,
+            $columnName TEXT NOT NULL,
+            $columnNote TEXT,
+            $columnWorth INTEGER,
+            $columnFavored BOOL,
+            $columnDate INTEGER
           )
           ''');
   }
@@ -87,14 +86,11 @@ class DatabaseHelper {
 
     var sortModeSql;
     switch (sortMode) {
-      //case SortMode.SortById:
-      //  sortModeSql = columnId;
-      //  break;
       case SortMode.SortByName:
         sortModeSql = columnName;
         break;
       case SortMode.SortByWorth:
-        sortModeSql = totalWorth;
+        sortModeSql = columnTotalWorth;
         break;
       case SortMode.SortByFavored:
         sortModeSql = columnFavored;
@@ -123,37 +119,36 @@ class DatabaseHelper {
     return list;
   }
 
-  Future<List<NestItem>> getNestItems(
-      int givenID, SortMode sortMode, bool onlyFavored) async {
+  Future<List<NestItem>> getNestItems(Nest nest, bool onlyFavored) async {
     var dbClient = await database;
 
     var sortModeSql;
-    switch (sortMode) {
-      //case SortMode.SortById:
-      //  sortModeSql = id;
-      //  break;
+    switch (nest.sortMode) {
       case SortMode.SortByName:
-        sortModeSql = name;
+        sortModeSql = columnName;
         break;
       case SortMode.SortByWorth:
-        sortModeSql = worth;
+        sortModeSql = columnWorth;
         break;
       case SortMode.SortByFavored:
-        sortModeSql = favored;
+        sortModeSql = columnFavored;
         break;
       case SortMode.SortByDate:
-        sortModeSql = date;
+        sortModeSql = columnDate;
     }
 
     String sql;
     if (!onlyFavored) {
       sql =
-          "SELECT * FROM $nestItems WHERE $nestId = $givenID ORDER BY $sortModeSql";
+          "SELECT * FROM $nestItems WHERE $columnNestId = ${nest.id} ORDER BY $sortModeSql";
       //TODO: Parametrisierung funktioniert nicht, Lösung finden
     } else {
       sql =
-          "SELECT * FROM $nestItems WHERE $nestId = $givenID AND $favored = -1 ORDER BY $sortModeSql";
+          "SELECT * FROM $nestItems WHERE $columnNestId = ${nest.id} AND $columnFavored = -1 ORDER BY $sortModeSql";
       //TODO: Parametrisierung funktioniert nicht, Lösung finden
+    }
+    if (!nest.asc) {
+      sql += " DESC";
     }
     var result = await dbClient.rawQuery(sql);
     if (result.length == 0) return null;
@@ -167,33 +162,15 @@ class DatabaseHelper {
     final Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query(nests);
     return Nest.fromMap(maps[id]);
-    /*
-    return Nest(
-      albumCover: maps[id]['albumCover'],
-      name: maps[id]['name'],
-      note: maps[id]['note'],
-      totalWorth: maps[id]['totalWorth'],
-    );
-     */
   }
 
   Future<NestItem> getNestItem(int id) async {
     final Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query(nestItems);
-
     return NestItem.fromMap(maps[id]);
-    /*
-    return NestItem(
-      nestId: maps[id]['nestId'],
-      photo: maps[id]['photo'],
-      name: maps[id]['name'],
-      note: maps[id]['note'],
-      worth: maps[id]['worth'],
-    );
-
-     */
   }
 
+  // not sure if this actually works
   Future<void> vacuum() async {
     final Database db = await database;
     await db.execute("VACUUM");
@@ -202,7 +179,8 @@ class DatabaseHelper {
   Future<int> getTotalWorth(Nest nest) async {
     final Database db = await database;
     return Sqflite.firstIntValue(await db.rawQuery(
-        'SELECT SUM($worth) FROM $nestItems WHERE $nestId = ?', [nest.id]));
+        'SELECT SUM($columnWorth) FROM $nestItems WHERE $columnNestId = ?',
+        [nest.id]));
   }
 
   Future<int> getNestCount() async {
@@ -213,8 +191,8 @@ class DatabaseHelper {
 
   Future<int> getNestItemCount(int id) async {
     final Database db = await database;
-    return Sqflite.firstIntValue(await db
-        .rawQuery('SELECT COUNT(*) FROM $nestItems WHERE $nestId = ?', [id]));
+    return Sqflite.firstIntValue(await db.rawQuery(
+        'SELECT COUNT(*) FROM $nestItems WHERE $columnNestId = ?', [id]));
   }
 
   Future<int> insert(Nest nest) async {
@@ -222,12 +200,22 @@ class DatabaseHelper {
 
     File albumCover = nest.albumCover;
     int date = nest.date.millisecondsSinceEpoch;
+    String sortModeAsString = nest.sortMode.toString();
 
     return await db.rawInsert(
         'INSERT INTO $nests'
-        '($columnAlbumCover, $columnName, $columnNote, $totalWorth, $columnFavored, $columnDate)'
-        'VALUES(?,?,?,?,?,?)',
-        ['LOAD_FILE($albumCover)', nest.name, nest.note, 0, 0, date]);
+        '($columnAlbumCover, $columnName, $columnNote, $columnTotalWorth, $columnFavored, $columnDate, $columnSortMode, $columnAsc)'
+        'VALUES(?,?,?,?,?,?,?,?)',
+        [
+          'LOAD_FILE($albumCover)',
+          nest.name,
+          nest.note,
+          0,
+          0,
+          date,
+          sortModeAsString,
+          1
+        ]);
 
     //return await db.insert(nests, nest.toMap(),
     //   conflictAlgorithm: ConflictAlgorithm.replace);
@@ -236,11 +224,11 @@ class DatabaseHelper {
   Future<int> insertItem(NestItem nestItem) async {
     Database db = await instance.database;
     File pic = nestItem.photo;
-    int date = nestItem.date.millisecondsSinceEpoch;
+    int dateAsInt = nestItem.date.millisecondsSinceEpoch;
 
     return await db.rawInsert(
         'INSERT INTO $nestItems'
-        '($nestId, $photo, $name, $note, $worth, $favored, $date)'
+        '($columnNestId, $columnPhoto, $columnName, $columnNote, $columnWorth, $columnFavored, $columnDate)'
         'VALUES(?,?,?,?,?,?,?)',
         [
           nestItem.nestId,
@@ -249,7 +237,7 @@ class DatabaseHelper {
           nestItem.note,
           nestItem.worth,
           0,
-          date
+          dateAsInt
         ]);
     //return await db.insert(nests, nest.toMap(),
     //   conflictAlgorithm: ConflictAlgorithm.replace);
@@ -260,6 +248,8 @@ class DatabaseHelper {
     File albumCover = nest.albumCover;
     int fav = nest.favored ? -1 : 0;
     int date = nest.date.millisecondsSinceEpoch;
+    int asc = nest.asc ? 1 : 0;
+    String sortModeAsString = nest.sortMode.toString();
 
     await db.rawUpdate(
         'UPDATE $nests'
@@ -278,7 +268,7 @@ class DatabaseHelper {
         [nest.note, nest.id]);
     await db.rawUpdate(
         'UPDATE $nests'
-        ' SET $totalWorth = ?'
+        ' SET $columnTotalWorth = ?'
         ' WHERE $columnId = ?',
         [nest.totalWorth, nest.id]);
     await db.rawUpdate(
@@ -286,11 +276,21 @@ class DatabaseHelper {
         ' SET $columnFavored = ?'
         ' WHERE $columnId = ?',
         [fav, nest.id]);
-    return await db.rawUpdate(
+    await db.rawUpdate(
         'UPDATE $nests'
         ' SET $columnDate = ?'
         ' WHERE $columnId = ?',
         [date, nest.id]);
+    await db.rawUpdate(
+        'UPDATE $nests'
+        ' SET $columnSortMode = ?'
+        ' WHERE $columnId = ?',
+        [sortModeAsString, nest.id]);
+    return await db.rawUpdate(
+        'UPDATE $nests'
+        ' SET $columnAsc = ?'
+        ' WHERE $columnId = ?',
+        [asc, nest.id]);
     //    .update(nests, nest.toMap(), where: '$columnId = ?', whereArgs: [id]);
   }
 
@@ -302,33 +302,33 @@ class DatabaseHelper {
 
     await db.rawUpdate(
         'UPDATE $nestItems'
-        ' SET $photo = ?'
-        ' WHERE $id = ?',
+        ' SET $columnPhoto = ?'
+        ' WHERE $columnId = ?',
         ['LOAD_FILE($pic)', nestItem.id]);
     await db.rawUpdate(
         'UPDATE $nestItems'
-        ' SET $name = ?'
-        ' WHERE $id = ?',
+        ' SET $columnName = ?'
+        ' WHERE $columnId = ?',
         [nestItem.name, nestItem.id]);
     await db.rawUpdate(
         'UPDATE $nestItems'
-        ' SET $note = ?'
-        ' WHERE $id = ?',
+        ' SET $columnNote = ?'
+        ' WHERE $columnId = ?',
         [nestItem.note, nestItem.id]);
     await db.rawUpdate(
         'UPDATE $nestItems'
-        ' SET $worth = ?'
-        ' WHERE $id = ?',
+        ' SET $columnWorth = ?'
+        ' WHERE $columnId = ?',
         [nestItem.worth, nestItem.id]);
     await db.rawUpdate(
         'UPDATE $nestItems'
-        ' SET $favored = ?'
-        ' WHERE $id = ?',
+        ' SET $columnFavored = ?'
+        ' WHERE $columnId = ?',
         [fav, nestItem.id]);
     return await db.rawUpdate(
         'UPDATE $nestItems'
-        ' SET $date = ?'
-        ' WHERE $id = ?',
+        ' SET $columnDate = ?'
+        ' WHERE $columnId = ?',
         [date, nestItem.id]);
     //    .update(nests, nest.toMap(), where: '$columnId = ?', whereArgs: [id]);
   }
@@ -336,12 +336,13 @@ class DatabaseHelper {
   Future<int> deleteNest(int id) async {
     Database db = await instance.database;
     await db.delete(nests, where: '$columnId = ?', whereArgs: [id]);
-    return db.delete(nestItems, where: '$nestId = ?', whereArgs: [id]);
+    return db.delete(nestItems, where: '$columnNestId = ?', whereArgs: [id]);
   }
 
   Future<int> deleteNestItem(int itemId) async {
     Database db = await instance.database;
-    return await db.delete(nestItems, where: '$id = ?', whereArgs: [itemId]);
+    return await db
+        .delete(nestItems, where: '$columnId = ?', whereArgs: [itemId]);
   }
 
   Future<int> clear() async {

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:magpie_app/sortMode.dart';
 
 import '../database_helper.dart';
 import '../screens/nestItemsScreen.dart';
@@ -14,7 +15,9 @@ class Nest extends StatefulWidget {
       this.note,
       this.totalWorth,
       this.favored,
-      this.date});
+      this.date,
+      this.sortMode,
+      this.asc});
 
   int id;
   File albumCover;
@@ -23,7 +26,10 @@ class Nest extends StatefulWidget {
   int totalWorth;
   bool favored;
   DateTime date;
+  SortMode sortMode;
+  bool asc;
 
+  /*
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -32,9 +38,12 @@ class Nest extends StatefulWidget {
       'note': note,
       'totalWorth': totalWorth,
       'favored': favored,
-      'date': date
+      'date': date,
+      'sortMode': sortMode,
+      'asc': asc
     };
   }
+   */
 
   Nest.fromMap(dynamic obj) {
     this.id = obj["id"];
@@ -46,6 +55,20 @@ class Nest extends StatefulWidget {
     this.totalWorth = obj["totalWorth"];
     this.favored = obj["favored"] == 0 ? false : true;
     this.date = DateTime.fromMillisecondsSinceEpoch(obj["date"]);
+    switch (obj["sortMode"]) {
+      case "SortMode.SortByName":
+        this.sortMode = SortMode.SortByName;
+        break;
+      case "SortMode.SortByWorth":
+        this.sortMode = SortMode.SortByWorth;
+        break;
+      case "SortMode.SortByFavored":
+        this.sortMode = SortMode.SortByFavored;
+        break;
+      case "SortMode.SortByDate":
+        this.sortMode = SortMode.SortByDate;
+    }
+    this.asc = obj["asc"] == 0 ? false : true;
   }
 
   @override
@@ -55,13 +78,16 @@ class Nest extends StatefulWidget {
 class _NestState extends State<Nest> {
   void openNestItemsScreen() async {
     Nest oldNest = Nest(
-        id: widget.id,
-        albumCover: widget.albumCover,
-        name: widget.name,
-        note: widget.note,
-        totalWorth: widget.totalWorth,
-        favored: widget.favored,
-        date: widget.date);
+      id: widget.id,
+      albumCover: widget.albumCover,
+      name: widget.name,
+      note: widget.note,
+      totalWorth: widget.totalWorth,
+      favored: widget.favored,
+      date: widget.date,
+      asc: widget.asc,
+      sortMode: widget.sortMode,
+    );
     Nest newNest = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => NestItems(nest: oldNest)),
@@ -164,6 +190,8 @@ class _NestState extends State<Nest> {
       totalWorth: widget.totalWorth,
       favored: widget.favored,
       date: widget.date,
+      sortMode: widget.sortMode,
+      asc: widget.asc,
     );
     await DatabaseHelper.instance.update(nest);
   }

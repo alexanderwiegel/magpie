@@ -101,17 +101,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 tooltip: "Sortiermodus auswählen",
                 onSelected: (SortMode result) {
-                  setState(() {
-                    if (sortMode != result) {
+                  if (sortMode != result) {
+                    setState(() {
                       asc = true;
                       sortMode = result;
-                    } else {
+                    });
+                  } else {
+                    setState(() {
                       asc ^= true;
-                    }
-                  });
+                    });
+                  }
                 },
                 initialValue: sortMode,
-                itemBuilder: (BuildContext contect) =>
+                itemBuilder: (BuildContext context) =>
                     <PopupMenuEntry<SortMode>>[
                   menuItem(SortMode.SortByDate, "Nach Erstelldatum sortieren"),
                   menuItem(SortMode.SortByName, "Nach Name sortieren"),

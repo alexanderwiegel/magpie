@@ -21,8 +21,6 @@ class NestItems extends StatefulWidget {
 class _NestItemsState extends State<NestItems> {
   DatabaseHelper db = DatabaseHelper.instance;
 
-  SortMode sortMode = SortMode.SortByDate;
-  bool asc = true;
   bool onlyFavored = false;
 
   Icon _searchIcon = Icon(
@@ -39,6 +37,7 @@ class _NestItemsState extends State<NestItems> {
   @override
   initState() {
     super.initState();
+    _initiateNest();
     buildNestItems();
   }
 
@@ -63,7 +62,7 @@ class _NestItemsState extends State<NestItems> {
 
   @override
   Widget build(BuildContext context) {
-    _initiateNest();
+    //_initiateNest();
 
     return Scaffold(
       appBar: AppBar(
@@ -83,7 +82,7 @@ class _NestItemsState extends State<NestItems> {
         ],
       ),
       body: FutureBuilder<List<NestItem>>(
-        future: db.getNestItems(widget.nest.id, sortMode, onlyFavored),
+        future: db.getNestItems(widget.nest, onlyFavored),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(
@@ -123,21 +122,17 @@ class _NestItemsState extends State<NestItems> {
                 ),
                 tooltip: "Sortiermodus auswählen",
                 onSelected: (SortMode result) {
-                  setState(() {
-                    if (sortMode != result) {
-                      asc = true;
-                      sortMode = result;
-                    } else {
-                      asc ^= true;
-                    }
-                  });
+                  switchSortOrder(result);
                 },
-                initialValue: sortMode,
-                itemBuilder: (BuildContext contect) =>
+                initialValue: widget.nest.sortMode,
+                itemBuilder: (BuildContext context) =>
                     <PopupMenuEntry<SortMode>>[
                   menuItem(SortMode.SortByDate, "Nach Erstelldatum sortieren"),
+                  PopupMenuDivider(),
                   menuItem(SortMode.SortByName, "Nach Name sortieren"),
+                  PopupMenuDivider(),
                   menuItem(SortMode.SortByWorth, "Nach Wert sortieren"),
+                  PopupMenuDivider(),
                   menuItem(SortMode.SortByFavored, "Nach Favoriten sortieren"),
                 ],
               ),
@@ -174,13 +169,28 @@ class _NestItemsState extends State<NestItems> {
     );
   }
 
+  void switchSortOrder(result) async {
+    if (widget.nest.sortMode != result) {
+      setState(() {
+        widget.nest.asc = true;
+        widget.nest.sortMode = result;
+      });
+    } else {
+      setState(() {
+        widget.nest.asc = !widget.nest.asc;
+      });
+    }
+    DatabaseHelper.instance.update(widget.nest);
+  }
+
   Widget menuItem(SortMode value, String txt) {
     return PopupMenuItem<SortMode>(
       value: value,
       child: Row(
         children: <Widget>[
-          sortMode == value
-              ? Icon(asc ? Icons.arrow_upward : Icons.arrow_downward,
+          widget.nest.sortMode == value
+              ? Icon(
+                  widget.nest.asc ? Icons.arrow_upward : Icons.arrow_downward,
                   color: Colors.amber)
               : Icon(null),
           Padding(
