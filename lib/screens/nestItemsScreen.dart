@@ -21,8 +21,6 @@ class NestItems extends StatefulWidget {
 class _NestItemsState extends State<NestItems> {
   DatabaseHelper db = DatabaseHelper.instance;
 
-  bool onlyFavored = false;
-
   Icon _searchIcon = Icon(
     Icons.search,
     color: Colors.amber,
@@ -62,8 +60,6 @@ class _NestItemsState extends State<NestItems> {
 
   @override
   Widget build(BuildContext context) {
-    //_initiateNest();
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.nest.name),
@@ -82,7 +78,7 @@ class _NestItemsState extends State<NestItems> {
         ],
       ),
       body: FutureBuilder<List<NestItem>>(
-        future: db.getNestItems(widget.nest, onlyFavored),
+        future: db.getNestItems(widget.nest),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(
@@ -139,7 +135,7 @@ class _NestItemsState extends State<NestItems> {
               IconButton(
                 color: Colors.amber,
                 tooltip: "Nur Favoriten anzeigen",
-                icon: onlyFavored
+                icon: widget.nest.onlyFavored
                     ? Icon(Icons.favorite)
                     : Icon(Icons.favorite_border),
                 onPressed: showFavorites,
@@ -204,8 +200,9 @@ class _NestItemsState extends State<NestItems> {
 
   void showFavorites() {
     setState(() {
-      onlyFavored ^= true;
+      widget.nest.onlyFavored ^= true;
     });
+    DatabaseHelper.instance.update(widget.nest);
   }
 
   List<NestItem> filterList() {

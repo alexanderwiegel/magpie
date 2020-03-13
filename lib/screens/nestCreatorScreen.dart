@@ -61,6 +61,7 @@ class _NestCreatorState extends State<NestCreator> {
       favored: false,
       sortMode: SortMode.SortByDate,
       asc: true,
+      onlyFavored: false,
     );
     _id = await DatabaseHelper.instance.insert(nest);
     Navigator.of(context).pop(Nest(
@@ -73,6 +74,7 @@ class _NestCreatorState extends State<NestCreator> {
       favored: false,
       sortMode: SortMode.SortByDate,
       asc: true,
+      onlyFavored: false,
     ));
   }
 

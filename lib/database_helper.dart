@@ -9,8 +9,13 @@ import 'widgets/nest.dart';
 import 'widgets/nestItem.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "MagpiePrototype25.db";
+  static final _databaseName = "MagpiePrototype27.db";
   static final _databaseVersion = 4;
+
+  static final home = 'Home';
+  static final homeSort = 'homeSort';
+  static final homeAsc = 'homeAsc';
+  static final homeOnlyFavored = 'homeOnlyFavored';
 
   static final nests = 'Nester';
   static final columnId = 'id';
@@ -22,6 +27,7 @@ class DatabaseHelper {
   static final columnDate = 'date';
   static final columnSortMode = 'sortMode';
   static final columnAsc = 'asc';
+  static final onlyFavored = 'onlyFavored';
 
   static final nestItems = 'NestItems';
   static final columnNestId = 'nestId';
@@ -63,7 +69,9 @@ class DatabaseHelper {
             $columnFavored BOOL,
             $columnDate INTEGER,
             $columnSortMode TEXT,
-            $columnAsc BOOL
+            $columnAsc BOOL,
+            $homeSort TEXT,
+            $onlyFavored BOOL
           )
           ''');
     await db.execute('''
@@ -78,11 +86,23 @@ class DatabaseHelper {
             $columnDate INTEGER
           )
           ''');
+    await db.execute('''
+          CREATE TABLE $home (
+            $homeSort TEXT,
+            $homeAsc BOOL,
+            $homeOnlyFavored BOOL
+          )
+          ''');
   }
 
-  Future<List<Nest>> getNests(
-      SortMode sortMode, bool asc, bool onlyFavored) async {
+  Future<List<Nest>> getNests(SortMode sortMode, bool asc, bool onlyFav) async {
     var dbClient = await database;
+
+    // TEST
+    //var homeStatus = await dbClient.rawQuery("SELECT * FROM $home");
+    //if (homeStatus.length == 0) return null;
+    //print(homeStatus);
+    // TEST
 
     var sortModeSql;
     switch (sortMode) {
@@ -100,7 +120,7 @@ class DatabaseHelper {
     }
 
     String sql;
-    if (!onlyFavored) {
+    if (!onlyFav) {
       sql = "SELECT * FROM $nests ORDER BY $sortModeSql";
     } else {
       sql =
@@ -119,7 +139,7 @@ class DatabaseHelper {
     return list;
   }
 
-  Future<List<NestItem>> getNestItems(Nest nest, bool onlyFavored) async {
+  Future<List<NestItem>> getNestItems(Nest nest) async {
     var dbClient = await database;
 
     var sortModeSql;
@@ -138,7 +158,7 @@ class DatabaseHelper {
     }
 
     String sql;
-    if (!onlyFavored) {
+    if (!nest.onlyFavored) {
       sql =
           "SELECT * FROM $nestItems WHERE $columnNestId = ${nest.id} ORDER BY $sortModeSql";
       //TODO: Parametrisierung funktioniert nicht, Lösung finden
@@ -204,8 +224,8 @@ class DatabaseHelper {
 
     return await db.rawInsert(
         'INSERT INTO $nests'
-        '($columnAlbumCover, $columnName, $columnNote, $columnTotalWorth, $columnFavored, $columnDate, $columnSortMode, $columnAsc)'
-        'VALUES(?,?,?,?,?,?,?,?)',
+        '($columnAlbumCover, $columnName, $columnNote, $columnTotalWorth, $columnFavored, $columnDate, $columnSortMode, $columnAsc, $onlyFavored)'
+        'VALUES(?,?,?,?,?,?,?,?,?)',
         [
           'LOAD_FILE($albumCover)',
           nest.name,
@@ -214,7 +234,8 @@ class DatabaseHelper {
           0,
           date,
           sortModeAsString,
-          1
+          1,
+          0
         ]);
 
     //return await db.insert(nests, nest.toMap(),
@@ -250,6 +271,7 @@ class DatabaseHelper {
     int date = nest.date.millisecondsSinceEpoch;
     int asc = nest.asc ? 1 : 0;
     String sortModeAsString = nest.sortMode.toString();
+    int onlyFav = nest.onlyFavored ? 1 : 0;
 
     await db.rawUpdate(
         'UPDATE $nests'
@@ -286,11 +308,16 @@ class DatabaseHelper {
         ' SET $columnSortMode = ?'
         ' WHERE $columnId = ?',
         [sortModeAsString, nest.id]);
-    return await db.rawUpdate(
+    await db.rawUpdate(
         'UPDATE $nests'
         ' SET $columnAsc = ?'
         ' WHERE $columnId = ?',
         [asc, nest.id]);
+    return await db.rawUpdate(
+        'UPDATE $nests'
+        ' SET $onlyFavored = ?'
+        ' WHERE $columnId = ?',
+        [onlyFav, nest.id]);
     //    .update(nests, nest.toMap(), where: '$columnId = ?', whereArgs: [id]);
   }
 

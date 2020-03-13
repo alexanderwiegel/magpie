@@ -19,9 +19,9 @@ class Magpie extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.teal,
       ),
-      routes: {
-        HomeScreen.routeName: (context) => HomeScreen(),
-      },
+      //routes: {
+      //  HomeScreen.routeName: (context) => HomeScreen(),
+      //},
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate

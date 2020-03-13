@@ -9,7 +9,34 @@ import '../widgets/nest.dart';
 import '../widgets/startMessage.dart';
 
 class HomeScreen extends StatefulWidget {
-  static const routeName = "/home";
+  //static const routeName = "/home";
+
+  /*
+  HomeScreen({this.sortMode, this.onlyFavored, this.asc});
+
+  SortMode sortMode;
+  bool asc = true;
+  bool onlyFavored = false;
+
+  HomeScreen.fromMap(dynamic obj) {
+    switch (obj["homeSort"]) {
+      case "SortMode.SortByName":
+        this.sortMode = SortMode.SortByName;
+        break;
+      case "SortMode.SortByWorth":
+        this.sortMode = SortMode.SortByWorth;
+        break;
+      case "SortMode.SortByFavored":
+        this.sortMode = SortMode.SortByFavored;
+        break;
+      case "SortMode.SortByDate":
+        this.sortMode = SortMode.SortByDate;
+    }
+    this.asc = obj["homeAsc"] == 0 ? false : true;
+    this.onlyFavored = obj["onlyFavored"] == 0 ? false : true;
+  }
+
+   */
 
   @override
   _HomeScreenState createState() => _HomeScreenState();

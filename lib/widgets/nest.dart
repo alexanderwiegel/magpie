@@ -17,7 +17,8 @@ class Nest extends StatefulWidget {
       this.favored,
       this.date,
       this.sortMode,
-      this.asc});
+      this.asc,
+      this.onlyFavored});
 
   int id;
   File albumCover;
@@ -28,6 +29,7 @@ class Nest extends StatefulWidget {
   DateTime date;
   SortMode sortMode;
   bool asc;
+  bool onlyFavored;
 
   /*
   Map<String, dynamic> toMap() {
@@ -69,6 +71,7 @@ class Nest extends StatefulWidget {
         this.sortMode = SortMode.SortByDate;
     }
     this.asc = obj["asc"] == 0 ? false : true;
+    this.onlyFavored = obj["onlyFavored"] == 0 ? false : true;
   }
 
   @override
@@ -87,6 +90,7 @@ class _NestState extends State<Nest> {
       date: widget.date,
       asc: widget.asc,
       sortMode: widget.sortMode,
+      onlyFavored: widget.onlyFavored,
     );
     Nest newNest = await Navigator.push(
       context,
@@ -192,6 +196,7 @@ class _NestState extends State<Nest> {
       date: widget.date,
       sortMode: widget.sortMode,
       asc: widget.asc,
+      onlyFavored: widget.onlyFavored,
     );
     await DatabaseHelper.instance.update(nest);
   }
