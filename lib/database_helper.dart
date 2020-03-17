@@ -86,23 +86,24 @@ class DatabaseHelper {
             $columnDate INTEGER
           )
           ''');
+    String sortModeAsString = SortMode.SortByDate.toString();
     await db.execute('''
           CREATE TABLE $home (
-            $homeSort TEXT,
-            $homeAsc BOOL,
-            $homeOnlyFavored BOOL
+            $homeSort TEXT DEFAULT $sortModeAsString,
+            $homeAsc BOOL DEFAULT 1,
+            $homeOnlyFavored BOOL DEFAULT 0
           )
           ''');
   }
 
   Future<List<Nest>> getNests(SortMode sortMode, bool asc, bool onlyFav) async {
     var dbClient = await database;
-
-    // TEST
     //var homeStatus = await dbClient.rawQuery("SELECT * FROM $home");
-    //if (homeStatus.length == 0) return null;
     //print(homeStatus);
-    // TEST
+    //List<HomeScreen> statusList = homeStatus.map((item) {
+    //  return HomeScreen.fromMap(item);
+    //}).toList();
+    // TODO: wie bekommt man die einzelnen Daten aus der Liste?
 
     var sortModeSql;
     switch (sortMode) {

@@ -65,8 +65,8 @@ class _NestItemsState extends State<NestItems> {
         title: Text(widget.nest.name),
         actions: [
           IconButton(
-            icon: Icon(Icons.info_outline),
-            tooltip: "Details anzeigen",
+            icon: Icon(Icons.edit),
+            tooltip: "Bearbeiten",
             onPressed: () {
               Navigator.push(
                 context,

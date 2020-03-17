@@ -9,7 +9,7 @@ import '../widgets/nest.dart';
 import '../widgets/startMessage.dart';
 
 class HomeScreen extends StatefulWidget {
-  //static const routeName = "/home";
+  static const routeName = "/home";
 
   /*
   HomeScreen({this.sortMode, this.onlyFavored, this.asc});
@@ -35,7 +35,6 @@ class HomeScreen extends StatefulWidget {
     this.asc = obj["homeAsc"] == 0 ? false : true;
     this.onlyFavored = obj["onlyFavored"] == 0 ? false : true;
   }
-
    */
 
   @override

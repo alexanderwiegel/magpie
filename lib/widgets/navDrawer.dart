@@ -25,7 +25,7 @@ class NavDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.home),
             title: Text('Übersicht'),
-            onTap: () => {},
+            onTap: () => navigate(context, "/home"),
           ),
           ListTile(
             leading: Icon(Icons.insert_chart),
@@ -50,5 +50,22 @@ class NavDrawer extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void navigate(context, String routeName) {
+    bool isNewRouteSameAsCurrent = false;
+
+    Navigator.popUntil(context, (route) {
+      if (route.settings.name == routeName) {
+        print("Du befindest dich bereits auf $routeName");
+        isNewRouteSameAsCurrent = true;
+      }
+      return true;
+    });
+
+    if (!isNewRouteSameAsCurrent) {
+      print("Navigiere nun zu $routeName");
+      Navigator.pushNamed(context, routeName);
+    }
   }
 }
