@@ -29,7 +29,6 @@ class _NestItemsState extends State<NestItems> {
   String _searchText = "";
   List<NestItem> _names = new List();
   List<NestItem> _filteredNames = new List();
-
   Widget _searchTitle = Text("");
 
   @override

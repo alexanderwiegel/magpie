@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../database_helper.dart';
+import '../widgets/magpieForm.dart';
 import '../widgets/nest.dart';
 import '../widgets/nestItem.dart';
 
@@ -101,126 +101,67 @@ class _NestItemCreatorState extends State<NestItemCreator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Neuer Gegenstand"),
-          actions: [
-            FlatButton(
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  if (_photo != null)
-                    insertNestItem();
-                  else
-                    _displayPhotoAlert();
-                }
-              },
-              child: Text(
-                'ANLEGEN',
-                style: Theme.of(context)
-                    .textTheme
-                    .subhead
-                    .copyWith(color: Colors.white),
-              ),
+      appBar: AppBar(
+        title: Text("Neuer Gegenstand"),
+        actions: [
+          FlatButton(
+            onPressed: () {
+              if (_formKey.currentState.validate()) {
+                if (_photo != null)
+                  insertNestItem();
+                else
+                  _displayPhotoAlert();
+              }
+            },
+            child: Text(
+              'ANLEGEN',
+              style: Theme.of(context)
+                  .textTheme
+                  .subhead
+                  .copyWith(color: Colors.white),
             ),
-          ],
-        ),
-        body: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(children: [
-              GestureDetector(
-                onTap: () {
-                  _displayOptionsDialog();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)),
-                      clipBehavior: Clip.antiAlias,
-                      child: _photo != null
-                          ? Image.file(_photo, fit: BoxFit.cover)
-                          : FadeInImage.assetNetwork(
-                              width: 400.0,
-                              height: 250.0,
-                              placeholder: 'pics/placeholder.jpg',
-                              fit: BoxFit.cover,
-                              image: 'pics/placeholder.jpg')),
-                ),
-              ),
-              ListTile(
-                title: TextFormField(
-                  validator: (value) => value.isEmpty
-                      ? "Bitte gib dem Gegenstand einen Namen"
-                      : null,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    labelText: "Name *",
-                    icon: Icon(Icons.title, color: Colors.amber),
-                    hintText: 'Gib dem Gegenstand einen Namen',
-                  ),
-                  controller: _nameEditingController,
-                  onChanged: (value) {
-                    setState(() {
-                      _name = value;
-                    });
-                  },
-                ),
-              ),
-              ListTile(
-                title: TextFormField(
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    WhitelistingTextInputFormatter.digitsOnly
-                  ],
-                  decoration: InputDecoration(
-                      labelText: "Wert (optional)",
-                      icon: Icon(Icons.euro_symbol, color: Colors.amber)),
-                  controller: _worthEditingController,
-                  onChanged: (value) {
-                    setState(() {
-                      _worth = int.parse(value);
-                    });
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 3),
-              ),
-              ListTile(
-                title: TextField(
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    labelText: "Beschreibung (optional)",
-                    icon: Icon(Icons.speaker_notes, color: Colors.amber),
-                    border: OutlineInputBorder(),
-                  ),
-                  controller: _noteEditingController,
-                  onChanged: (value) {
-                    setState(() {
-                      _note = value;
-                    });
-                  },
-                ),
-              ),
-              ListTile(
-                  title: TextFormField(
-                //onTap: () => _selectDate(context),
-                //controller: _dateController,
-                initialValue: formatter.format(_date),
-                enabled: false,
-                decoration: InputDecoration(
-                  labelText: "Erstelldatum",
-                  icon: Icon(
-                    Icons.date_range,
-                    color: Colors.amber,
-                  ),
-                ),
-              ))
-            ]),
           ),
-        ));
+        ],
+      ),
+      body: MagpieForm(
+        date: _date,
+        displayOptionsDialog: _displayOptionsDialog,
+        file: _photo,
+        formKey: _formKey,
+        isNest: false,
+        nameEditingController: _nameEditingController,
+        noteEditingController: _noteEditingController,
+        setField: _setField,
+        worthEditingController: _worthEditingController,
+        worthVisible: true,
+      ),
+    );
+  }
+
+  void _setField(String field, value) {
+    switch (field) {
+      case "name":
+        if (_name != value) {
+          setState(() {
+            _name = value;
+          });
+        }
+        break;
+      case "note":
+        if (_note != value) {
+          setState(() {
+            _note = value;
+          });
+        }
+        break;
+      case "worth":
+        if (_worth != value) {
+          setState(() {
+            _worth = value;
+          });
+        }
+        break;
+    }
   }
 
   /*

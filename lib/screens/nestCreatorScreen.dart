@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
-import 'package:magpie_app/sortMode.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../database_helper.dart';
+import '../sortMode.dart';
+import '../widgets/magpieForm.dart';
 import '../widgets/nest.dart';
 
 class NestCreator extends StatefulWidget {
@@ -15,7 +15,6 @@ class NestCreator extends StatefulWidget {
 }
 
 class _NestCreatorState extends State<NestCreator> {
-  final formatter = DateFormat("dd.MM.yyyy");
   PermissionStatus _status;
   final _formKey = GlobalKey<FormState>();
 
@@ -101,110 +100,59 @@ class _NestCreatorState extends State<NestCreator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Neues Nest"),
-          actions: [
-            FlatButton(
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  if (_albumCover != null) {
-                    insertNest();
-                  } else
-                    _displayPhotoAlert();
-                }
-              },
-              child: Text(
-                'ANLEGEN',
-                style: Theme.of(context)
-                    .textTheme
-                    .subhead
-                    .copyWith(color: Colors.white),
-              ),
+      appBar: AppBar(
+        title: Text("Neues Nest"),
+        actions: [
+          FlatButton(
+            onPressed: () {
+              if (_formKey.currentState.validate()) {
+                if (_albumCover != null) {
+                  insertNest();
+                } else
+                  _displayPhotoAlert();
+              }
+            },
+            child: Text(
+              'ANLEGEN',
+              style: Theme.of(context)
+                  .textTheme
+                  .subhead
+                  .copyWith(color: Colors.white),
             ),
-          ],
-        ),
-        body: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(children: [
-              GestureDetector(
-                onTap: () {
-                  _displayOptionsDialog();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Material(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)),
-                      clipBehavior: Clip.antiAlias,
-                      child: _albumCover != null
-                          ? Image.file(_albumCover, fit: BoxFit.cover)
-                          : FadeInImage.assetNetwork(
-                              width: 400.0,
-                              height: 250.0,
-                              placeholder: 'pics/placeholder.jpg',
-                              fit: BoxFit.cover,
-                              image: 'pics/placeholder.jpg')),
-                ),
-              ),
-              ListTile(
-                title: TextFormField(
-                  validator: (value) => value.isEmpty
-                      ? "Bitte gib Deiner Sammlung einen Namen"
-                      : null,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    labelText: "Name *",
-                    icon: Icon(Icons.title, color: Colors.amber),
-                    hintText: 'Gib Deiner Sammlung einen Namen',
-                  ),
-                  controller: _nameEditingController,
-                  onChanged: (value) {
-                    if (_name != value) {
-                      setState(() {
-                        _name = value;
-                      });
-                    }
-                  },
-                ),
-              ),
-              ListTile(
-                title: TextField(
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    labelText: "Beschreibung (optional)",
-                    icon: Icon(Icons.speaker_notes, color: Colors.amber),
-                    border: OutlineInputBorder(),
-                  ),
-                  controller: _noteEditingController,
-                  onChanged: (value) {
-                    if (_note != value) {
-                      setState(() {
-                        _note = value;
-                      });
-                    }
-                  },
-                ),
-              ),
-              ListTile(
-                  title: TextFormField(
-                //onTap: () => _selectDate(context),
-                //controller: _dateController,
-                initialValue: formatter.format(_date),
-                enabled: false,
-                decoration: InputDecoration(
-                  labelText: "Erstelldatum",
-                  icon: Icon(
-                    Icons.date_range,
-                    color: Colors.amber,
-                  ),
-                ),
-              ))
-            ]),
           ),
-        ));
+        ],
+      ),
+      body: MagpieForm(
+        date: _date,
+        displayOptionsDialog: _displayOptionsDialog,
+        file: _albumCover,
+        formKey: _formKey,
+        isNest: true,
+        nameEditingController: _nameEditingController,
+        noteEditingController: _noteEditingController,
+        setField: _setField,
+        worthVisible: false,
+      ),
+    );
+  }
+
+  void _setField(String field, value) {
+    switch (field) {
+      case "name":
+        if (_name != value) {
+          setState(() {
+            _name = value;
+          });
+        }
+        break;
+      case "note":
+        if (_note != value) {
+          setState(() {
+            _note = value;
+          });
+        }
+        break;
+    }
   }
 
   /*

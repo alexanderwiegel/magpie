@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../database_helper.dart';
 import '../widgets/magpieButton.dart';
+import '../widgets/magpieForm.dart';
 import '../widgets/nest.dart';
 import '../widgets/nestItem.dart';
 
@@ -77,105 +77,17 @@ class _NestItemDetailState extends State<NestItemDetail> {
           ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 70),
-          child: Column(children: [
-            GestureDetector(
-              onTap: () {
-                _displayOptionsDialog();
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Material(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)),
-                  clipBehavior: Clip.antiAlias,
-                  child: Image.file(
-                    widget.nestItem.photo,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-            ListTile(
-              title: TextFormField(
-                validator: (value) => value.isEmpty
-                    ? "Bitte gib dem Gegenstand einen Namen"
-                    : null,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(
-                    labelText: "Name *",
-                    icon: Icon(Icons.title, color: Colors.amber)),
-                controller: _nameEditingController,
-                onChanged: (value) {
-                  if (widget.nestItem.name != value) {
-                    setState(() {
-                      widget.nestItem.name = value;
-                    });
-                  }
-                },
-              ),
-            ),
-            ListTile(
-              title: TextFormField(
-                keyboardType: TextInputType.number,
-                inputFormatters: <TextInputFormatter>[
-                  WhitelistingTextInputFormatter.digitsOnly
-                ],
-                decoration: InputDecoration(
-                    labelText: "Wert (optional)",
-                    icon: Icon(Icons.euro_symbol, color: Colors.amber)),
-                controller: _worthEditingController,
-                onChanged: (value) {
-                  if (widget.nestItem.worth != int.parse(value)) {
-                    setState(() {
-                      widget.nestItem.worth = int.parse(value);
-                    });
-                  }
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3),
-            ),
-            ListTile(
-              title: TextField(
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(
-                  labelText: "Beschreibung (optional)",
-                  icon: Icon(Icons.speaker_notes, color: Colors.amber),
-                  border: OutlineInputBorder(),
-                ),
-                controller: _noteEditingController,
-                onChanged: (value) {
-                  if (widget.nestItem.note != value) {
-                    setState(() {
-                      widget.nestItem.note = value;
-                    });
-                  }
-                },
-              ),
-            ),
-            ListTile(
-                title: TextFormField(
-              //onTap: () => _selectDate(context),
-              //controller: _dateController,
-              initialValue: formatter.format(widget.nestItem.date),
-              enabled: false,
-              decoration: InputDecoration(
-                labelText: "Erstelldatum",
-                icon: Icon(
-                  Icons.date_range,
-                  color: Colors.amber,
-                ),
-              ),
-            ))
-          ]),
-        ),
+      body: MagpieForm(
+        date: widget.nestItem.date,
+        displayOptionsDialog: _displayOptionsDialog,
+        file: widget.nestItem.photo,
+        formKey: _formKey,
+        isNest: false,
+        nameEditingController: _nameEditingController,
+        noteEditingController: _noteEditingController,
+        setField: _setField,
+        worthEditingController: _worthEditingController,
+        worthVisible: true,
       ),
       floatingActionButton: MagpieButton(
         onPressed: () {
@@ -185,6 +97,32 @@ class _NestItemDetailState extends State<NestItemDetail> {
         icon: Icons.delete,
       ),
     );
+  }
+
+  void _setField(String field, value) {
+    switch (field) {
+      case "name":
+        if (widget.nestItem.name != value) {
+          setState(() {
+            widget.nestItem.name = value;
+          });
+        }
+        break;
+      case "note":
+        if (widget.nestItem.note != value) {
+          setState(() {
+            widget.nestItem.note = value;
+          });
+        }
+        break;
+      case "worth":
+        if (widget.nestItem.worth != value) {
+          setState(() {
+            widget.nestItem.worth = value;
+          });
+        }
+        break;
+    }
   }
 
   /*

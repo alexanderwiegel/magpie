@@ -1,25 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../database_helper.dart';
 import '../widgets/magpieButton.dart';
+import '../widgets/magpieForm.dart';
 import '../widgets/nest.dart';
 
 // ignore: must_be_immutable
 class NestDetail extends StatefulWidget {
-  NestDetail({@required this.nest});
-
   Nest nest;
+
+  NestDetail({@required this.nest});
 
   @override
   _NestDetailState createState() => _NestDetailState();
 }
 
 class _NestDetailState extends State<NestDetail> {
-  final formatter = DateFormat("dd.MM.yyyy");
   PermissionStatus _status;
   final _formKey = GlobalKey<FormState>();
 
@@ -72,86 +70,17 @@ class _NestDetailState extends State<NestDetail> {
           ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 70),
-          child: Column(children: [
-            GestureDetector(
-              onTap: () {
-                _displayOptionsDialog();
-                //PhotoDialog(nest: widget.nest);
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Material(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)),
-                  clipBehavior: Clip.antiAlias,
-                  child: Image.file(
-                    widget.nest.albumCover,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-            ListTile(
-              title: TextFormField(
-                validator: (value) => value.isEmpty
-                    ? "Bitte gib Deiner Sammlung einen Namen"
-                    : null,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(
-                    labelText: "Name *",
-                    icon: Icon(Icons.title, color: Colors.amber)),
-                controller: _nameEditingController,
-                onChanged: (value) => widget.nest.name = value,
-              ),
-            ),
-            ListTile(
-              title: TextFormField(
-                enabled: false,
-                initialValue: widget.nest.totalWorth == null
-                    ? "?"
-                    : "${widget.nest.totalWorth}",
-                decoration: InputDecoration(
-                    labelText: "Gesamtwert",
-                    icon: Icon(Icons.euro_symbol, color: Colors.amber)),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 3),
-            ),
-            ListTile(
-              title: TextField(
-                maxLines: null,
-                keyboardType: TextInputType.multiline,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(
-                  labelText: "Beschreibung (optional)",
-                  icon: Icon(Icons.speaker_notes, color: Colors.amber),
-                  border: OutlineInputBorder(),
-                ),
-                controller: _noteEditingController,
-                onChanged: (value) => widget.nest.note = value,
-              ),
-            ),
-            ListTile(
-                title: TextFormField(
-              //onTap: () => _selectDate(context),
-              //controller: _dateController,
-              initialValue: formatter.format(widget.nest.date),
-              enabled: false,
-              decoration: InputDecoration(
-                labelText: "Erstelldatum",
-                icon: Icon(
-                  Icons.date_range,
-                  color: Colors.amber,
-                ),
-              ),
-            ))
-          ]),
-        ),
+      body: MagpieForm(
+        date: widget.nest.date,
+        displayOptionsDialog: _displayOptionsDialog,
+        file: widget.nest.albumCover,
+        formKey: _formKey,
+        nameEditingController: _nameEditingController,
+        isNest: true,
+        noteEditingController: _noteEditingController,
+        setField: _setField,
+        totalWorth: widget.nest.totalWorth,
+        worthVisible: true,
       ),
       floatingActionButton: MagpieButton(
         onPressed: () {
@@ -161,6 +90,25 @@ class _NestDetailState extends State<NestDetail> {
         icon: Icons.delete,
       ),
     );
+  }
+
+  void _setField(String field, value) {
+    switch (field) {
+      case "name":
+        if (widget.nest.name != value) {
+          setState(() {
+            widget.nest.name = value;
+          });
+        }
+        break;
+      case "note":
+        if (widget.nest.note != value) {
+          setState(() {
+            widget.nest.note = value;
+          });
+        }
+        break;
+    }
   }
 
   /*

@@ -8,18 +8,6 @@ import '../screens/nestItemsScreen.dart';
 
 // ignore: must_be_immutable
 class Nest extends StatefulWidget {
-  Nest(
-      {this.id,
-      this.albumCover,
-      @required this.name,
-      this.note,
-      this.totalWorth,
-      this.favored,
-      this.date,
-      this.sortMode,
-      this.asc,
-      this.onlyFavored});
-
   int id;
   File albumCover;
   String name;
@@ -31,6 +19,17 @@ class Nest extends StatefulWidget {
   bool asc;
   bool onlyFavored;
 
+  Nest(
+      {this.id,
+      this.albumCover,
+      @required this.name,
+      this.note,
+      this.totalWorth,
+      this.favored,
+      this.date,
+      this.sortMode,
+      this.asc,
+      this.onlyFavored});
   /*
   Map<String, dynamic> toMap() {
     return {
