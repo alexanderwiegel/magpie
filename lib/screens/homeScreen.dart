@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:magpie_app/widgets/magpieBottomAppBar.dart';
 
 import '../database_helper.dart';
 import '../screens/nestCreatorScreen.dart';
@@ -44,9 +45,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   DatabaseHelper db = DatabaseHelper.instance;
 
-  SortMode sortMode = SortMode.SortByDate;
-  bool asc = true;
-  bool onlyFavored = false;
+  SortMode _sortMode = SortMode.SortByDate;
+  bool _asc = true;
+  bool _onlyFavored = false;
 
   Icon _searchIcon = Icon(
     Icons.search,
@@ -54,9 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
   );
   final TextEditingController _filter = new TextEditingController();
   String _searchText = "";
-  List<Nest> names = new List();
-  List<Nest> filteredNames = new List();
-  Widget searchTitle = Text("");
+  List<Nest> _names = new List();
+  List<Nest> _filteredNames = new List();
+  Widget _searchTitle = Text("");
 
   @override
   initState() {
@@ -69,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (_filter.text.isEmpty) {
         setState(() {
           _searchText = "";
-          filteredNames = names;
+          _filteredNames = _names;
         });
       } else {
         setState(() {
@@ -89,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: FutureBuilder<List<Nest>>(
-        future: db.getNests(sortMode, asc, onlyFavored),
+        future: db.getNests(_sortMode, _asc, _onlyFavored),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(
@@ -111,60 +112,15 @@ class _HomeScreenState extends State<HomeScreen> {
               children: filterList());
         },
       ),
-      bottomNavigationBar: Padding(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: BottomAppBar(
-            clipBehavior: Clip.antiAlias,
-            color: Colors.teal,
-            shape: CircularNotchedRectangle(),
-            notchMargin: 4.0,
-            child: Row(children: <Widget>[
-              PopupMenuButton<SortMode>(
-                icon: Icon(
-                  Icons.sort_by_alpha,
-                  color: Colors.amber,
-                ),
-                tooltip: "Sortiermodus auswählen",
-                onSelected: (SortMode result) {
-                  if (sortMode != result) {
-                    setState(() {
-                      asc = true;
-                      sortMode = result;
-                    });
-                  } else {
-                    setState(() {
-                      asc ^= true;
-                    });
-                  }
-                },
-                initialValue: sortMode,
-                itemBuilder: (BuildContext context) =>
-                    <PopupMenuEntry<SortMode>>[
-                  menuItem(SortMode.SortByDate, "Nach Erstelldatum sortieren"),
-                  menuItem(SortMode.SortByName, "Nach Name sortieren"),
-                  menuItem(SortMode.SortByWorth, "Nach Wert sortieren"),
-                  menuItem(SortMode.SortByFavored, "Nach Favoriten sortieren"),
-                ],
-              ),
-              IconButton(
-                color: Colors.amber,
-                tooltip: "Nur Favoriten anzeigen",
-                icon: onlyFavored
-                    ? Icon(Icons.favorite)
-                    : Icon(Icons.favorite_border),
-                onPressed: showFavorites,
-              ),
-              IconButton(
-                color: Colors.amber,
-                tooltip: "Nest suchen",
-                padding: const EdgeInsets.only(left: 12.0),
-                alignment: Alignment.centerLeft,
-                icon: _searchIcon,
-                onPressed: _searchPressed,
-              ),
-              Expanded(child: searchTitle)
-            ])),
+      bottomNavigationBar: MagpieBottomAppBar(
+        searchPressed: _searchPressed,
+        showFavorites: _showFavorites,
+        switchSortOrder: _switchSortOrder,
+        sortMode: _sortMode,
+        asc: _asc,
+        onlyFavored: _onlyFavored,
+        searchIcon: _searchIcon,
+        searchTitle: _searchTitle,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
@@ -180,50 +136,45 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget menuItem(SortMode value, String txt) {
-    return PopupMenuItem<SortMode>(
-      value: value,
-      child: Row(
-        children: <Widget>[
-          sortMode == value
-              ? Icon(asc ? Icons.arrow_upward : Icons.arrow_downward,
-                  color: Colors.amber)
-              : Icon(null),
-          Padding(
-            padding: const EdgeInsets.only(left: 2.0),
-          ),
-          Text(txt)
-        ],
-      ),
-    );
+  void _switchSortOrder(SortMode result) {
+    if (_sortMode != result) {
+      setState(() {
+        _asc = true;
+        _sortMode = result;
+      });
+    } else {
+      setState(() {
+        _asc ^= true;
+      });
+    }
   }
 
-  void showFavorites() {
+  void _showFavorites() {
     setState(() {
-      onlyFavored ^= true;
+      _onlyFavored ^= true;
     });
   }
 
   List<Nest> filterList() {
     if (_searchText.isNotEmpty) {
       List<Nest> tempList = new List();
-      for (int i = 0; i < filteredNames.length; i++) {
-        if (filteredNames[i]
+      for (int i = 0; i < _filteredNames.length; i++) {
+        if (_filteredNames[i]
             .name
             .toLowerCase()
             .contains(_searchText.toLowerCase())) {
-          tempList.add(filteredNames[i]);
+          tempList.add(_filteredNames[i]);
         }
       }
-      filteredNames = tempList;
+      _filteredNames = tempList;
     }
-    return filteredNames;
+    return _filteredNames;
   }
 
   void fillList(snapshot) {
-    names =
+    _names =
         List.generate(snapshot.data.length, (index) => snapshot.data[index]);
-    filteredNames = names;
+    _filteredNames = _names;
   }
 
   Future _openNestCreator() async {
@@ -243,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
         this._searchIcon = new Icon(Icons.close);
-        this.searchTitle = new TextField(
+        this._searchTitle = new TextField(
             style: TextStyle(color: Colors.white),
             controller: _filter,
             decoration: new InputDecoration(
@@ -252,8 +203,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ));
       } else {
         this._searchIcon = new Icon(Icons.search);
-        this.searchTitle = new Text('');
-        filteredNames = names;
+        this._searchTitle = new Text('');
+        _filteredNames = _names;
         _filter.clear();
       }
     });

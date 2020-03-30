@@ -89,7 +89,7 @@ class DatabaseHelper {
     String sortModeAsString = SortMode.SortByDate.toString();
     await db.execute('''
           CREATE TABLE $home (
-            $homeSort TEXT DEFAULT $sortModeAsString,
+            $homeSort TEXT,
             $homeAsc BOOL DEFAULT 1,
             $homeOnlyFavored BOOL DEFAULT 0
           )

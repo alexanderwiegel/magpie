@@ -58,6 +58,7 @@ class NavDrawer extends StatelessWidget {
     Navigator.popUntil(context, (route) {
       if (route.settings.name == routeName) {
         print("Du befindest dich bereits auf $routeName");
+        Navigator.pop(context);
         isNewRouteSameAsCurrent = true;
       }
       return true;

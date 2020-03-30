@@ -113,9 +113,7 @@ class _NestState extends State<Nest> {
     );
 
     return GestureDetector(
-      onTap: () {
-        openNestItemsScreen();
-      },
+      onTap: () => openNestItemsScreen(),
       child: GridTile(
         footer: Material(
           color: Colors.transparent,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:magpie_app/sortMode.dart';
 
 import '../database_helper.dart';
+import '../widgets/magpieBottomAppBar.dart';
 import '../widgets/nest.dart';
 import '../widgets/nestItem.dart';
 import '../widgets/startMessage.dart';
@@ -10,9 +10,9 @@ import 'nestItemCreatorScreen.dart';
 
 // ignore: must_be_immutable
 class NestItems extends StatefulWidget {
-  NestItems({@required this.nest});
-
   Nest nest;
+
+  NestItems({@required this.nest});
 
   @override
   _NestItemsState createState() => _NestItemsState();
@@ -27,16 +27,16 @@ class _NestItemsState extends State<NestItems> {
   );
   final TextEditingController _filter = new TextEditingController();
   String _searchText = "";
-  List<NestItem> names = new List();
-  List<NestItem> filteredNames = new List();
+  List<NestItem> _names = new List();
+  List<NestItem> _filteredNames = new List();
 
-  Widget searchTitle = Text("");
+  Widget _searchTitle = Text("");
 
   @override
   initState() {
     super.initState();
     _initiateNest();
-    buildNestItems();
+    _buildNestItems();
   }
 
   _NestItemsState() {
@@ -44,7 +44,7 @@ class _NestItemsState extends State<NestItems> {
       if (_filter.text.isEmpty) {
         setState(() {
           _searchText = "";
-          filteredNames = names;
+          _filteredNames = _names;
         });
       } else {
         setState(() {
@@ -92,64 +92,25 @@ class _NestItemsState extends State<NestItems> {
                     message: "um deinen ersten Gegenstand anzulegen."),
               ],
             ));
-          fillList(snapshot);
+          _fillList(snapshot);
           return GridView.count(
               padding: const EdgeInsets.all(8),
               mainAxisSpacing: 8,
               crossAxisSpacing: 8,
               crossAxisCount: 2,
               childAspectRatio: 1.05,
-              children: filterList());
+              children: _filterList());
         },
       ),
-      bottomNavigationBar: Padding(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: BottomAppBar(
-            clipBehavior: Clip.antiAlias,
-            color: Colors.teal,
-            shape: CircularNotchedRectangle(),
-            notchMargin: 4.0,
-            child: Row(children: <Widget>[
-              PopupMenuButton<SortMode>(
-                icon: Icon(
-                  Icons.sort_by_alpha,
-                  color: Colors.amber,
-                ),
-                tooltip: "Sortiermodus auswählen",
-                onSelected: (SortMode result) {
-                  switchSortOrder(result);
-                },
-                initialValue: widget.nest.sortMode,
-                itemBuilder: (BuildContext context) =>
-                    <PopupMenuEntry<SortMode>>[
-                  menuItem(SortMode.SortByDate, "Nach Erstelldatum sortieren"),
-                  PopupMenuDivider(),
-                  menuItem(SortMode.SortByName, "Nach Name sortieren"),
-                  PopupMenuDivider(),
-                  menuItem(SortMode.SortByWorth, "Nach Wert sortieren"),
-                  PopupMenuDivider(),
-                  menuItem(SortMode.SortByFavored, "Nach Favoriten sortieren"),
-                ],
-              ),
-              IconButton(
-                color: Colors.amber,
-                tooltip: "Nur Favoriten anzeigen",
-                icon: widget.nest.onlyFavored
-                    ? Icon(Icons.favorite)
-                    : Icon(Icons.favorite_border),
-                onPressed: showFavorites,
-              ),
-              IconButton(
-                color: Colors.amber,
-                tooltip: "Gegenstand suchen",
-                padding: const EdgeInsets.only(left: 12.0),
-                alignment: Alignment.centerLeft,
-                icon: _searchIcon,
-                onPressed: _searchPressed,
-              ),
-              Expanded(child: searchTitle)
-            ])),
+      bottomNavigationBar: MagpieBottomAppBar(
+        searchPressed: _searchPressed,
+        showFavorites: _showFavorites,
+        switchSortOrder: _switchSortOrder,
+        sortMode: widget.nest.sortMode,
+        asc: widget.nest.asc,
+        onlyFavored: widget.nest.onlyFavored,
+        searchIcon: _searchIcon,
+        searchTitle: _searchTitle,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
@@ -165,7 +126,7 @@ class _NestItemsState extends State<NestItems> {
     );
   }
 
-  void switchSortOrder(result) async {
+  void _switchSortOrder(result) async {
     if (widget.nest.sortMode != result) {
       setState(() {
         widget.nest.asc = true;
@@ -179,59 +140,40 @@ class _NestItemsState extends State<NestItems> {
     DatabaseHelper.instance.update(widget.nest);
   }
 
-  Widget menuItem(SortMode value, String txt) {
-    return PopupMenuItem<SortMode>(
-      value: value,
-      child: Row(
-        children: <Widget>[
-          widget.nest.sortMode == value
-              ? Icon(
-                  widget.nest.asc ? Icons.arrow_upward : Icons.arrow_downward,
-                  color: Colors.amber)
-              : Icon(null),
-          Padding(
-            padding: const EdgeInsets.only(left: 2.0),
-          ),
-          Text(txt)
-        ],
-      ),
-    );
-  }
-
-  void showFavorites() {
+  void _showFavorites() {
     setState(() {
       widget.nest.onlyFavored ^= true;
     });
     DatabaseHelper.instance.update(widget.nest);
   }
 
-  List<NestItem> filterList() {
+  List<NestItem> _filterList() {
     if (_searchText.isNotEmpty) {
       List<NestItem> tempList = new List();
-      for (int i = 0; i < filteredNames.length; i++) {
-        if (filteredNames[i]
+      for (int i = 0; i < _filteredNames.length; i++) {
+        if (_filteredNames[i]
             .name
             .toLowerCase()
             .contains(_searchText.toLowerCase())) {
-          tempList.add(filteredNames[i]);
+          tempList.add(_filteredNames[i]);
         }
       }
-      filteredNames = tempList;
+      _filteredNames = tempList;
     }
-    return filteredNames;
+    return _filteredNames;
   }
 
-  void fillList(snapshot) {
-    names =
+  void _fillList(snapshot) {
+    _names =
         List.generate(snapshot.data.length, (index) => snapshot.data[index]);
-    filteredNames = names;
+    _filteredNames = _names;
   }
 
   void _searchPressed() {
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
         this._searchIcon = new Icon(Icons.close);
-        this.searchTitle = new TextField(
+        this._searchTitle = new TextField(
             style: TextStyle(color: Colors.white),
             controller: _filter,
             decoration: new InputDecoration(
@@ -240,8 +182,8 @@ class _NestItemsState extends State<NestItems> {
             ));
       } else {
         this._searchIcon = new Icon(Icons.search);
-        this.searchTitle = new Text('');
-        filteredNames = names;
+        this._searchTitle = new Text('');
+        _filteredNames = _names;
         _filter.clear();
       }
     });
@@ -255,7 +197,7 @@ class _NestItemsState extends State<NestItems> {
         fullscreenDialog: true));
   }
 
-  Future<List<Future<NestItem>>> buildNestItems() async {
+  Future<List<Future<NestItem>>> _buildNestItems() async {
     return List.generate(
         await DatabaseHelper.instance.getNestItemCount(widget.nest.id),
         (int index) => DatabaseHelper.instance.getNestItem(index));
