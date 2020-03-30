@@ -26,15 +26,12 @@ class _NestItemDetailState extends State<NestItemDetail> {
   TextEditingController _nameEditingController;
   TextEditingController _noteEditingController;
   TextEditingController _worthEditingController;
-  //TextEditingController _dateController;
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     _nameEditingController.dispose();
     _noteEditingController.dispose();
     _worthEditingController.dispose();
-    //_dateController.dispose();
     super.dispose();
   }
 
@@ -61,8 +58,6 @@ class _NestItemDetailState extends State<NestItemDetail> {
     _noteEditingController = TextEditingController(text: widget.nestItem.note);
     _worthEditingController = TextEditingController(
         text: widget.nestItem.worth != null ? "${widget.nestItem.worth}" : "");
-    //_dateController =
-    //    TextEditingController(text: formatter.format(widget.nestItem.date));
 
     return Scaffold(
       appBar: AppBar(
@@ -124,23 +119,6 @@ class _NestItemDetailState extends State<NestItemDetail> {
         break;
     }
   }
-
-  /*
-  Future<Null> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-        locale: Locale("de", "DE"),
-        context: context,
-        initialDate: widget.nestItem.date,
-        firstDate: DateTime(1900),
-        lastDate: DateTime.now());
-    if (picked != null && picked != widget.nestItem.date) {
-      widget.nestItem.date = picked;
-      setState(() {
-        _dateController.text = formatter.format(widget.nestItem.date);
-      });
-    }
-  }
-   */
 
   void _displayDeleteDialogue() async {
     await _deleteDialogueBox();

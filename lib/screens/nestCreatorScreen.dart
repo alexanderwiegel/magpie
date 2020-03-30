@@ -26,14 +26,11 @@ class _NestCreatorState extends State<NestCreator> {
 
   TextEditingController _nameEditingController;
   TextEditingController _noteEditingController;
-  //TextEditingController _dateController;
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     _nameEditingController.dispose();
     _noteEditingController.dispose();
-    //_dateController.dispose();
     super.dispose();
   }
 
@@ -47,7 +44,6 @@ class _NestCreatorState extends State<NestCreator> {
 
     _nameEditingController = TextEditingController(text: _name);
     _noteEditingController = TextEditingController(text: _note);
-    //_dateController = TextEditingController(text: formatter.format(_date));
   }
 
   void insertNest() async {
@@ -154,23 +150,6 @@ class _NestCreatorState extends State<NestCreator> {
         break;
     }
   }
-
-  /*
-  Future<Null> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-        locale: Locale("de", "DE"),
-        context: context,
-        initialDate: _date,
-        firstDate: DateTime(1900),
-        lastDate: DateTime.now());
-    if (picked != null && picked != _date) {
-      _date = picked;
-      setState(() {
-        _dateController.text = formatter.format(_date);
-      });
-    }
-  }
-   */
 
   void _displayOptionsDialog() async {
     /*
