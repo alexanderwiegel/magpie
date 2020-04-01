@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../database_helper.dart';
 import '../sortMode.dart';
 import '../widgets/magpieForm.dart';
+import '../widgets/magpiePhotoAlert.dart';
 import '../widgets/nest.dart';
 
 class NestCreator extends StatefulWidget {
@@ -15,6 +16,7 @@ class NestCreator extends StatefulWidget {
 }
 
 class _NestCreatorState extends State<NestCreator> {
+  MagpiePhotoAlert _magpiePhotoAlert = MagpiePhotoAlert();
   PermissionStatus _status;
   final _formKey = GlobalKey<FormState>();
 
@@ -46,6 +48,14 @@ class _NestCreatorState extends State<NestCreator> {
     _noteEditingController = TextEditingController(text: _note);
   }
 
+  void _updateStatus(PermissionStatus value) {
+    if (value != _status) {
+      setState(() {
+        _status = value;
+      });
+    }
+  }
+
   void insertNest() async {
     Nest nest = Nest(
       albumCover: _albumCover,
@@ -73,26 +83,6 @@ class _NestCreatorState extends State<NestCreator> {
     ));
   }
 
-  void _displayPhotoAlert() async {
-    await _photoAlert();
-  }
-
-  Future<void> _photoAlert() {
-    return showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: SingleChildScrollView(
-            child: Text(
-              "Du musst ein eigenes Bild benutzen.",
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +95,7 @@ class _NestCreatorState extends State<NestCreator> {
                 if (_albumCover != null) {
                   insertNest();
                 } else
-                  _displayPhotoAlert();
+                  _magpiePhotoAlert.displayPhotoAlert(context);
               }
             },
             child: Text(
@@ -152,16 +142,6 @@ class _NestCreatorState extends State<NestCreator> {
   }
 
   void _displayOptionsDialog() async {
-    /*
-    File file = await Navigator.push(context,
-        MaterialPageRoute(builder: (BuildContext context) {
-      return PhotoDialog(context: context);
-    }));
-    setState(() {
-      _albumCover = file;
-    });
-    */
-
     await _optionsDialogBox();
   }
 
@@ -189,7 +169,7 @@ class _NestCreatorState extends State<NestCreator> {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                   ),
                   GestureDetector(
-                      onTap: imageSelectorGallery,
+                      onTap: _imageSelectorGallery,
                       child: Row(
                         children: [
                           Icon(Icons.image, color: Colors.amber),
@@ -214,37 +194,29 @@ class _NestCreatorState extends State<NestCreator> {
   void _onStatusRequested(Map<PermissionGroup, PermissionStatus> value) {
     final status = value[PermissionGroup.camera];
     if (status == PermissionStatus.granted) {
-      imageSelectorCamera();
+      _imageSelectorCamera();
     } else {
       _updateStatus(status);
     }
   }
 
-  _updateStatus(PermissionStatus value) {
-    if (value != _status) {
-      setState(() {
-        _status = value;
-      });
-    }
-  }
-
-  void imageSelectorCamera() async {
+  void _imageSelectorCamera() async {
     Navigator.pop(context);
     var image = await ImagePicker.pickImage(
       source: ImageSource.camera,
     );
-    changeImage(image);
+    _changeImage(image);
   }
 
-  void imageSelectorGallery() async {
+  void _imageSelectorGallery() async {
     Navigator.pop(context);
     var image = await ImagePicker.pickImage(
       source: ImageSource.gallery,
     );
-    changeImage(image);
+    _changeImage(image);
   }
 
-  void changeImage(var image) {
+  void _changeImage(var image) {
     if (_albumCover != image) {
       setState(() {
         _albumCover = image;

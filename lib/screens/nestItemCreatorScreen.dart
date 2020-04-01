@@ -9,6 +9,7 @@ import '../database_helper.dart';
 import '../widgets/magpieForm.dart';
 import '../widgets/nest.dart';
 import '../widgets/nestItem.dart';
+import '../widgets/magpiePhotoAlert.dart';
 
 class NestItemCreator extends StatefulWidget {
   NestItemCreator({@required this.nest});
@@ -21,6 +22,7 @@ class NestItemCreator extends StatefulWidget {
 
 class _NestItemCreatorState extends State<NestItemCreator> {
   final formatter = DateFormat("dd.MM.yyyy");
+  MagpiePhotoAlert _magpiePhotoAlert = MagpiePhotoAlert();
   PermissionStatus _status;
   final _formKey = GlobalKey<FormState>();
 
@@ -74,26 +76,6 @@ class _NestItemCreatorState extends State<NestItemCreator> {
     Navigator.of(context).pop(widget.nest);
   }
 
-  void _displayPhotoAlert() async {
-    await _photoAlert();
-  }
-
-  Future<void> _photoAlert() {
-    return showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: SingleChildScrollView(
-            child: Text(
-              "Du musst ein eigenes Bild benutzen.",
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,7 +88,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
                 if (_photo != null)
                   insertNestItem();
                 else
-                  _displayPhotoAlert();
+                  _magpiePhotoAlert.displayPhotoAlert(context);
               }
             },
             child: Text(
