@@ -93,10 +93,8 @@ class _NestItemDetailState extends State<NestItemDetail> {
         worthVisible: true,
       ),
       floatingActionButton: MagpieButton(
-        onPressed: () {
-          _magpieDeleteDialogue.displayDeleteDialogue(
-              context, _delete, "Diesen Gegenstand");
-        },
+        onPressed: () => _magpieDeleteDialogue.displayDeleteDialogue(
+            context, false, widget.nestItem.id),
         title: "Gegenstand löschen",
         icon: Icons.delete,
       ),
@@ -127,11 +125,6 @@ class _NestItemDetailState extends State<NestItemDetail> {
         }
         break;
     }
-  }
-
-  Future _delete() async {
-    DatabaseHelper.instance.deleteNestItem(widget.nestItem.id);
-    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   void _changeImage(var image) {

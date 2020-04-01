@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 
+import '../database_helper.dart';
+
 class MagpieDeleteDialogue {
-  void displayDeleteDialogue(
-      BuildContext context, Function delete, String title) async {
-    await _deleteDialogueBox(context, delete, title);
+  void displayDeleteDialogue(BuildContext context, bool isNest, int id) async {
+    await _deleteDialogueBox(context, isNest, id);
   }
 
-  Future<void> _deleteDialogueBox(
-      BuildContext context, Function delete, String title) {
+  void _delete(BuildContext context, bool isNest, int id) async {
+    await _actuallyDelete(context, isNest, id);
+  }
+
+  Future<void> _actuallyDelete(BuildContext context, bool isNest, int id) {
+    isNest
+        ? DatabaseHelper.instance.deleteNest(id)
+        : DatabaseHelper.instance.deleteNestItem(id);
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  Future<void> _deleteDialogueBox(BuildContext context, bool isNest, int id) {
     return showDialog(
       context: context,
       barrierDismissible: true,
@@ -17,14 +28,16 @@ class MagpieDeleteDialogue {
             child: ListBody(
               children: <Widget>[
                 Text(
-                  "$title für immer löschen?",
+                  isNest
+                      ? "Dieses Nest für immer löschen?"
+                      : "Diesen Gegenstand für immer löschen?",
                   style: TextStyle(color: Colors.red),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
                 GestureDetector(
-                  onTap: delete(),
+                  onTap: () => _delete(context, isNest, id),
                   child: Row(
                     children: <Widget>[
                       Icon(
