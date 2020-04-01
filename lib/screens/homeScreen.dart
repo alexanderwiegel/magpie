@@ -1,11 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:magpie_app/widgets/magpieBottomAppBar.dart';
 
 import '../database_helper.dart';
 import '../screens/nestCreatorScreen.dart';
 import '../sortMode.dart';
-import '../widgets/magpieSearch.dart';
+import '../widgets/magpieBottomAppBar.dart';
+import '../widgets/magpieGridView.dart';
 import '../widgets/navDrawer.dart';
 import '../widgets/nest.dart';
 import '../widgets/startMessage.dart';
@@ -45,7 +44,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   DatabaseHelper db = DatabaseHelper.instance;
-  MagpieSearch _magpieSearch = MagpieSearch();
 
   SortMode _sortMode = SortMode.SortByDate;
   bool _asc = true;
@@ -111,14 +109,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ));
           _fillList(snapshot);
-          return GridView.count(
-              padding: const EdgeInsets.all(8),
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              crossAxisCount: 2,
-              childAspectRatio: 1.05,
-              children:
-                  _magpieSearch.filterList(_searchText, _filteredNames, true));
+          return MagpieGridView(
+            filteredNames: _filteredNames,
+            isNest: true,
+            searchText: _searchText,
+          );
         },
       ),
       bottomNavigationBar: MagpieBottomAppBar(

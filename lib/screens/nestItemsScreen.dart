@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:magpie_app/widgets/magpieGridView.dart';
 
 import '../database_helper.dart';
 import '../widgets/magpieBottomAppBar.dart';
-import '../widgets/magpieSearch.dart';
 import '../widgets/nest.dart';
 import '../widgets/nestItem.dart';
 import '../widgets/startMessage.dart';
@@ -21,7 +21,6 @@ class NestItems extends StatefulWidget {
 
 class _NestItemsState extends State<NestItems> {
   DatabaseHelper db = DatabaseHelper.instance;
-  MagpieSearch _magpieSearch = MagpieSearch();
 
   Icon _searchIcon = Icon(
     Icons.search,
@@ -99,14 +98,11 @@ class _NestItemsState extends State<NestItems> {
               ],
             ));
           _fillList(snapshot);
-          return GridView.count(
-              padding: const EdgeInsets.all(8),
-              mainAxisSpacing: 8,
-              crossAxisSpacing: 8,
-              crossAxisCount: 2,
-              childAspectRatio: 1.05,
-              children:
-                  _magpieSearch.filterList(_searchText, _filteredNames, false));
+          return MagpieGridView(
+            filteredNames: _filteredNames,
+            isNest: false,
+            searchText: _searchText,
+          );
         },
       ),
       bottomNavigationBar: MagpieBottomAppBar(
