@@ -5,6 +5,7 @@ import 'package:magpie_app/widgets/magpieBottomAppBar.dart';
 import '../database_helper.dart';
 import '../screens/nestCreatorScreen.dart';
 import '../sortMode.dart';
+import '../widgets/magpieSearch.dart';
 import '../widgets/navDrawer.dart';
 import '../widgets/nest.dart';
 import '../widgets/startMessage.dart';
@@ -44,6 +45,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   DatabaseHelper db = DatabaseHelper.instance;
+  MagpieSearch _magpieSearch = MagpieSearch();
 
   SortMode _sortMode = SortMode.SortByDate;
   bool _asc = true;
@@ -62,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   initState() {
     super.initState();
-    buildNests();
+    _buildNests();
   }
 
   _HomeScreenState() {
@@ -78,6 +80,12 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     });
+  }
+
+  void _fillList(snapshot) {
+    _names =
+        List.generate(snapshot.data.length, (index) => snapshot.data[index]);
+    _filteredNames = _names;
   }
 
   @override
@@ -97,19 +105,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                new StartMessage(message: "Du hast noch kein Nest angelegt."),
-                new StartMessage(message: "Klicke auf den Button,"),
-                new StartMessage(message: "um dein erstes Nest anzulegen."),
+                StartMessage(message: "Du hast noch kein Nest angelegt."),
+                StartMessage(message: "Klicke auf den Button,"),
+                StartMessage(message: "um dein erstes Nest anzulegen."),
               ],
             ));
-          fillList(snapshot);
+          _fillList(snapshot);
           return GridView.count(
               padding: const EdgeInsets.all(8),
               mainAxisSpacing: 8,
               crossAxisSpacing: 8,
               crossAxisCount: 2,
               childAspectRatio: 1.05,
-              children: filterList());
+              children:
+                  _magpieSearch.filterList(_searchText, _filteredNames, true));
         },
       ),
       bottomNavigationBar: MagpieBottomAppBar(
@@ -155,28 +164,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  List<Nest> filterList() {
-    if (_searchText.isNotEmpty) {
-      List<Nest> tempList = new List();
-      for (int i = 0; i < _filteredNames.length; i++) {
-        if (_filteredNames[i]
-            .name
-            .toLowerCase()
-            .contains(_searchText.toLowerCase())) {
-          tempList.add(_filteredNames[i]);
-        }
-      }
-      _filteredNames = tempList;
-    }
-    return _filteredNames;
-  }
-
-  void fillList(snapshot) {
-    _names =
-        List.generate(snapshot.data.length, (index) => snapshot.data[index]);
-    _filteredNames = _names;
-  }
-
   Future _openNestCreator() async {
     await Navigator.of(context).push(MaterialPageRoute<Nest>(
         builder: (BuildContext context) {
@@ -185,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
         fullscreenDialog: true));
   }
 
-  Future<List<Future<Nest>>> buildNests() async {
+  Future<List<Future<Nest>>> _buildNests() async {
     return List.generate(await DatabaseHelper.instance.getNestCount(),
         (int index) => DatabaseHelper.instance.getNest(index));
   }

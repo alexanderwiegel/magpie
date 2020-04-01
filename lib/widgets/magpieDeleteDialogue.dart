@@ -11,6 +11,7 @@ class MagpieDeleteDialogue {
     await _actuallyDelete(context, isNest, id);
   }
 
+  // ignore: missing_return
   Future<void> _actuallyDelete(BuildContext context, bool isNest, int id) {
     isNest
         ? DatabaseHelper.instance.deleteNest(id)

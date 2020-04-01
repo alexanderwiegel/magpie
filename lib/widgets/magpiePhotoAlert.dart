@@ -14,6 +14,7 @@ class MagpiePhotoAlert {
           content: SingleChildScrollView(
             child: Text(
               "Du musst ein eigenes Bild benutzen.",
+              textAlign: TextAlign.center,
             ),
           ),
         );

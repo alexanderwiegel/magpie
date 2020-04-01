@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../database_helper.dart';
 import '../widgets/magpieBottomAppBar.dart';
+import '../widgets/magpieSearch.dart';
 import '../widgets/nest.dart';
 import '../widgets/nestItem.dart';
 import '../widgets/startMessage.dart';
@@ -20,6 +21,7 @@ class NestItems extends StatefulWidget {
 
 class _NestItemsState extends State<NestItems> {
   DatabaseHelper db = DatabaseHelper.instance;
+  MagpieSearch _magpieSearch = MagpieSearch();
 
   Icon _searchIcon = Icon(
     Icons.search,
@@ -57,6 +59,12 @@ class _NestItemsState extends State<NestItems> {
     widget.nest = await DatabaseHelper.instance.getNest(widget.nest.id - 1);
   }
 
+  void _fillList(snapshot) {
+    _names =
+        List.generate(snapshot.data.length, (index) => snapshot.data[index]);
+    _filteredNames = _names;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,11 +92,10 @@ class _NestItemsState extends State<NestItems> {
                 child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                new StartMessage(
+                StartMessage(
                     message: "Du hast noch keinen Gegenstand angelegt."),
-                new StartMessage(message: "Klicke auf den Button,"),
-                new StartMessage(
-                    message: "um deinen ersten Gegenstand anzulegen."),
+                StartMessage(message: "Klicke auf den Button,"),
+                StartMessage(message: "um deinen ersten Gegenstand anzulegen."),
               ],
             ));
           _fillList(snapshot);
@@ -98,7 +105,8 @@ class _NestItemsState extends State<NestItems> {
               crossAxisSpacing: 8,
               crossAxisCount: 2,
               childAspectRatio: 1.05,
-              children: _filterList());
+              children:
+                  _magpieSearch.filterList(_searchText, _filteredNames, false));
         },
       ),
       bottomNavigationBar: MagpieBottomAppBar(
@@ -144,28 +152,6 @@ class _NestItemsState extends State<NestItems> {
       widget.nest.onlyFavored ^= true;
     });
     DatabaseHelper.instance.update(widget.nest);
-  }
-
-  List<NestItem> _filterList() {
-    if (_searchText.isNotEmpty) {
-      List<NestItem> tempList = new List();
-      for (int i = 0; i < _filteredNames.length; i++) {
-        if (_filteredNames[i]
-            .name
-            .toLowerCase()
-            .contains(_searchText.toLowerCase())) {
-          tempList.add(_filteredNames[i]);
-        }
-      }
-      _filteredNames = tempList;
-    }
-    return _filteredNames;
-  }
-
-  void _fillList(snapshot) {
-    _names =
-        List.generate(snapshot.data.length, (index) => snapshot.data[index]);
-    _filteredNames = _names;
   }
 
   void _searchPressed() {
