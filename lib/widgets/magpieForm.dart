@@ -4,30 +4,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:magpie_app/widgets/magpieFormField.dart';
+import 'package:magpie_app/widgets/magpieImageSelector.dart';
 
+// ignore: must_be_immutable
 class MagpieForm extends StatelessWidget {
-  final File file;
+  final Function changeImage;
   final DateTime date;
-  final Function displayOptionsDialog;
+  final File file;
   final GlobalKey formKey;
   final TextEditingController nameEditingController;
   final bool isNest;
   final TextEditingController noteEditingController;
   final Function setField;
   final int totalWorth;
+  final Function updateStatus;
   final TextEditingController worthEditingController;
   final bool worthVisible;
 
   MagpieForm({
-    @required this.file,
+    @required this.changeImage,
     @required this.date,
-    @required this.displayOptionsDialog,
+    @required this.file,
     @required this.formKey,
     @required this.nameEditingController,
     @required this.isNest,
     @required this.noteEditingController,
     @required this.setField,
     this.totalWorth,
+    @required this.updateStatus,
     this.worthEditingController,
     @required this.worthVisible,
   });
@@ -45,25 +49,11 @@ class MagpieForm extends StatelessWidget {
       key: formKey,
       child: SingleChildScrollView(
         child: Column(children: [
-          GestureDetector(
-            onTap: () {
-              displayOptionsDialog();
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Material(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)),
-                  clipBehavior: Clip.antiAlias,
-                  child: file != null
-                      ? Image.file(file, fit: BoxFit.cover)
-                      : FadeInImage.assetNetwork(
-                          width: 400.0,
-                          height: 250.0,
-                          placeholder: 'pics/placeholder.jpg',
-                          fit: BoxFit.cover,
-                          image: 'pics/placeholder.jpg')),
-            ),
+          MagpieImageSelector(
+            changeImage: changeImage,
+            context: context,
+            file: file,
+            updateStatus: updateStatus,
           ),
           MagpieFormField(
             controller: nameEditingController,

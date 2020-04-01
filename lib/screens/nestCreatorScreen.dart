@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../database_helper.dart';
@@ -109,14 +108,15 @@ class _NestCreatorState extends State<NestCreator> {
         ],
       ),
       body: MagpieForm(
+        changeImage: _changeImage,
         date: _date,
-        displayOptionsDialog: _displayOptionsDialog,
         file: _albumCover,
         formKey: _formKey,
         isNest: true,
         nameEditingController: _nameEditingController,
         noteEditingController: _noteEditingController,
         setField: _setField,
+        updateStatus: _updateStatus,
         worthVisible: false,
       ),
     );
@@ -139,81 +139,6 @@ class _NestCreatorState extends State<NestCreator> {
         }
         break;
     }
-  }
-
-  void _displayOptionsDialog() async {
-    await _optionsDialogBox();
-  }
-
-  Future<void> _optionsDialogBox() {
-    return showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  GestureDetector(
-                      onTap: _askPermission,
-                      child: Row(
-                        children: [
-                          Icon(Icons.photo_camera, color: Colors.amber),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                          ),
-                          Text('Neues Bild aufnehmen'),
-                        ],
-                      )),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                  ),
-                  GestureDetector(
-                      onTap: _imageSelectorGallery,
-                      child: Row(
-                        children: [
-                          Icon(Icons.image, color: Colors.amber),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                          ),
-                          Text('Bild aus Galerie wählen'),
-                        ],
-                      )),
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-  void _askPermission() {
-    PermissionHandler()
-        .requestPermissions([PermissionGroup.camera]).then(_onStatusRequested);
-  }
-
-  void _onStatusRequested(Map<PermissionGroup, PermissionStatus> value) {
-    final status = value[PermissionGroup.camera];
-    if (status == PermissionStatus.granted) {
-      _imageSelectorCamera();
-    } else {
-      _updateStatus(status);
-    }
-  }
-
-  void _imageSelectorCamera() async {
-    Navigator.pop(context);
-    var image = await ImagePicker.pickImage(
-      source: ImageSource.camera,
-    );
-    _changeImage(image);
-  }
-
-  void _imageSelectorGallery() async {
-    Navigator.pop(context);
-    var image = await ImagePicker.pickImage(
-      source: ImageSource.gallery,
-    );
-    _changeImage(image);
   }
 
   void _changeImage(var image) {

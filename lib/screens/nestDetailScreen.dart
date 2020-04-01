@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../database_helper.dart';
@@ -39,6 +38,14 @@ class _NestDetailState extends State<NestDetail> {
         .then(_updateStatus);
   }
 
+  void _updateStatus(PermissionStatus value) {
+    if (value != _status) {
+      setState(() {
+        _status = value;
+      });
+    }
+  }
+
   Future<void> _initiateNest() async {
     widget.nest = await DatabaseHelper.instance.getNest(widget.nest.id - 1);
   }
@@ -66,8 +73,8 @@ class _NestDetailState extends State<NestDetail> {
         ],
       ),
       body: MagpieForm(
+        changeImage: _changeImage,
         date: widget.nest.date,
-        displayOptionsDialog: _displayOptionsDialog,
         file: widget.nest.albumCover,
         formKey: _formKey,
         nameEditingController: _nameEditingController,
@@ -75,6 +82,7 @@ class _NestDetailState extends State<NestDetail> {
         noteEditingController: _noteEditingController,
         setField: _setField,
         totalWorth: widget.nest.totalWorth,
+        updateStatus: _updateStatus,
         worthVisible: true,
       ),
       floatingActionButton: MagpieButton(
@@ -178,90 +186,7 @@ class _NestDetailState extends State<NestDetail> {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
-  void _displayOptionsDialog() async {
-    await _optionsDialogBox();
-  }
-
-  Future<void> _optionsDialogBox() {
-    return showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  GestureDetector(
-                      onTap: _askPermission,
-                      child: Row(
-                        children: [
-                          Icon(Icons.photo_camera, color: Colors.amber),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                          ),
-                          Text('Neues Bild aufnehmen'),
-                        ],
-                      )),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                  ),
-                  GestureDetector(
-                      onTap: imageSelectorGallery,
-                      child: Row(
-                        children: [
-                          Icon(Icons.image, color: Colors.amber),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                          ),
-                          Text('Bild aus Galerie wählen'),
-                        ],
-                      )),
-                ],
-              ),
-            ),
-          );
-        });
-  }
-
-  void _askPermission() {
-    PermissionHandler()
-        .requestPermissions([PermissionGroup.camera]).then(_onStatusRequested);
-  }
-
-  void _onStatusRequested(Map<PermissionGroup, PermissionStatus> value) {
-    final status = value[PermissionGroup.camera];
-    if (status == PermissionStatus.granted) {
-      imageSelectorCamera();
-    } else {
-      _updateStatus(status);
-    }
-  }
-
-  _updateStatus(PermissionStatus value) {
-    if (value != _status) {
-      setState(() {
-        _status = value;
-      });
-    }
-  }
-
-  void imageSelectorCamera() async {
-    Navigator.pop(context);
-    var image = await ImagePicker.pickImage(
-      source: ImageSource.camera,
-    );
-    changeImage(image);
-  }
-
-  void imageSelectorGallery() async {
-    Navigator.pop(context);
-    var image = await ImagePicker.pickImage(
-      source: ImageSource.gallery,
-    );
-    changeImage(image);
-  }
-
-  void changeImage(var image) {
+  void _changeImage(var image) {
     if (widget.nest.albumCover != image) {
       setState(() {
         widget.nest.albumCover = image;
