@@ -9,34 +9,9 @@ import '../widgets/navDrawer.dart';
 import '../widgets/nest.dart';
 import '../widgets/startMessage.dart';
 
+// ignore: must_be_immutable
 class HomeScreen extends StatefulWidget {
   static const routeName = "/home";
-
-  /*
-  HomeScreen({this.sortMode, this.onlyFavored, this.asc});
-
-  SortMode sortMode;
-  bool asc = true;
-  bool onlyFavored = false;
-
-  HomeScreen.fromMap(dynamic obj) {
-    switch (obj["homeSort"]) {
-      case "SortMode.SortByName":
-        this.sortMode = SortMode.SortByName;
-        break;
-      case "SortMode.SortByWorth":
-        this.sortMode = SortMode.SortByWorth;
-        break;
-      case "SortMode.SortByFavored":
-        this.sortMode = SortMode.SortByFavored;
-        break;
-      case "SortMode.SortByDate":
-        this.sortMode = SortMode.SortByDate;
-    }
-    this.asc = obj["homeAsc"] == 0 ? false : true;
-    this.onlyFavored = obj["onlyFavored"] == 0 ? false : true;
-  }
-   */
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -96,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: FutureBuilder<List<Nest>>(
-        future: db.getNests(_sortMode, _asc, _onlyFavored),
+        future: db.getNests(),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(
@@ -146,10 +121,12 @@ class _HomeScreenState extends State<HomeScreen> {
         _asc = true;
         _sortMode = result;
       });
+      DatabaseHelper.instance.updateHome(_asc, _onlyFavored, _sortMode);
     } else {
       setState(() {
         _asc ^= true;
       });
+      DatabaseHelper.instance.updateHome(_asc, _onlyFavored, _sortMode);
     }
   }
 
@@ -157,6 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _onlyFavored ^= true;
     });
+    DatabaseHelper.instance.updateHome(_asc, _onlyFavored, _sortMode);
   }
 
   Future _openNestCreator() async {
@@ -168,6 +146,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<List<Future<Nest>>> _buildNests() async {
+    var homeStatus = await DatabaseHelper.instance.getHome();
+    bool asc = homeStatus.first.values.elementAt(0) == 1 ? true : false;
+    bool onlyFav = homeStatus.first.values.elementAt(1) == 1 ? true : false;
+    String sortModeAsString = homeStatus.first.values.elementAt(2);
+    SortMode sortMode =
+        SortMode.values.firstWhere((e) => e.toString() == sortModeAsString);
+    setState(() {
+      _asc = asc;
+      _onlyFavored = onlyFav;
+      _sortMode = sortMode;
+    });
     return List.generate(await DatabaseHelper.instance.getNestCount(),
         (int index) => DatabaseHelper.instance.getNest(index));
   }

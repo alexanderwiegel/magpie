@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -30,13 +31,13 @@ class MagpieImageSelector extends StatelessWidget {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             clipBehavior: Clip.antiAlias,
             child: file != null
-                ? Image.file(file, fit: BoxFit.cover)
-                : FadeInImage.assetNetwork(
-                    width: 400.0,
-                    height: 250.0,
-                    placeholder: 'pics/placeholder.jpg',
+                ? Image.file(
+                    file,
                     fit: BoxFit.cover,
-                    image: 'pics/placeholder.jpg')),
+                    width: 400.0,
+                    height: 200.0,
+                  )
+                : Image.asset("pics/placeholder.jpg")),
       ),
     );
   }

@@ -6,6 +6,7 @@ class StartMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //MediaQueryData queryData = MediaQuery.of(context);
     return Text(
       message,
       style: TextStyle(fontSize: 16),

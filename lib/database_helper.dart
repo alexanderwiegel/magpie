@@ -9,7 +9,7 @@ import 'widgets/nest.dart';
 import 'widgets/nestItem.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "MagpiePrototype27.db";
+  static final _databaseName = "MagpiePrototype30.db";
   static final _databaseVersion = 4;
 
   static final home = 'Home';
@@ -27,29 +27,25 @@ class DatabaseHelper {
   static final columnDate = 'date';
   static final columnSortMode = 'sortMode';
   static final columnAsc = 'asc';
-  static final onlyFavored = 'onlyFavored';
+  static final columnOnlyFavored = 'onlyFavored';
 
   static final nestItems = 'NestItems';
   static final columnNestId = 'nestId';
   static final columnPhoto = 'photo';
   static final columnWorth = 'worth';
 
-  // make this a singleton class
   DatabaseHelper._privateConstructor();
 
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
-  // only have a single app-wide reference to the database
   static Database _database;
 
   Future<Database> get database async {
     if (_database != null) return _database;
-    // lazily instantiate the db the first time it is accessed
     _database = await _initDatabase();
     return _database;
   }
 
-  // this opens the database (and creates it if it doesn't exist)
   _initDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
@@ -57,7 +53,6 @@ class DatabaseHelper {
         version: _databaseVersion, onCreate: _onCreate);
   }
 
-  // SQL code to create the database table
   Future _onCreate(Database db, int version) async {
     await db.execute('''
           CREATE TABLE $nests (
@@ -71,7 +66,7 @@ class DatabaseHelper {
             $columnSortMode TEXT,
             $columnAsc BOOL,
             $homeSort TEXT,
-            $onlyFavored BOOL
+            $columnOnlyFavored BOOL
           )
           ''');
     await db.execute('''
@@ -86,24 +81,30 @@ class DatabaseHelper {
             $columnDate INTEGER
           )
           ''');
-    String sortModeAsString = SortMode.SortByDate.toString();
     await db.execute('''
           CREATE TABLE $home (
-            $homeSort TEXT,
-            $homeAsc BOOL DEFAULT 1,
-            $homeOnlyFavored BOOL DEFAULT 0
+            $homeAsc BOOL,
+            $homeOnlyFavored BOOL,
+            $homeSort TEXT
           )
           ''');
+    Map<String, dynamic> homeMap = {
+      homeAsc: 1,
+      homeOnlyFavored: 0,
+      homeSort: SortMode.SortByDate.toString(),
+    };
+    await db.insert(home, homeMap,
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<List<Nest>> getNests(SortMode sortMode, bool asc, bool onlyFav) async {
+  Future<List<Nest>> getNests() async {
     var dbClient = await database;
-    //var homeStatus = await dbClient.rawQuery("SELECT * FROM $home");
-    //print(homeStatus);
-    //List<HomeScreen> statusList = homeStatus.map((item) {
-    //  return HomeScreen.fromMap(item);
-    //}).toList();
-    // TODO: wie bekommt man die einzelnen Daten aus der Liste?
+    var homeStatus = await dbClient.rawQuery("SELECT * FROM $home");
+    bool asc = homeStatus.first.values.elementAt(0) == 1 ? true : false;
+    bool onlyFav = homeStatus.first.values.elementAt(1) == 1 ? true : false;
+    String sortModeAsString = homeStatus.first.values.elementAt(2);
+    SortMode sortMode =
+        SortMode.values.firstWhere((e) => e.toString() == sortModeAsString);
 
     var sortModeSql;
     switch (sortMode) {
@@ -225,7 +226,7 @@ class DatabaseHelper {
 
     return await db.rawInsert(
         'INSERT INTO $nests'
-        '($columnAlbumCover, $columnName, $columnNote, $columnTotalWorth, $columnFavored, $columnDate, $columnSortMode, $columnAsc, $onlyFavored)'
+        '($columnAlbumCover, $columnName, $columnNote, $columnTotalWorth, $columnFavored, $columnDate, $columnSortMode, $columnAsc, $columnOnlyFavored)'
         'VALUES(?,?,?,?,?,?,?,?,?)',
         [
           'LOAD_FILE($albumCover)',
@@ -263,6 +264,21 @@ class DatabaseHelper {
         ]);
     //return await db.insert(nests, nest.toMap(),
     //   conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<List<dynamic>> getHome() async {
+    var dbClient = await database;
+    return await dbClient.rawQuery("SELECT * FROM $home");
+  }
+
+  Future<int> updateHome(bool asc, bool onlyFavored, SortMode sortMode) async {
+    Database db = await instance.database;
+    Map<String, dynamic> homeMap = {
+      homeAsc: asc,
+      homeOnlyFavored: onlyFavored,
+      homeSort: sortMode.toString(),
+    };
+    return await db.update(home, homeMap);
   }
 
   Future<int> update(Nest nest) async {
@@ -316,7 +332,7 @@ class DatabaseHelper {
         [asc, nest.id]);
     return await db.rawUpdate(
         'UPDATE $nests'
-        ' SET $onlyFavored = ?'
+        ' SET $columnOnlyFavored = ?'
         ' WHERE $columnId = ?',
         [onlyFav, nest.id]);
     //    .update(nests, nest.toMap(), where: '$columnId = ?', whereArgs: [id]);
