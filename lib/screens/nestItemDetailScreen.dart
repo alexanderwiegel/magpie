@@ -57,6 +57,9 @@ class _NestItemDetailState extends State<NestItemDetail> {
     nest.totalWorth = await DatabaseHelper.instance.getTotalWorth(nest);
     await DatabaseHelper.instance.update(nest);
     Navigator.of(context).pop(widget.nestItem);
+    // TODO: Nestgesamtwert wird nicht aktualisiert angezeigt
+    //  sobald man hiernach den NestDetail Screen aufruft,
+    //  sondern erst beim Homescreen. Wo ist der Fehler? Async?
   }
 
   @override
