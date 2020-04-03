@@ -374,7 +374,8 @@ class _LoginPageState extends State<LoginPage>
                                   loginEmailController.text,
                                   loginPasswordController.text);
                           if (result == null) {
-                            setState(() {                              loading = false;
+                            setState(() {
+                              loading = false;
                             });
                             showInSnackBar("Email oder Passwort ungültig");
                           }
