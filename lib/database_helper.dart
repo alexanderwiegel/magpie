@@ -9,8 +9,8 @@ import 'widgets/nest.dart';
 import 'widgets/nestItem.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "MagpiePrototype30.db";
-  static final _databaseVersion = 4;
+  static final _databaseName = "MagpiePrototype34.db";
+  static final _databaseVersion = 6;
 
   static final home = 'Home';
   static final homeSort = 'homeSort';
@@ -19,6 +19,7 @@ class DatabaseHelper {
 
   static final nests = 'Nester';
   static final columnId = 'id';
+  static final columnUserId = 'userId';
   static final columnAlbumCover = 'albumCover';
   static final columnName = 'name';
   static final columnNote = 'note';
@@ -57,6 +58,7 @@ class DatabaseHelper {
     await db.execute('''
           CREATE TABLE $nests (
             $columnId INTEGER PRIMARY KEY,
+            $columnUserId TEXT NOT NULL,
             $columnAlbumCover BLOB,
             $columnName TEXT NOT NULL,
             $columnNote TEXT,
@@ -65,7 +67,6 @@ class DatabaseHelper {
             $columnDate INTEGER,
             $columnSortMode TEXT,
             $columnAsc BOOL,
-            $homeSort TEXT,
             $columnOnlyFavored BOOL
           )
           ''');
@@ -97,7 +98,7 @@ class DatabaseHelper {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<List<Nest>> getNests() async {
+  Future<List<Nest>> getNests(String userId) async {
     var dbClient = await database;
     var homeStatus = await dbClient.rawQuery("SELECT * FROM $home");
     bool asc = homeStatus.first.values.elementAt(0) == 1 ? true : false;
@@ -123,17 +124,20 @@ class DatabaseHelper {
 
     String sql;
     if (!onlyFav) {
-      sql = "SELECT * FROM $nests ORDER BY $sortModeSql";
+      sql =
+          "SELECT * FROM $nests WHERE $columnUserId = '$userId' ORDER BY $sortModeSql";
+      //TODO: Parametrisierung funktioniert nicht, Lösung finden (SQL Injection)
     } else {
       sql =
-          "SELECT * FROM $nests WHERE $columnFavored = -1 ORDER BY $sortModeSql";
+          "SELECT * FROM $nests WHERE $columnFavored = -1 AND $columnUserId = '$userId' ORDER BY $sortModeSql";
       // "'SELECT * FROM $nests WHERE $columnFavored = ? ORDER BY $sortModeSql', [1]";
-      //TODO: Parametrisierung funktioniert nicht, Lösung finden
+      //TODO: Parametrisierung funktioniert nicht, Lösung finden (SQL Injection)
     }
     if (!asc) {
       sql += " DESC";
     }
     var result = await dbClient.rawQuery(sql);
+    print(result);
     if (result.length == 0) return null;
     List<Nest> list = result.map((item) {
       return Nest.fromMap(item);
@@ -163,11 +167,11 @@ class DatabaseHelper {
     if (!nest.onlyFavored) {
       sql =
           "SELECT * FROM $nestItems WHERE $columnNestId = ${nest.id} ORDER BY $sortModeSql";
-      //TODO: Parametrisierung funktioniert nicht, Lösung finden
+      //TODO: Parametrisierung funktioniert nicht, Lösung finden (SQL Injection)
     } else {
       sql =
           "SELECT * FROM $nestItems WHERE $columnNestId = ${nest.id} AND $columnFavored = -1 ORDER BY $sortModeSql";
-      //TODO: Parametrisierung funktioniert nicht, Lösung finden
+      //TODO: Parametrisierung funktioniert nicht, Lösung finden (SQL Injection)
     }
     if (!nest.asc) {
       sql += " DESC";
@@ -224,11 +228,15 @@ class DatabaseHelper {
     int date = nest.date.millisecondsSinceEpoch;
     String sortModeAsString = nest.sortMode.toString();
 
+    print("\n\n\n");
+    print(nest.userId);
+    print("\n\n\n");
     return await db.rawInsert(
         'INSERT INTO $nests'
-        '($columnAlbumCover, $columnName, $columnNote, $columnTotalWorth, $columnFavored, $columnDate, $columnSortMode, $columnAsc, $columnOnlyFavored)'
-        'VALUES(?,?,?,?,?,?,?,?,?)',
+        '($columnUserId, $columnAlbumCover, $columnName, $columnNote, $columnTotalWorth, $columnFavored, $columnDate, $columnSortMode, $columnAsc, $columnOnlyFavored)'
+        'VALUES(?,?,?,?,?,?,?,?,?,?)',
         [
+          nest.userId,
           'LOAD_FILE($albumCover)',
           nest.name,
           nest.note,

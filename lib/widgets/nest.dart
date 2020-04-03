@@ -9,6 +9,7 @@ import '../screens/nestItemsScreen.dart';
 // ignore: must_be_immutable
 class Nest extends StatefulWidget {
   int id;
+  String userId;
   File albumCover;
   String name;
   String note;
@@ -21,6 +22,7 @@ class Nest extends StatefulWidget {
 
   Nest(
       {this.id,
+      this.userId,
       this.albumCover,
       @required this.name,
       this.note,
@@ -48,6 +50,7 @@ class Nest extends StatefulWidget {
 
   Nest.fromMap(dynamic obj) {
     this.id = obj["id"];
+    this.userId = obj["userId"];
     String path = obj["albumCover"].toString();
     path = path.substring(path.indexOf("s"), path.length - 2);
     this.albumCover = File(path);
@@ -81,6 +84,7 @@ class _NestState extends State<Nest> {
   void openNestItemsScreen() async {
     Nest oldNest = Nest(
       id: widget.id,
+      userId: widget.userId,
       albumCover: widget.albumCover,
       name: widget.name,
       note: widget.note,
@@ -185,6 +189,7 @@ class _NestState extends State<Nest> {
     });
     Nest nest = Nest(
       id: widget.id,
+      userId: widget.userId,
       albumCover: widget.albumCover,
       name: widget.name,
       note: widget.note,

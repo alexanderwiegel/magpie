@@ -13,6 +13,9 @@ import '../widgets/startMessage.dart';
 class HomeScreen extends StatefulWidget {
   static const routeName = "/home";
 
+  final String userId;
+  HomeScreen({this.userId});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -71,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: FutureBuilder<List<Nest>>(
-        future: db.getNests(),
+        future: db.getNests(widget.userId),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(
@@ -140,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future _openNestCreator() async {
     await Navigator.of(context).push(MaterialPageRoute<Nest>(
         builder: (BuildContext context) {
-          return NestCreator();
+          return NestCreator(userId: widget.userId);
         },
         fullscreenDialog: true));
   }

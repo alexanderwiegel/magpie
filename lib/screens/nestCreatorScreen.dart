@@ -10,6 +10,9 @@ import '../widgets/magpiePhotoAlert.dart';
 import '../widgets/nest.dart';
 
 class NestCreator extends StatefulWidget {
+  final String userId;
+  NestCreator({this.userId});
+
   @override
   _NestCreatorState createState() => _NestCreatorState();
 }
@@ -57,6 +60,7 @@ class _NestCreatorState extends State<NestCreator> {
 
   void insertNest() async {
     Nest nest = Nest(
+      userId: widget.userId,
       albumCover: _albumCover,
       name: _name,
       note: _note,
@@ -70,6 +74,7 @@ class _NestCreatorState extends State<NestCreator> {
     _id = await DatabaseHelper.instance.insert(nest);
     Navigator.of(context).pop(Nest(
       id: _id,
+      userId: widget.userId,
       albumCover: _albumCover,
       name: _name,
       note: _note,

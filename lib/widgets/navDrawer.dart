@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../services/auth.dart';
+
 class NavDrawer extends StatelessWidget {
+  final AuthService _auth = AuthService();
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -43,10 +47,12 @@ class NavDrawer extends StatelessWidget {
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Ausloggen'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
+              leading: Icon(Icons.exit_to_app),
+              title: Text('Ausloggen'),
+              onTap: () async {
+                Navigator.of(context).pop();
+                await _auth.signOut();
+              }),
         ],
       ),
     );
