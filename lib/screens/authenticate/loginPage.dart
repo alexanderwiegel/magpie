@@ -19,8 +19,13 @@ class _LoginPageState extends State<LoginPage>
   final _signUpKey = GlobalKey<FormState>();
   final _signInKey = GlobalKey<FormState>();
   bool loading = false;
-  int addedHeightSignIn = 0;
-  int addedHeightSignUp = 0;
+
+  List<Text> signUpErrors = [];
+  List<Text> signInErrors = [];
+  Text nameError;
+  Text emailError;
+  Text passwordError;
+  Text repeatPasswordError;
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
   final FocusNode myFocusNodePasswordLogin = FocusNode();
@@ -52,6 +57,7 @@ class _LoginPageState extends State<LoginPage>
     return Scaffold(
       key: _scaffoldKey,
       body: NotificationListener<OverscrollIndicatorNotification>(
+        // ignore: missing_return
         onNotification: (overscroll) {
           overscroll.disallowGlow();
         },
@@ -83,7 +89,7 @@ class _LoginPageState extends State<LoginPage>
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(top: 75.0),
+                        padding: EdgeInsets.only(top: 50.0),
                         child: Image.asset(
                           "pics/logo.png",
                           width: 100.0,
@@ -151,6 +157,12 @@ class _LoginPageState extends State<LoginPage>
     ]);
 
     _pageController = PageController();
+
+    nameError = errorMessage("Bitte gib einen Benutzernamen an");
+    emailError = errorMessage("Bitte gib eine gültige Emailadresse an");
+    passwordError =
+        errorMessage("Passwörter müssen mindestens sechs Zeichen beinhalten");
+    repeatPasswordError = errorMessage("Die Passwörter müssen identisch sein");
   }
 
   void showInSnackBar(String value) {
@@ -240,17 +252,15 @@ class _LoginPageState extends State<LoginPage>
                   ),
                   child: Container(
                     width: 300.0,
-                    height: 195.0 + addedHeightSignIn * 1.2,
-                    // TODO: hier
+                    height: 195.0,
                     child: Column(
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(
                               top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                           child: TextFormField(
-                            validator: (val) => val.isEmpty
-                                ? "Bitte gib eine Emailadresse an"
-                                : null,
+                            validator: (val) =>
+                                validate(val.isEmpty, signInErrors, emailError),
                             focusNode: myFocusNodeEmailLogin,
                             controller: loginEmailController,
                             keyboardType: TextInputType.emailAddress,
@@ -281,13 +291,8 @@ class _LoginPageState extends State<LoginPage>
                           padding: EdgeInsets.only(
                               top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                           child: TextFormField(
-                            validator: (val) {
-                              if (val.length < 6) {
-                                setState(() => addedHeightSignIn = 30);
-                                return "Passwort muss min. 6 Zeichen haben";
-                              } else
-                                return null;
-                            },
+                            validator: (val) => validate(
+                                val.length < 6, signInErrors, passwordError),
                             focusNode: myFocusNodePasswordLogin,
                             controller: loginPasswordController,
                             obscureText: _obscureTextLogin,
@@ -324,8 +329,7 @@ class _LoginPageState extends State<LoginPage>
                   ),
                 ),
                 Container(
-                  // TODO: hier
-                  margin: EdgeInsets.only(top: 175.0 + addedHeightSignIn * 1.2),
+                  margin: EdgeInsets.only(top: 175.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     boxShadow: <BoxShadow>[
@@ -367,7 +371,8 @@ class _LoginPageState extends State<LoginPage>
                         ),
                       ),
                       onPressed: () async {
-                        if (_signInKey.currentState.validate()) {
+                        if (_signInKey.currentState.validate() &&
+                            signInErrors.length == 0) {
                           setState(() => loading = true);
                           dynamic result =
                               await _auth.signInWithEmailAndPassword(
@@ -384,6 +389,14 @@ class _LoginPageState extends State<LoginPage>
                 ),
               ],
             ),
+            Visibility(
+                visible: signInErrors.length == 0 ? false : true,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Column(
+                    children: signInErrors,
+                  ),
+                )),
             Padding(
               padding: EdgeInsets.only(top: 10.0),
               child: FlatButton(
@@ -492,6 +505,14 @@ class _LoginPageState extends State<LoginPage>
     );
   }
 
+  Text errorMessage(String text) {
+    return Text(
+      text,
+      textAlign: TextAlign.center,
+      style: TextStyle(color: Colors.amber),
+    );
+  }
+
   Widget _buildSignUp(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(top: 23.0),
@@ -511,17 +532,15 @@ class _LoginPageState extends State<LoginPage>
                   ),
                   child: Container(
                     width: 300.0,
-                    // TODO: hier
-                    height: 360.0 + addedHeightSignUp * 3.2,
+                    height: 360.0,
                     child: Column(
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.only(
                               top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                           child: TextFormField(
-                            validator: (val) => val.isEmpty
-                                ? "Bitte gib einen Benutzernamen an"
-                                : null,
+                            validator: (val) =>
+                                validate(val.isEmpty, signUpErrors, nameError),
                             focusNode: myFocusNodeName,
                             controller: signUpNameController,
                             keyboardType: TextInputType.text,
@@ -552,9 +571,8 @@ class _LoginPageState extends State<LoginPage>
                           padding: EdgeInsets.only(
                               top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                           child: TextFormField(
-                            validator: (val) => val.isEmpty
-                                ? "Bitte gib eine Emailadresse an"
-                                : null,
+                            validator: (val) =>
+                                validate(val.isEmpty, signUpErrors, emailError),
                             focusNode: myFocusNodeEmail,
                             controller: signUpEmailController,
                             keyboardType: TextInputType.emailAddress,
@@ -584,13 +602,8 @@ class _LoginPageState extends State<LoginPage>
                           padding: EdgeInsets.only(
                               top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                           child: TextFormField(
-                            validator: (val) {
-                              if (val.length < 6) {
-                                setState(() => addedHeightSignUp = 20);
-                                return "Passwort muss min. 6 Zeichen haben";
-                              } else
-                                return null;
-                            },
+                            validator: (val) => validate(
+                                val.length < 6, signUpErrors, passwordError),
                             focusNode: myFocusNodePassword,
                             controller: signUpPasswordController,
                             obscureText: _obscureTextSignUp,
@@ -630,13 +643,10 @@ class _LoginPageState extends State<LoginPage>
                           padding: EdgeInsets.only(
                               top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
                           child: TextFormField(
-                            validator: (val) {
-                              if (val != signUpPasswordController.text) {
-                                setState(() => addedHeightSignUp = 30);
-                                return "Die Passwörter müssen identisch sein";
-                              } else
-                                return null;
-                            },
+                            validator: (val) => validate(
+                                val != signUpPasswordController.text,
+                                signUpErrors,
+                                repeatPasswordError),
                             controller: signUpConfirmPasswordController,
                             obscureText: _obscureTextSignUpConfirm,
                             style: TextStyle(
@@ -671,8 +681,7 @@ class _LoginPageState extends State<LoginPage>
                   ),
                 ),
                 Container(
-                  // TODO: hier
-                  margin: EdgeInsets.only(top: 340.0 + addedHeightSignUp * 3.2),
+                  margin: EdgeInsets.only(top: 340.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     boxShadow: <BoxShadow>[
@@ -714,7 +723,8 @@ class _LoginPageState extends State<LoginPage>
                         ),
                       ),
                       onPressed: () async {
-                        if (_signUpKey.currentState.validate()) {
+                        if (_signUpKey.currentState.validate() &&
+                            signUpErrors.length == 0) {
                           setState(() => loading = true);
                           print(loginEmailController.text);
                           print(loginPasswordController.text);
@@ -727,29 +737,41 @@ class _LoginPageState extends State<LoginPage>
                               loading = false;
                             });
                             showInSnackBar(
-                                "Bitte gib eine gültige Emailadresse an");
+                                "Bitte fülle alle Felder korrekt aus");
                           }
                         }
                       }),
                 ),
               ],
             ),
+            Visibility(
+                visible: signUpErrors.length == 0 ? false : true,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 10.0),
+                  child: Column(
+                    children: signUpErrors,
+                  ),
+                )),
           ],
         ),
       ),
     );
   }
 
+  String validate(bool condition, List<Text> errors, Text error) {
+    errors.remove(error);
+    if (condition) setState(() => errors.add(error));
+    return null;
+  }
+
   void _onSignInButtonPress() {
     _pageController.animateToPage(0,
         duration: Duration(milliseconds: 500), curve: Curves.decelerate);
-    addedHeightSignUp = 0;
   }
 
   void _onSignUpButtonPress() {
     _pageController?.animateToPage(1,
         duration: Duration(milliseconds: 500), curve: Curves.decelerate);
-    addedHeightSignIn = 0;
   }
 
   void _toggleLogin() {

@@ -18,7 +18,7 @@ class TabIndicationPainter extends CustomPainter {
       this.dy = 25.0,
       this.pageController})
       : super(repaint: pageController) {
-    painter = new Paint()
+    painter = Paint()
       ..color = Color(0xFFFFFFFF)
       ..style = PaintingStyle.fill;
   }
@@ -44,7 +44,7 @@ class TabIndicationPainter extends CustomPainter {
         new Rect.fromCircle(center: target, radius: radius), 1.5 * pi, 1 * pi);
 
     canvas.translate(size.width * pageOffset, 0.0);
-    canvas.drawShadow(path, Color(0xFFfbab66), 3.0, true);
+    canvas.drawShadow(path, Color.fromRGBO(37, 68, 65, 1), 3.0, true);
     canvas.drawPath(path, painter);
   }
 
