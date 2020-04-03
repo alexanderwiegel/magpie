@@ -20,7 +20,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   DatabaseHelper db = DatabaseHelper.instance;
-  String userId;
+  String _userId;
 
   SortMode _sortMode = SortMode.SortByDate;
   bool _asc = true;
@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    userId = ModalRoute.of(context).settings.arguments;
+    _userId = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       drawer: NavDrawer(userId: widget.userId),
       appBar: AppBar(
@@ -74,9 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: FutureBuilder<List<Nest>>(
-        future: widget.userId == null
-            ? db.getNests(userId)
-            : db.getNests(widget.userId),
+        future: db.getNests(_getUserId()),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(
@@ -120,18 +118,24 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  String _getUserId() {
+    return _userId == null ? widget.userId : _userId;
+  }
+
   void _switchSortOrder(SortMode result) {
     if (_sortMode != result) {
       setState(() {
         _asc = true;
         _sortMode = result;
       });
-      DatabaseHelper.instance.updateHome(_asc, _onlyFavored, _sortMode);
+      DatabaseHelper.instance
+          .updateHome(_asc, _onlyFavored, _sortMode, _getUserId());
     } else {
       setState(() {
         _asc ^= true;
       });
-      DatabaseHelper.instance.updateHome(_asc, _onlyFavored, _sortMode);
+      DatabaseHelper.instance
+          .updateHome(_asc, _onlyFavored, _sortMode, _getUserId());
     }
   }
 
@@ -139,7 +143,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _onlyFavored ^= true;
     });
-    DatabaseHelper.instance.updateHome(_asc, _onlyFavored, _sortMode);
+    DatabaseHelper.instance
+        .updateHome(_asc, _onlyFavored, _sortMode, _getUserId());
   }
 
   Future _openNestCreator() async {
@@ -150,21 +155,20 @@ class _HomeScreenState extends State<HomeScreen> {
         fullscreenDialog: true));
   }
 
-  Future<List<Future<Nest>>> _buildNests() async {
-    var homeStatus = await DatabaseHelper.instance.getHome();
-    bool asc = homeStatus.first.values.elementAt(0) == 1 ? true : false;
-    bool onlyFav = homeStatus.first.values.elementAt(1) == 1 ? true : false;
-    String sortModeAsString = homeStatus.first.values.elementAt(2);
-    SortMode sortMode =
-        SortMode.values.firstWhere((e) => e.toString() == sortModeAsString);
-    setState(() {
-      _asc = asc;
-      _onlyFavored = onlyFav;
-      _sortMode = sortMode;
-    });
-    // TODO: userID miteinbeziehen
-    return List.generate(await DatabaseHelper.instance.getNestCount(),
-        (int index) => DatabaseHelper.instance.getNest(index));
+  void _buildNests() async {
+    var homeStatus = await DatabaseHelper.instance.getHome(_getUserId());
+    if (homeStatus.length != 0) {
+      bool asc = homeStatus.first.values.elementAt(0) == 1 ? true : false;
+      bool onlyFav = homeStatus.first.values.elementAt(1) == 1 ? true : false;
+      String sortModeAsString = homeStatus.first.values.elementAt(2);
+      SortMode sortMode =
+          SortMode.values.firstWhere((e) => e.toString() == sortModeAsString);
+      setState(() {
+        _asc = asc;
+        _onlyFavored = onlyFav;
+        _sortMode = sortMode;
+      });
+    }
   }
 
   void _searchPressed() {

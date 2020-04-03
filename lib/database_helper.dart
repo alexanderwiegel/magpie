@@ -9,10 +9,11 @@ import 'widgets/nest.dart';
 import 'widgets/nestItem.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "MagpiePrototype34.db";
+  static final _databaseName = "MagpiePrototype36.db";
   static final _databaseVersion = 6;
 
   static final home = 'Home';
+  static final homeUserId = 'homeUserId';
   static final homeSort = 'homeSort';
   static final homeAsc = 'homeAsc';
   static final homeOnlyFavored = 'homeOnlyFavored';
@@ -84,23 +85,18 @@ class DatabaseHelper {
           ''');
     await db.execute('''
           CREATE TABLE $home (
-            $homeAsc BOOL,
-            $homeOnlyFavored BOOL,
-            $homeSort TEXT
+            $homeAsc BOOL DEFAULT 1,
+            $homeOnlyFavored BOOL DEFAULT 0,
+            $homeSort TEXT,
+            $homeUserId TEXT NOT NULL
           )
           ''');
-    Map<String, dynamic> homeMap = {
-      homeAsc: 1,
-      homeOnlyFavored: 0,
-      homeSort: SortMode.SortByDate.toString(),
-    };
-    await db.insert(home, homeMap,
-        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<List<Nest>> getNests(String userId) async {
     var dbClient = await database;
-    var homeStatus = await dbClient.rawQuery("SELECT * FROM $home");
+    var homeStatus = await dbClient
+        .rawQuery("SELECT * FROM $home WHERE $homeUserId = '$userId'");
     bool asc = homeStatus.first.values.elementAt(0) == 1 ? true : false;
     bool onlyFav = homeStatus.first.values.elementAt(1) == 1 ? true : false;
     String sortModeAsString = homeStatus.first.values.elementAt(2);
@@ -185,8 +181,9 @@ class DatabaseHelper {
 
   Future<Nest> getNest(int id) async {
     final Database db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(nests);
-    return Nest.fromMap(maps[id]);
+    final List<Map<String, dynamic>> maps =
+        await db.rawQuery("SELECT * FROM $nests WHERE $columnId = ?", [id]);
+    return maps.length == 0 ? null : Nest.fromMap(maps[0]);
   }
 
   Future<NestItem> getNestItem(int id) async {
@@ -208,10 +205,11 @@ class DatabaseHelper {
         [nest.id]));
   }
 
-  Future<int> getNestCount() async {
+  Future<int> getNestCount(String userId) async {
     final Database db = await database;
-    return Sqflite.firstIntValue(
-        await db.rawQuery('SELECT COUNT(*) FROM $nests'));
+    var result = Sqflite.firstIntValue(await db.rawQuery(
+        "SELECT COUNT(*) FROM $nests WHERE $columnUserId = '$userId' "));
+    return result;
   }
 
   Future<int> getNestItemCount(int id) async {
@@ -227,9 +225,6 @@ class DatabaseHelper {
     int date = nest.date.millisecondsSinceEpoch;
     String sortModeAsString = nest.sortMode.toString();
 
-    print("\n\n\n");
-    print(nest.userId);
-    print("\n\n\n");
     return await db.rawInsert(
         'INSERT INTO $nests'
         '($columnUserId, $columnAlbumCover, $columnName, $columnNote, $columnTotalWorth, $columnFavored, $columnDate, $columnSortMode, $columnAsc, $columnOnlyFavored)'
@@ -273,19 +268,33 @@ class DatabaseHelper {
     //   conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<List<dynamic>> getHome() async {
+  Future<List<dynamic>> getHome(String userId) async {
     var dbClient = await database;
-    return await dbClient.rawQuery("SELECT * FROM $home");
+    return await dbClient
+        .rawQuery("SELECT * FROM $home WHERE $homeUserId = '$userId'");
   }
 
-  Future<int> updateHome(bool asc, bool onlyFavored, SortMode sortMode) async {
+  Future<int> insertHome(String userId) async {
+    var dbClient = await database;
+    Map<String, dynamic> homeMap = {
+      homeAsc: 1,
+      homeOnlyFavored: 0,
+      homeSort: SortMode.SortByDate.toString(),
+      homeUserId: userId
+    };
+    return await dbClient.insert(home, homeMap,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<int> updateHome(
+      bool asc, bool onlyFavored, SortMode sortMode, String userId) async {
     Database db = await instance.database;
     Map<String, dynamic> homeMap = {
-      homeAsc: asc,
-      homeOnlyFavored: onlyFavored,
+      homeAsc: asc ? 1 : 0,
+      homeOnlyFavored: onlyFavored ? 1 : 0,
       homeSort: sortMode.toString(),
     };
-    return await db.update(home, homeMap);
+    return await db.update(home, homeMap, where: "$homeUserId = '$userId'");
   }
 
   Future<int> update(Nest nest) async {

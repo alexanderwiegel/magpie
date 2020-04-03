@@ -55,7 +55,7 @@ class _NestItemsState extends State<NestItems> {
   }
 
   Future<void> _initiateNest() async {
-    widget.nest = await DatabaseHelper.instance.getNest(widget.nest.id - 1);
+    widget.nest = await DatabaseHelper.instance.getNest(widget.nest.id);
   }
 
   void _fillList(snapshot) {

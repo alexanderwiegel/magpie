@@ -52,8 +52,7 @@ class _NestItemDetailState extends State<NestItemDetail> {
 
   void _updateNest() async {
     await DatabaseHelper.instance.updateItem(widget.nestItem);
-    Nest nest =
-        await DatabaseHelper.instance.getNest(widget.nestItem.nestId - 1);
+    Nest nest = await DatabaseHelper.instance.getNest(widget.nestItem.nestId);
     nest.totalWorth = await DatabaseHelper.instance.getTotalWorth(nest);
     await DatabaseHelper.instance.update(nest);
     Navigator.of(context).pop(widget.nestItem);

@@ -49,7 +49,7 @@ class _NestDetailState extends State<NestDetail> {
   }
 
   Future<void> _initiateNest() async {
-    widget.nest = await DatabaseHelper.instance.getNest(widget.nest.id - 1);
+    widget.nest = await DatabaseHelper.instance.getNest(widget.nest.id);
   }
 
   @override
