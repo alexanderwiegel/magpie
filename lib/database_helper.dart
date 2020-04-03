@@ -137,7 +137,6 @@ class DatabaseHelper {
       sql += " DESC";
     }
     var result = await dbClient.rawQuery(sql);
-    print(result);
     if (result.length == 0) return null;
     List<Nest> list = result.map((item) {
       return Nest.fromMap(item);

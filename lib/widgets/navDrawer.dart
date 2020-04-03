@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../services/auth.dart';
 
 class NavDrawer extends StatelessWidget {
+  final String userId;
+  NavDrawer({this.userId});
+
   final AuthService _auth = AuthService();
 
   @override
@@ -50,7 +53,8 @@ class NavDrawer extends StatelessWidget {
               leading: Icon(Icons.exit_to_app),
               title: Text('Ausloggen'),
               onTap: () async {
-                Navigator.of(context).pop();
+                //Navigator.of(context).pop();
+                navigate(context, "/");
                 await _auth.signOut();
               }),
         ],
@@ -72,7 +76,7 @@ class NavDrawer extends StatelessWidget {
 
     if (!isNewRouteSameAsCurrent) {
       print("Navigiere nun zu $routeName");
-      Navigator.pushNamed(context, routeName);
+      Navigator.pushReplacementNamed(context, routeName, arguments: userId);
     }
   }
 }

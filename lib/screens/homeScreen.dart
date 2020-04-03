@@ -11,8 +11,6 @@ import '../widgets/startMessage.dart';
 
 // ignore: must_be_immutable
 class HomeScreen extends StatefulWidget {
-  static const routeName = "/home";
-
   final String userId;
   HomeScreen({this.userId});
 
@@ -22,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   DatabaseHelper db = DatabaseHelper.instance;
+  String userId;
 
   SortMode _sortMode = SortMode.SortByDate;
   bool _asc = true;
@@ -66,15 +65,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    userId = ModalRoute.of(context).settings.arguments;
     return Scaffold(
-      drawer: NavDrawer(),
+      drawer: NavDrawer(userId: widget.userId),
       appBar: AppBar(
         title: Text(
           "Übersicht",
         ),
       ),
       body: FutureBuilder<List<Nest>>(
-        future: db.getNests(widget.userId),
+        future: widget.userId == null
+            ? db.getNests(userId)
+            : db.getNests(widget.userId),
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(
@@ -160,6 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _onlyFavored = onlyFav;
       _sortMode = sortMode;
     });
+    // TODO: userID miteinbeziehen
     return List.generate(await DatabaseHelper.instance.getNestCount(),
         (int index) => DatabaseHelper.instance.getNest(index));
   }
