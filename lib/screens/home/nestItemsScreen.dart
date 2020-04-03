@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:magpie_app/widgets/magpieGridView.dart';
 
-import '../database_helper.dart';
-import '../widgets/magpieBottomAppBar.dart';
-import '../widgets/nest.dart';
-import '../widgets/nestItem.dart';
-import '../widgets/startMessage.dart';
+import '../../models/nest.dart';
+import '../../models/nestItem.dart';
+import '../../services/database_helper.dart';
+import '../../widgets/magpieBottomAppBar.dart';
+import '../../widgets/startMessage.dart';
 import 'nestDetailScreen.dart';
 import 'nestItemCreatorScreen.dart';
 

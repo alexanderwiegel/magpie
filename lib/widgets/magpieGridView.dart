@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'nest.dart';
-import 'nestItem.dart';
+import '../models/nest.dart';
+import '../models/nestItem.dart';
 
 // ignore: must_be_immutable
 class MagpieGridView extends StatelessWidget {

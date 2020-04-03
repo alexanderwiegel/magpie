@@ -4,9 +4,9 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'sortMode.dart';
-import 'widgets/nest.dart';
-import 'widgets/nestItem.dart';
+import '../models/nest.dart';
+import '../models/nestItem.dart';
+import '../sortMode.dart';
 
 class DatabaseHelper {
   static final _databaseName = "MagpiePrototype36.db";

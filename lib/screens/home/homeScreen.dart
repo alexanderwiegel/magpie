@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../database_helper.dart';
-import '../screens/nestCreatorScreen.dart';
-import '../sortMode.dart';
-import '../widgets/magpieBottomAppBar.dart';
-import '../widgets/magpieGridView.dart';
-import '../widgets/navDrawer.dart';
-import '../widgets/nest.dart';
-import '../widgets/startMessage.dart';
+import '../../models/nest.dart';
+import '../../services/database_helper.dart';
+import '../../sortMode.dart';
+import '../../widgets/magpieBottomAppBar.dart';
+import '../../widgets/magpieGridView.dart';
+import '../../widgets/navDrawer.dart';
+import '../../widgets/startMessage.dart';
+import 'nestCreatorScreen.dart';
 
 // ignore: must_be_immutable
 class HomeScreen extends StatefulWidget {

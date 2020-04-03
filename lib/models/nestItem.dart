@@ -1,106 +1,79 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:magpie_app/sortMode.dart';
 
-import '../database_helper.dart';
-import '../screens/nestItemsScreen.dart';
+import '../screens/home/nestItemDetailScreen.dart';
+import '../services/database_helper.dart';
 
 // ignore: must_be_immutable
-class Nest extends StatefulWidget {
-  int id;
-  String userId;
-  File albumCover;
-  String name;
-  String note;
-  int totalWorth;
-  bool favored;
-  DateTime date;
-  SortMode sortMode;
-  bool asc;
-  bool onlyFavored;
-
-  Nest(
-      {this.id,
-      this.userId,
-      this.albumCover,
+class NestItem extends StatefulWidget {
+  NestItem(
+      {@required this.nestId,
+      this.id,
+      this.photo,
       @required this.name,
       this.note,
-      this.totalWorth,
+      this.worth,
       this.favored,
-      this.date,
-      this.sortMode,
-      this.asc,
-      this.onlyFavored});
-  /*
+      this.date});
+
+  int nestId;
+  int id;
+  File photo;
+  String name;
+  String note;
+  int worth;
+  bool favored;
+  DateTime date;
+
   Map<String, dynamic> toMap() {
     return {
+      'nestId': nestId,
       'id': id,
-      'albumCover': albumCover,
+      'albumCover': photo,
       'name': name,
       'note': note,
-      'totalWorth': totalWorth,
+      'worth': worth,
       'favored': favored,
-      'date': date,
-      'sortMode': sortMode,
-      'asc': asc
+      'date': date
     };
   }
-   */
 
-  Nest.fromMap(dynamic obj) {
+  NestItem.fromMap(dynamic obj) {
+    this.nestId = obj["nestId"];
     this.id = obj["id"];
-    this.userId = obj["userId"];
-    String path = obj["albumCover"].toString();
+    String path = obj["photo"].toString();
     path = path.substring(path.indexOf("s"), path.length - 2);
-    this.albumCover = File(path);
+    this.photo = File(path);
     this.name = obj["name"];
     this.note = obj["note"];
-    this.totalWorth = obj["totalWorth"];
+    this.worth = obj["worth"];
     this.favored = obj["favored"] == 0 ? false : true;
     this.date = DateTime.fromMillisecondsSinceEpoch(obj["date"]);
-    switch (obj["sortMode"]) {
-      case "SortMode.SortByName":
-        this.sortMode = SortMode.SortByName;
-        break;
-      case "SortMode.SortByWorth":
-        this.sortMode = SortMode.SortByWorth;
-        break;
-      case "SortMode.SortByFavored":
-        this.sortMode = SortMode.SortByFavored;
-        break;
-      case "SortMode.SortByDate":
-        this.sortMode = SortMode.SortByDate;
-    }
-    this.asc = obj["asc"] == 0 ? false : true;
-    this.onlyFavored = obj["onlyFavored"] == 0 ? false : true;
   }
 
   @override
-  _NestState createState() => _NestState();
+  _NestItemState createState() => _NestItemState();
 }
 
-class _NestState extends State<Nest> {
-  void openNestItemsScreen() async {
-    Nest oldNest = Nest(
-      id: widget.id,
-      userId: widget.userId,
-      albumCover: widget.albumCover,
-      name: widget.name,
-      note: widget.note,
-      totalWorth: widget.totalWorth,
-      favored: widget.favored,
-      date: widget.date,
-      asc: widget.asc,
-      sortMode: widget.sortMode,
-      onlyFavored: widget.onlyFavored,
-    );
-    Nest newNest = await Navigator.push(
+class _NestItemState extends State<NestItem> {
+  void openNestItemDetailScreen() async {
+    NestItem oldNestItem = NestItem(
+        nestId: widget.nestId,
+        id: widget.id,
+        photo: widget.photo,
+        name: widget.name,
+        note: widget.note,
+        worth: widget.worth,
+        favored: widget.favored,
+        date: widget.date);
+    NestItem newNestItem = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => NestItems(nest: oldNest)),
+      MaterialPageRoute(
+          builder: (context) => NestItemDetail(nestItem: oldNestItem)),
     );
-    if (newNest != null) {
-      await DatabaseHelper.instance.update(newNest);
+    if (newNestItem != null) {
+      await DatabaseHelper.instance.updateItem(newNestItem);
     }
   }
 
@@ -110,13 +83,15 @@ class _NestState extends State<Nest> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       clipBehavior: Clip.antiAlias,
       child: Image.file(
-        widget.albumCover,
+        widget.photo,
         fit: BoxFit.cover,
       ),
     );
 
     return GestureDetector(
-      onTap: () => openNestItemsScreen(),
+      onTap: () {
+        openNestItemDetailScreen();
+      },
       child: GridTile(
         footer: Material(
           color: Colors.transparent,
@@ -139,18 +114,14 @@ class _NestState extends State<Nest> {
             subtitle: FittedBox(
               fit: BoxFit.scaleDown,
               alignment: AlignmentDirectional.centerStart,
-              child: FutureBuilder<Text>(
-                future: getText(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) return Text("0 Gegenstände");
-                  return snapshot.data;
-                },
+              child: Text(
+                widget.note != null ? widget.note : " ",
               ),
             ),
             trailing: FittedBox(
               alignment: AlignmentDirectional.centerStart,
               child: Text(
-                "${widget.totalWorth}€",
+                "${widget.worth}€",
                 style: TextStyle(
                   color: Colors.amber,
                 ),
@@ -187,28 +158,16 @@ class _NestState extends State<Nest> {
     setState(() {
       widget.favored ^= true;
     });
-    Nest nest = Nest(
+    NestItem nestItem = NestItem(
+      nestId: widget.nestId,
       id: widget.id,
-      userId: widget.userId,
-      albumCover: widget.albumCover,
+      photo: widget.photo,
       name: widget.name,
       note: widget.note,
-      totalWorth: widget.totalWorth,
+      worth: widget.worth,
       favored: widget.favored,
       date: widget.date,
-      sortMode: widget.sortMode,
-      asc: widget.asc,
-      onlyFavored: widget.onlyFavored,
     );
-    await DatabaseHelper.instance.update(nest);
-  }
-
-  Future<Text> getText() async {
-    int count = await DatabaseHelper.instance.getNestItemCount(widget.id);
-    Text text;
-    count == 1
-        ? text = Text("$count Gegenstand")
-        : text = Text("$count Gegenstände");
-    return text;
+    await DatabaseHelper.instance.updateItem(nestItem);
   }
 }

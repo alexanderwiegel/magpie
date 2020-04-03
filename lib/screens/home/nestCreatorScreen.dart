@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:magpie_app/models/nest.dart';
+import 'package:magpie_app/services/database_helper.dart';
+import 'package:magpie_app/widgets/magpieForm.dart';
+import 'package:magpie_app/widgets/magpiePhotoAlert.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../database_helper.dart';
-import '../sortMode.dart';
-import '../widgets/magpieForm.dart';
-import '../widgets/magpiePhotoAlert.dart';
-import '../widgets/nest.dart';
+import '../../sortMode.dart';
 
 class NestCreator extends StatefulWidget {
   final String userId;

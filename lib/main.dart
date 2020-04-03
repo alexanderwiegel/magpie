@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:magpie_app/authenticate.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/homeScreen.dart';
+import 'file:///A:/Alex/Downloads/magpie/lib/screens/authenticate/authenticate.dart';
+
+import 'models/user.dart';
+import 'screens/home/homeScreen.dart';
+import 'screens/wrapper.dart';
 import 'services/auth.dart';
-import 'user.dart';
-import 'wrapper.dart';
 
 void main() {
   //DatabaseHelper.instance.clear();

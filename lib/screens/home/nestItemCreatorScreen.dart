@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../database_helper.dart';
-import '../widgets/magpieForm.dart';
-import '../widgets/magpiePhotoAlert.dart';
-import '../widgets/nest.dart';
-import '../widgets/nestItem.dart';
+import '../../models/nest.dart';
+import '../../models/nestItem.dart';
+import '../../services/database_helper.dart';
+import '../../widgets/magpieForm.dart';
+import '../../widgets/magpiePhotoAlert.dart';
 
 class NestItemCreator extends StatefulWidget {
   NestItemCreator({@required this.nest});
