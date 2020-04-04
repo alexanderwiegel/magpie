@@ -6,17 +6,14 @@ import 'database_helper.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // create user based on firebase user
   User _userFromFirebaseUser(FirebaseUser user) {
     return user != null ? User(uid: user.uid) : null;
   }
 
-  // auth change user stream
   Stream<User> get user {
     return _auth.onAuthStateChanged.map(_userFromFirebaseUser);
   }
 
-  // sign in anonymously
   Future signInAnon() async {
     try {
       AuthResult result = await _auth.signInAnonymously();
@@ -28,7 +25,15 @@ class AuthService {
     }
   }
 
-  // sign in with email and password
+  Future resetPassword(String email) async {
+    try {
+      return await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
       AuthResult result = await _auth.signInWithEmailAndPassword(
@@ -41,7 +46,6 @@ class AuthService {
     }
   }
 
-  // register with email and password
   Future registerWithEmailAndPassword(String email, String password) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
@@ -55,7 +59,6 @@ class AuthService {
     }
   }
 
-  // sign out
   Future signOut() async {
     try {
       return await _auth.signOut();

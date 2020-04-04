@@ -22,10 +22,12 @@ class _LoginPageState extends State<LoginPage>
 
   List<Text> signUpErrors = [];
   List<Text> signInErrors = [];
+  List<Text> resetErrors = [];
   Text nameError;
   Text emailError;
   Text passwordError;
   Text repeatPasswordError;
+  Text resetPasswordError;
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
   final FocusNode myFocusNodePasswordLogin = FocusNode();
@@ -156,6 +158,8 @@ class _LoginPageState extends State<LoginPage>
     passwordError =
         errorMessage("Passwörter müssen mindestens sechs Zeichen beinhalten");
     repeatPasswordError = errorMessage("Die Passwörter müssen identisch sein");
+    resetPasswordError = errorMessage(
+        "Bitte gib eine gültige Emailadresse an, damit dein Passwort zurückgesetzt werden kann");
   }
 
   void showInSnackBar(String value) {
@@ -264,13 +268,38 @@ class _LoginPageState extends State<LoginPage>
                     "Email oder Passwort ungültig")
               ],
             ),
-            showErrors(signInErrors),
-            Padding(
-              padding: EdgeInsets.only(top: 10.0),
+            showErrors(signInErrors, 10),
+            FlatButton(
+                onPressed: () {
+                  validate(loginEmailController.text.isEmpty, resetErrors,
+                      resetPasswordError);
+                },
+                child: Text(
+                  "Passwort vergessen?",
+                  style: style().copyWith(
+                    decoration: TextDecoration.underline,
+                    color: Colors.white,
+                  ),
+                )),
+            showErrors(resetErrors, 0),
+            Visibility(
+              visible: loginEmailController.text.isNotEmpty &&
+                      resetErrors.length == 0
+                  ? true
+                  : false,
               child: FlatButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    setState(() => loading = true);
+                    dynamic result =
+                        await _auth.resetPassword(loginEmailController.text);
+                    if (result == null) {
+                      setState(() => loading = false);
+                      showInSnackBar(
+                          "Es wurde ein Link zum Zurücksetzen deines Passworts an deine Emailadresse gesendet");
+                    }
+                  },
                   child: Text(
-                    "Passwort vergessen?",
+                    "Passwort zurücksetzen",
                     style: style().copyWith(
                       decoration: TextDecoration.underline,
                       color: Colors.white,
@@ -426,9 +455,7 @@ class _LoginPageState extends State<LoginPage>
                   ? await _auth.signInWithEmailAndPassword(email, password)
                   : await _auth.registerWithEmailAndPassword(email, password);
               if (result == null) {
-                setState(() {
-                  loading = false;
-                });
+                setState(() => loading = false);
                 showInSnackBar(error);
               }
             }
@@ -453,11 +480,11 @@ class _LoginPageState extends State<LoginPage>
     );
   }
 
-  Widget showErrors(List<Text> errors) {
+  Widget showErrors(List<Text> errors, double padding) {
     return Visibility(
         visible: errors.length == 0 ? false : true,
         child: Padding(
-          padding: EdgeInsets.only(top: 10.0),
+          padding: EdgeInsets.only(top: padding),
           child: Column(
             children: errors,
           ),
@@ -577,7 +604,7 @@ class _LoginPageState extends State<LoginPage>
                     "Bitte fülle alle Felder korrekt aus")
               ],
             ),
-            showErrors(signUpErrors),
+            showErrors(signUpErrors, 10),
           ],
         ),
       ),
