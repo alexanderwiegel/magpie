@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:magpie_app/widgets/home/magpieButton.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../models/nest.dart';
 import '../../models/nestItem.dart';
 import '../../services/database_helper.dart';
-import '../../widgets/magpieButton.dart';
-import '../../widgets/magpieDeleteDialogue.dart';
-import '../../widgets/magpieForm.dart';
+import '../../widgets/home/magpieDeleteDialogue.dart';
+import '../../widgets/home/magpieForm.dart';
 
 class NestItemDetail extends StatefulWidget {
   NestItemDetail({@required this.nestItem});

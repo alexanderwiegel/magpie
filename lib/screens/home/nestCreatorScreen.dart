@@ -3,9 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:magpie_app/models/nest.dart';
 import 'package:magpie_app/services/database_helper.dart';
-import 'package:magpie_app/widgets/magpieForm.dart';
-import 'package:magpie_app/widgets/magpiePhotoAlert.dart';
+import 'package:magpie_app/widgets/home/magpiePhotoAlert.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import 'file:///A:/Alex/Downloads/magpie/lib/widgets/home/magpieForm.dart';
 
 import '../../sortMode.dart';
 

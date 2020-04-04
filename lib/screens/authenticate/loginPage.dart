@@ -68,15 +68,8 @@ class _LoginPageState extends State<LoginPage>
                 ? MediaQuery.of(context).size.height
                 : 775.0,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [
-                    Theme.Colors.loginGradientStart,
-                    Theme.Colors.loginGradientEnd
-                  ],
-                  begin: const FractionalOffset(0.0, 0.0),
-                  end: const FractionalOffset(1.0, 1.0),
-                  stops: [0.0, 1.0],
-                  tileMode: TileMode.clamp),
+              gradient: linearGradient(Theme.Colors.loginGradientEnd,
+                  Theme.Colors.loginGradientStart),
             ),
             child: loading
                 ? Container(
@@ -172,11 +165,7 @@ class _LoginPageState extends State<LoginPage>
       content: Text(
         value,
         textAlign: TextAlign.center,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16.0,
-          //fontFamily: "WorkSansSemiBold"
-        ),
+        style: style().copyWith(color: Colors.white),
       ),
       backgroundColor: Colors.teal,
       duration: Duration(seconds: 3),
@@ -196,37 +185,8 @@ class _LoginPageState extends State<LoginPage>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            Expanded(
-              child: FlatButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onPressed: _onSignInButtonPress,
-                child: Text(
-                  "Einloggen",
-                  style: TextStyle(
-                    color: left,
-                    fontSize: 16.0,
-                    //fontFamily: "WorkSansSemiBold"
-                  ),
-                ),
-              ),
-            ),
-            //Container(height: 33.0, width: 1.0, color: Colors.white),
-            Expanded(
-              child: FlatButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onPressed: _onSignUpButtonPress,
-                child: Text(
-                  "Registrieren",
-                  style: TextStyle(
-                    color: right,
-                    fontSize: 16.0,
-                    //fontFamily: "WorkSansSemiBold"
-                  ),
-                ),
-              ),
-            ),
+            headerButton("Einloggen", _onSignInButtonPress, left),
+            headerButton("Registrieren", _onSignUpButtonPress, right),
           ],
         ),
       ),
@@ -256,71 +216,37 @@ class _LoginPageState extends State<LoginPage>
                     child: Column(
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                          padding: formFieldPadding(),
                           child: TextFormField(
                             validator: (val) =>
                                 validate(val.isEmpty, signInErrors, emailError),
                             focusNode: myFocusNodeEmailLogin,
                             controller: loginEmailController,
                             keyboardType: TextInputType.emailAddress,
-                            style: TextStyle(
-                                //fontFamily: "WorkSansSemiBold",
-                                fontSize: 16.0,
-                                color: Colors.black),
+                            style: style().copyWith(color: Colors.black),
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              icon: Icon(
-                                Icons.mail,
-                                color: Colors.black,
-                                size: 22.0,
-                              ),
+                              icon: icon(Icons.mail),
                               hintText: "Emailadresse",
-                              hintStyle: TextStyle(
-                                  //fontFamily: "WorkSansSemiBold",
-                                  fontSize: 17.0),
+                              hintStyle: style(),
                             ),
                           ),
                         ),
-                        Container(
-                          width: 250.0,
-                          height: 1.0,
-                          color: Colors.grey[400],
-                        ),
+                        line(),
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                          padding: formFieldPadding(),
                           child: TextFormField(
                             validator: (val) => validate(
                                 val.length < 6, signInErrors, passwordError),
                             focusNode: myFocusNodePasswordLogin,
                             controller: loginPasswordController,
                             obscureText: _obscureTextLogin,
-                            style: TextStyle(
-                                //fontFamily: "WorkSansSemiBold",
-                                fontSize: 16.0,
-                                color: Colors.black),
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              icon: Icon(
-                                FontAwesomeIcons.lock,
-                                size: 22.0,
-                                color: Colors.black,
-                              ),
+                              icon: icon(FontAwesomeIcons.lock),
                               hintText: "Passwort",
-                              hintStyle: TextStyle(
-                                  //fontFamily: "WorkSansSemiBold",
-                                  fontSize: 17.0),
-                              suffixIcon: GestureDetector(
-                                onTap: _toggleLogin,
-                                child: Icon(
-                                  _obscureTextLogin
-                                      ? FontAwesomeIcons.eye
-                                      : FontAwesomeIcons.eyeSlash,
-                                  size: 15.0,
-                                  color: Colors.black,
-                                ),
-                              ),
+                              suffixIcon: toggleEyeIcon(
+                                  _toggleLogin, _obscureTextLogin),
                             ),
                           ),
                         ),
@@ -328,86 +254,26 @@ class _LoginPageState extends State<LoginPage>
                     ),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 175.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Theme.Colors.loginGradientStart,
-                        offset: Offset(1.0, 6.0),
-                        blurRadius: 20.0,
-                      ),
-                      BoxShadow(
-                        color: Theme.Colors.loginGradientEnd,
-                        offset: Offset(1.0, 6.0),
-                        blurRadius: 20.0,
-                      ),
-                    ],
-                    gradient: LinearGradient(
-                        colors: [
-                          Theme.Colors.loginGradientEnd,
-                          Theme.Colors.loginGradientStart
-                        ],
-                        begin: const FractionalOffset(0.2, 0.2),
-                        end: const FractionalOffset(1.0, 1.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
-                  child: MaterialButton(
-                      highlightColor: Colors.transparent,
-                      splashColor: Theme.Colors.loginGradientEnd,
-                      //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 42.0),
-                        child: Text(
-                          "LOGIN",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25.0,
-                            //fontFamily: "WorkSansBold"
-                          ),
-                        ),
-                      ),
-                      onPressed: () async {
-                        if (_signInKey.currentState.validate() &&
-                            signInErrors.length == 0) {
-                          setState(() => loading = true);
-                          dynamic result =
-                              await _auth.signInWithEmailAndPassword(
-                                  loginEmailController.text,
-                                  loginPasswordController.text);
-                          if (result == null) {
-                            setState(() {
-                              loading = false;
-                            });
-                            showInSnackBar("Email oder Passwort ungültig");
-                          }
-                        }
-                      }),
-                ),
+                footerButton(
+                    175,
+                    "LOGIN",
+                    _signInKey,
+                    signInErrors,
+                    loginEmailController.text,
+                    loginPasswordController.text,
+                    "Email oder Passwort ungültig")
               ],
             ),
-            Visibility(
-                visible: signInErrors.length == 0 ? false : true,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Column(
-                    children: signInErrors,
-                  ),
-                )),
+            showErrors(signInErrors),
             Padding(
               padding: EdgeInsets.only(top: 10.0),
               child: FlatButton(
                   onPressed: () {},
                   child: Text(
                     "Passwort vergessen?",
-                    style: TextStyle(
+                    style: style().copyWith(
                       decoration: TextDecoration.underline,
                       color: Colors.white,
-                      fontSize: 16.0,
-                      //fontFamily: "WorkSansMedium"
                     ),
                   )),
             ),
@@ -416,87 +282,23 @@ class _LoginPageState extends State<LoginPage>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          colors: [
-                            Colors.white10,
-                            Colors.white,
-                          ],
-                          begin: const FractionalOffset(0.0, 0.0),
-                          end: const FractionalOffset(1.0, 1.0),
-                          stops: [0.0, 1.0],
-                          tileMode: TileMode.clamp),
-                    ),
-                    width: 100.0,
-                    height: 1.0,
-                  ),
+                  fadingLine(Colors.white10, Colors.white),
                   Padding(
-                    padding: EdgeInsets.only(left: 15.0, right: 15.0),
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
                     child: Text(
                       "oder",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                        //fontFamily: "WorkSansMedium"
-                      ),
+                      style: style().copyWith(color: Colors.white),
                     ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          colors: [
-                            Colors.white,
-                            Colors.white10,
-                          ],
-                          begin: const FractionalOffset(0.0, 0.0),
-                          end: const FractionalOffset(1.0, 1.0),
-                          stops: [0.0, 1.0],
-                          tileMode: TileMode.clamp),
-                    ),
-                    width: 100.0,
-                    height: 1.0,
-                  ),
+                  fadingLine(Colors.white, Colors.white10),
                 ],
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(top: 10.0, right: 40.0),
-                  child: GestureDetector(
-                    onTap: () => showInSnackBar("Facebook button pressed"),
-                    child: Container(
-                      padding: const EdgeInsets.all(15.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                      ),
-                      child: Icon(
-                        FontAwesomeIcons.facebookF,
-                        color: Color(0xFF0084ff),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: GestureDetector(
-                    onTap: () => showInSnackBar("Google button pressed"),
-                    child: Container(
-                      padding: const EdgeInsets.all(15.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                      ),
-                      child: Icon(
-                        FontAwesomeIcons.google,
-                        color: Color(0xFF0084ff),
-                      ),
-                    ),
-                  ),
-                ),
+                socialIcon("Facebook", FontAwesomeIcons.facebookF),
+                socialIcon("Google", FontAwesomeIcons.google),
               ],
             ),
           ],
@@ -505,12 +307,161 @@ class _LoginPageState extends State<LoginPage>
     );
   }
 
+  Widget socialIcon(String socialNetworkName, IconData socialNetworkIcon) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+      child: GestureDetector(
+        onTap: () => showInSnackBar("$socialNetworkName button pressed"),
+        child: Container(
+          padding: const EdgeInsets.all(15.0),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+          ),
+          child: Icon(
+            socialNetworkIcon,
+            color: Color(0xFF0084ff),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget toggleEyeIcon(Function onTap, bool condition) {
+    return GestureDetector(
+      onTap: onTap,
+      child: icon(condition ? FontAwesomeIcons.eye : FontAwesomeIcons.eyeSlash),
+    );
+  }
+
+  Icon icon(IconData iconData) {
+    return Icon(iconData, size: 19, color: Colors.black);
+  }
+
+  EdgeInsets formFieldPadding() {
+    return EdgeInsets.symmetric(vertical: 20, horizontal: 25);
+  }
+
+  TextStyle style() {
+    return TextStyle(fontSize: 16); //fontFamily: "WorkSansSemiBold"
+  }
+
+  Container line() {
+    return Container(
+      width: 250.0,
+      height: 1.0,
+      color: Colors.grey[400],
+    );
+  }
+
+  Container fadingLine(Color leftColor, Color rightColor) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: linearGradient(leftColor, rightColor),
+      ),
+      width: 100.0,
+      height: 1.0,
+    );
+  }
+
+  Widget headerButton(String text, Function onPressed, Color color) {
+    return Expanded(
+      child: FlatButton(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        onPressed: onPressed,
+        child: Text(
+          text,
+          style: TextStyle(
+            color: color,
+            fontSize: 16.0,
+            //fontFamily: "WorkSansSemiBold"
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget footerButton(double margin, String text, GlobalKey<FormState> key,
+      List<Text> errors, String email, String password, String error) {
+    return Container(
+      margin: EdgeInsets.only(top: margin),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Theme.Colors.loginGradientStart,
+            offset: Offset(1.0, 6.0),
+            blurRadius: 20.0,
+          ),
+          BoxShadow(
+            color: Theme.Colors.loginGradientEnd,
+            offset: Offset(1.0, 6.0),
+            blurRadius: 20.0,
+          ),
+        ],
+        gradient: linearGradient(
+            Theme.Colors.loginGradientEnd, Theme.Colors.loginGradientStart),
+      ),
+      child: MaterialButton(
+          highlightColor: Colors.transparent,
+          splashColor: Theme.Colors.loginGradientEnd,
+          //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 42.0),
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 25.0,
+                //fontFamily: "WorkSansBold"
+              ),
+            ),
+          ),
+          onPressed: () async {
+            if (key.currentState.validate() && errors.length == 0) {
+              setState(() => loading = true);
+              dynamic result = text == "LOGIN"
+                  ? await _auth.signInWithEmailAndPassword(email, password)
+                  : await _auth.registerWithEmailAndPassword(email, password);
+              if (result == null) {
+                setState(() {
+                  loading = false;
+                });
+                showInSnackBar(error);
+              }
+            }
+          }),
+    );
+  }
+
+  LinearGradient linearGradient(Color leftColor, Color rightColor) {
+    return LinearGradient(
+        colors: [leftColor, rightColor],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(1.2, 1.2),
+        stops: [0.0, 1.0],
+        tileMode: TileMode.clamp);
+  }
+
   Text errorMessage(String text) {
     return Text(
       text,
       textAlign: TextAlign.center,
       style: TextStyle(color: Colors.amber),
     );
+  }
+
+  Widget showErrors(List<Text> errors) {
+    return Visibility(
+        visible: errors.length == 0 ? false : true,
+        child: Padding(
+          padding: EdgeInsets.only(top: 10.0),
+          child: Column(
+            children: errors,
+          ),
+        ));
   }
 
   Widget _buildSignUp(BuildContext context) {
@@ -536,8 +487,7 @@ class _LoginPageState extends State<LoginPage>
                     child: Column(
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                          padding: formFieldPadding(),
                           child: TextFormField(
                             validator: (val) =>
                                 validate(val.isEmpty, signUpErrors, nameError),
@@ -545,103 +495,56 @@ class _LoginPageState extends State<LoginPage>
                             controller: signUpNameController,
                             keyboardType: TextInputType.text,
                             textCapitalization: TextCapitalization.words,
-                            style: TextStyle(
-                                //fontFamily: "WorkSansSemiBold",
-                                fontSize: 16.0,
-                                color: Colors.black),
+                            style: style().copyWith(color: Colors.black),
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              icon: Icon(
-                                FontAwesomeIcons.user,
-                                color: Colors.black,
-                              ),
+                              icon: icon(FontAwesomeIcons.user),
                               hintText: "Benutzername",
-                              hintStyle: TextStyle(
-                                  //fontFamily: "WorkSansSemiBold",
-                                  fontSize: 16.0),
+                              hintStyle: style(),
                             ),
                           ),
                         ),
-                        Container(
-                          width: 250.0,
-                          height: 1.0,
-                          color: Colors.grey[400],
-                        ),
+                        line(),
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                          padding: formFieldPadding(),
                           child: TextFormField(
                             validator: (val) =>
                                 validate(val.isEmpty, signUpErrors, emailError),
                             focusNode: myFocusNodeEmail,
                             controller: signUpEmailController,
                             keyboardType: TextInputType.emailAddress,
-                            style: TextStyle(
-                                //fontFamily: "WorkSansSemiBold",
-                                fontSize: 16.0,
-                                color: Colors.black),
+                            style: style().copyWith(color: Colors.black),
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              icon: Icon(
-                                FontAwesomeIcons.envelope,
-                                color: Colors.black,
-                              ),
+                              icon: icon(FontAwesomeIcons.envelope),
                               hintText: "Emailadresse",
-                              hintStyle: TextStyle(
-                                  //fontFamily: "WorkSansSemiBold",
-                                  fontSize: 16.0),
+                              hintStyle: style(),
                             ),
                           ),
                         ),
-                        Container(
-                          width: 250.0,
-                          height: 1.0,
-                          color: Colors.grey[400],
-                        ),
+                        line(),
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                          padding: formFieldPadding(),
                           child: TextFormField(
                             validator: (val) => validate(
                                 val.length < 6, signUpErrors, passwordError),
                             focusNode: myFocusNodePassword,
                             controller: signUpPasswordController,
                             obscureText: _obscureTextSignUp,
-                            style: TextStyle(
-                                //fontFamily: "WorkSansSemiBold",
-                                fontSize: 16.0,
-                                color: Colors.black),
+                            style: style().copyWith(color: Colors.black),
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              icon: Icon(
-                                FontAwesomeIcons.lock,
-                                color: Colors.black,
-                              ),
+                              icon: icon(FontAwesomeIcons.lock),
                               hintText: "Passwort",
-                              hintStyle: TextStyle(
-                                  //fontFamily: "WorkSansSemiBold",
-                                  fontSize: 16.0),
-                              suffixIcon: GestureDetector(
-                                onTap: _toggleSignUp,
-                                child: Icon(
-                                  _obscureTextSignUp
-                                      ? FontAwesomeIcons.eye
-                                      : FontAwesomeIcons.eyeSlash,
-                                  size: 15.0,
-                                  color: Colors.black,
-                                ),
-                              ),
+                              hintStyle: style(),
+                              suffixIcon: toggleEyeIcon(
+                                  _toggleSignUp, _obscureTextSignUp),
                             ),
                           ),
                         ),
-                        Container(
-                          width: 250.0,
-                          height: 1.0,
-                          color: Colors.grey[400],
-                        ),
+                        line(),
                         Padding(
-                          padding: EdgeInsets.only(
-                              top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+                          padding: formFieldPadding(),
                           child: TextFormField(
                             validator: (val) => validate(
                                 val != signUpPasswordController.text,
@@ -649,30 +552,14 @@ class _LoginPageState extends State<LoginPage>
                                 repeatPasswordError),
                             controller: signUpConfirmPasswordController,
                             obscureText: _obscureTextSignUpConfirm,
-                            style: TextStyle(
-                                //fontFamily: "WorkSansSemiBold",
-                                fontSize: 16.0,
-                                color: Colors.black),
+                            style: style().copyWith(color: Colors.black),
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              icon: Icon(
-                                FontAwesomeIcons.lock,
-                                color: Colors.black,
-                              ),
+                              icon: icon(FontAwesomeIcons.lock),
                               hintText: "Passwort wiederholen",
-                              hintStyle: TextStyle(
-                                  //fontFamily: "WorkSansSemiBold",
-                                  fontSize: 16.0),
-                              suffixIcon: GestureDetector(
-                                onTap: _toggleSignUpConfirm,
-                                child: Icon(
-                                  _obscureTextSignUpConfirm
-                                      ? FontAwesomeIcons.eye
-                                      : FontAwesomeIcons.eyeSlash,
-                                  size: 15.0,
-                                  color: Colors.black,
-                                ),
-                              ),
+                              hintStyle: style(),
+                              suffixIcon: toggleEyeIcon(_toggleSignUpConfirm,
+                                  _obscureTextSignUpConfirm),
                             ),
                           ),
                         ),
@@ -680,78 +567,17 @@ class _LoginPageState extends State<LoginPage>
                     ),
                   ),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 340.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Theme.Colors.loginGradientStart,
-                        offset: Offset(1.0, 6.0),
-                        blurRadius: 20.0,
-                      ),
-                      BoxShadow(
-                        color: Theme.Colors.loginGradientEnd,
-                        offset: Offset(1.0, 6.0),
-                        blurRadius: 20.0,
-                      ),
-                    ],
-                    gradient: LinearGradient(
-                        colors: [
-                          Theme.Colors.loginGradientEnd,
-                          Theme.Colors.loginGradientStart
-                        ],
-                        begin: const FractionalOffset(0.2, 0.2),
-                        end: const FractionalOffset(1.0, 1.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
-                  child: MaterialButton(
-                      highlightColor: Colors.transparent,
-                      splashColor: Theme.Colors.loginGradientEnd,
-                      //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 42.0),
-                        child: Text(
-                          "REGISTRIEREN",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25.0,
-                            //fontFamily: "WorkSansBold"
-                          ),
-                        ),
-                      ),
-                      onPressed: () async {
-                        if (_signUpKey.currentState.validate() &&
-                            signUpErrors.length == 0) {
-                          setState(() => loading = true);
-                          print(loginEmailController.text);
-                          print(loginPasswordController.text);
-                          dynamic result =
-                              await _auth.registerWithEmailAndPassword(
-                                  signUpEmailController.text,
-                                  signUpPasswordController.text);
-                          if (result == null) {
-                            setState(() {
-                              loading = false;
-                            });
-                            showInSnackBar(
-                                "Bitte fülle alle Felder korrekt aus");
-                          }
-                        }
-                      }),
-                ),
+                footerButton(
+                    340,
+                    "REGISTRIEREN",
+                    _signUpKey,
+                    signUpErrors,
+                    signUpEmailController.text,
+                    signUpPasswordController.text,
+                    "Bitte fülle alle Felder korrekt aus")
               ],
             ),
-            Visibility(
-                visible: signUpErrors.length == 0 ? false : true,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 10.0),
-                  child: Column(
-                    children: signUpErrors,
-                  ),
-                )),
+            showErrors(signUpErrors),
           ],
         ),
       ),
@@ -775,20 +601,14 @@ class _LoginPageState extends State<LoginPage>
   }
 
   void _toggleLogin() {
-    setState(() {
-      _obscureTextLogin = !_obscureTextLogin;
-    });
+    setState(() => _obscureTextLogin = !_obscureTextLogin);
   }
 
   void _toggleSignUp() {
-    setState(() {
-      _obscureTextSignUp = !_obscureTextSignUp;
-    });
+    setState(() => _obscureTextSignUp = !_obscureTextSignUp);
   }
 
   void _toggleSignUpConfirm() {
-    setState(() {
-      _obscureTextSignUpConfirm = !_obscureTextSignUpConfirm;
-    });
+    setState(() => _obscureTextSignUpConfirm = !_obscureTextSignUpConfirm);
   }
 }

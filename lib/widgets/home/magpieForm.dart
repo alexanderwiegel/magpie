@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:magpie_app/widgets/magpieFormField.dart';
-import 'package:magpie_app/widgets/magpieImageSelector.dart';
+
+import 'file:///A:/Alex/Downloads/magpie/lib/widgets/home/magpieImageSelector.dart';
+
+import 'magpieFormField.dart';
 
 // ignore: must_be_immutable
 class MagpieForm extends StatelessWidget {

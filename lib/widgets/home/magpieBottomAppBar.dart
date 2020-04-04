@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../sortMode.dart';
+import '../../sortMode.dart';
 
 class MagpieBottomAppBar extends StatelessWidget {
   final Function switchSortOrder;

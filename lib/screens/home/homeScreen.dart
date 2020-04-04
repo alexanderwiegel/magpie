@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:magpie_app/widgets/home/magpieGridView.dart';
 
 import '../../models/nest.dart';
 import '../../services/database_helper.dart';
 import '../../sortMode.dart';
-import '../../widgets/magpieBottomAppBar.dart';
-import '../../widgets/magpieGridView.dart';
-import '../../widgets/navDrawer.dart';
-import '../../widgets/startMessage.dart';
+import '../../widgets/home/magpieBottomAppBar.dart';
+import '../../widgets/home/navDrawer.dart';
+import '../../widgets/home/startMessage.dart';
 import 'nestCreatorScreen.dart';
 
 // ignore: must_be_immutable

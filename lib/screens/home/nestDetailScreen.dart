@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:magpie_app/widgets/home/magpieButton.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../models/nest.dart';
 import '../../services/database_helper.dart';
-import '../../widgets/magpieButton.dart';
-import '../../widgets/magpieDeleteDialogue.dart';
-import '../../widgets/magpieForm.dart';
+import '../../widgets/home/magpieDeleteDialogue.dart';
+import '../../widgets/home/magpieForm.dart';
 
 // ignore: must_be_immutable
 class NestDetail extends StatefulWidget {

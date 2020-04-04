@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../services/database_helper.dart';
+import '../../services/database_helper.dart';
 
 class MagpieDeleteDialogue {
   void displayDeleteDialogue(BuildContext context, bool isNest, int id) async {

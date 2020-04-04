@@ -1,13 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:magpie_app/widgets/home/magpiePhotoAlert.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../models/nest.dart';
 import '../../models/nestItem.dart';
 import '../../services/database_helper.dart';
-import '../../widgets/magpieForm.dart';
-import '../../widgets/magpiePhotoAlert.dart';
+import '../../widgets/home/magpieForm.dart';
 
 class NestItemCreator extends StatefulWidget {
   NestItemCreator({@required this.nest});
