@@ -340,17 +340,22 @@ class _LoginPageState extends State<LoginPage>
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
       child: GestureDetector(
-        onTap: () => showInSnackBar("$socialNetworkName button pressed"),
+        onTap: () async {
+          setState(() => loading = true);
+          dynamic result = await _auth.signInWithGoogle();
+          if (result == null) {
+            setState(() => loading = false);
+            showInSnackBar(
+                "Etwas ist schiefgelaufen. Versuch es später nochmal.");
+          }
+        },
         child: Container(
           padding: const EdgeInsets.all(15.0),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white,
           ),
-          child: Icon(
-            socialNetworkIcon,
-            color: Color(0xFF0084ff),
-          ),
+          child: Icon(socialNetworkIcon, color: Colors.teal),
         ),
       ),
     );
@@ -435,7 +440,6 @@ class _LoginPageState extends State<LoginPage>
       child: MaterialButton(
           highlightColor: Colors.transparent,
           splashColor: Theme.Colors.loginGradientEnd,
-          //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
           child: Padding(
             padding:
                 const EdgeInsets.symmetric(vertical: 10.0, horizontal: 42.0),
