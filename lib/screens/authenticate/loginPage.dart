@@ -29,6 +29,9 @@ class _LoginPageState extends State<LoginPage>
   Text repeatPasswordError;
   Text resetPasswordError;
 
+  RegExp emailRegEx = RegExp(
+      r"^[^.@-]*(?:(?:[\wäöüÄÖÜ]+\-?)+[^.@-]*\.?[^.@-]*)*[^.@-]*@[^.@-]*\.?(?:(?:[\wäöüÄÖÜ]+\-?)+[^.@-]*\.[^.@-])+[\wäöüÄÖÜ]{0,3}$");
+
   final FocusNode myFocusNodeEmailLogin = FocusNode();
   final FocusNode myFocusNodePasswordLogin = FocusNode();
 
@@ -222,8 +225,10 @@ class _LoginPageState extends State<LoginPage>
                         Padding(
                           padding: formFieldPadding(),
                           child: TextFormField(
-                            validator: (val) =>
-                                validate(val.isEmpty, signInErrors, emailError),
+                            validator: (val) => validate(
+                                !emailRegEx.hasMatch(loginEmailController.text),
+                                signInErrors,
+                                emailError),
                             focusNode: myFocusNodeEmailLogin,
                             controller: loginEmailController,
                             keyboardType: TextInputType.emailAddress,
@@ -548,8 +553,11 @@ class _LoginPageState extends State<LoginPage>
                         Padding(
                           padding: formFieldPadding(),
                           child: TextFormField(
-                            validator: (val) =>
-                                validate(val.isEmpty, signUpErrors, emailError),
+                            validator: (val) => validate(
+                                !emailRegEx
+                                    .hasMatch(signUpEmailController.text),
+                                signUpErrors,
+                                emailError),
                             focusNode: myFocusNodeEmail,
                             controller: signUpEmailController,
                             keyboardType: TextInputType.emailAddress,
