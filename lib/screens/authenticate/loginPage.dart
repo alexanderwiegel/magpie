@@ -68,7 +68,7 @@ class _LoginPageState extends State<LoginPage>
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height >= 775.0
                 ? MediaQuery.of(context).size.height
-                : 775.0,
+                : loading ? MediaQuery.of(context).size.height : 775.0,
             decoration: BoxDecoration(
               gradient: linearGradient(Theme.Colors.loginGradientEnd,
                   Theme.Colors.loginGradientStart),
@@ -342,11 +342,20 @@ class _LoginPageState extends State<LoginPage>
       child: GestureDetector(
         onTap: () async {
           setState(() => loading = true);
-          dynamic result = await _auth.signInWithGoogle();
-          if (result == null) {
+          dynamic result;
+          switch (socialNetworkName) {
+            case "Google":
+              result = await _auth.signInWithGoogle();
+              break;
+            case "Facebook":
+              result = await _auth.signInWithFacebook();
+              break;
+          }
+          if (result == null || result == 0) {
             setState(() => loading = false);
-            showInSnackBar(
-                "Etwas ist schiefgelaufen. Versuch es später nochmal.");
+            if (result == null)
+              showInSnackBar(
+                  "Etwas ist schiefgelaufen. Versuch es später nochmal.");
           }
         },
         child: Container(

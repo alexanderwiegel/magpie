@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../models/user.dart';
@@ -6,6 +7,7 @@ import 'database_helper.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FacebookLogin facebookLogin = FacebookLogin();
   final GoogleSignIn googleSignIn = GoogleSignIn(
       //clientId:
       //    "426743660967-bfff2c6p98l0nnl43jv3qhjcpj62ejjm.apps.googleusercontent.com"
@@ -34,9 +36,9 @@ class AuthService {
     try {
       final GoogleSignInAccount googleSignInAccount =
           await googleSignIn.signIn();
+      if (googleSignInAccount == null) return 0;
       final GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount.authentication;
-
       final AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
@@ -44,6 +46,33 @@ class AuthService {
       final AuthResult result = await _auth.signInWithCredential(credential);
       final FirebaseUser user = result.user;
       return _userFromFirebaseUser(user);
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future signInWithFacebook() async {
+    try {
+      final FacebookLoginResult facebookLoginResult =
+          await facebookLogin.logIn(['email']);
+      switch (facebookLoginResult.status) {
+        case FacebookLoginStatus.loggedIn:
+          final FacebookAccessToken token = facebookLoginResult.accessToken;
+          final AuthCredential credential =
+              FacebookAuthProvider.getCredential(accessToken: token.token);
+          final AuthResult result =
+              await _auth.signInWithCredential(credential);
+          final FirebaseUser user = result.user;
+          return _userFromFirebaseUser(user);
+          break;
+        case FacebookLoginStatus.cancelledByUser:
+          return 0;
+          break;
+        case FacebookLoginStatus.error:
+          return null;
+          break;
+      }
     } catch (e) {
       print(e.toString());
       return null;
@@ -87,9 +116,12 @@ class AuthService {
 
   Future signOut() async {
     try {
-      return googleSignIn.currentUser == null
-          ? await _auth.signOut()
-          : await googleSignIn.signOut();
+      //if (googleSignIn.currentUser != null)
+      //  return await googleSignIn.signOut();
+      //if (facebook)
+      //  return await facebookLogin.logOut();
+      //else
+      return await _auth.signOut();
     } catch (e) {
       print(e.toString());
       return null;
