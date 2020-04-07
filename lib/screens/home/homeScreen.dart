@@ -38,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   initState() {
+    _userId = ModalRoute.of(context).settings.arguments;
     super.initState();
     _buildNests();
   }
@@ -65,9 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _userId = ModalRoute.of(context).settings.arguments;
+    print(_getUserId());
     return Scaffold(
-      drawer: NavDrawer(userId: widget.userId),
+      drawer: NavDrawer(userId: _getUserId()),
       appBar: AppBar(
         title: Text(
           "Übersicht",
@@ -150,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future _openNestCreator() async {
     await Navigator.of(context).push(MaterialPageRoute<Nest>(
         builder: (BuildContext context) {
-          return NestCreator(userId: widget.userId);
+          return NestCreator(userId: _getUserId());
         },
         fullscreenDialog: true));
   }
