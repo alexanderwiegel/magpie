@@ -112,8 +112,6 @@ class _NestState extends State<Nest> {
       child: Image.file(
         widget.albumCover,
         fit: BoxFit.cover,
-        //width: ,
-        //height: ,
       ),
     );
 
