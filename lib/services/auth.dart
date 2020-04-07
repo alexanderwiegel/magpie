@@ -45,6 +45,7 @@ class AuthService {
       );
       final AuthResult result = await _auth.signInWithCredential(credential);
       final FirebaseUser user = result.user;
+      DatabaseHelper.instance.insertHome(user.uid);
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());
@@ -64,6 +65,7 @@ class AuthService {
           final AuthResult result =
               await _auth.signInWithCredential(credential);
           final FirebaseUser user = result.user;
+          DatabaseHelper.instance.insertHome(user.uid);
           return _userFromFirebaseUser(user);
           break;
         case FacebookLoginStatus.cancelledByUser:

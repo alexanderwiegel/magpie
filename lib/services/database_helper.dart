@@ -97,6 +97,7 @@ class DatabaseHelper {
     var dbClient = await database;
     var homeStatus = await dbClient
         .rawQuery("SELECT * FROM $home WHERE $homeUserId = '$userId'");
+    print(homeStatus);
     bool asc = homeStatus.first.values.elementAt(0) == 1 ? true : false;
     bool onlyFav = homeStatus.first.values.elementAt(1) == 1 ? true : false;
     String sortModeAsString = homeStatus.first.values.elementAt(2);
@@ -133,6 +134,7 @@ class DatabaseHelper {
       sql += " DESC";
     }
     var result = await dbClient.rawQuery(sql);
+    print(result);
     if (result.length == 0) return null;
     List<Nest> list = result.map((item) {
       return Nest.fromMap(item);
