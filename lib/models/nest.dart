@@ -106,7 +106,6 @@ class _NestState extends State<Nest> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.albumCover);
     final Widget image = Material(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       clipBehavior: Clip.antiAlias,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:magpie_app/screens/authenticate/loginPage.dart';
+import 'package:magpie_app/screens/home/unsplashPage.dart';
 import 'package:provider/provider.dart';
 
 import 'models/user.dart';
@@ -26,11 +27,12 @@ class Magpie extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.teal,
         ),
-        //initialRoute: "/login",
+        initialRoute: "/unsplash",
         routes: {
           "/": (context) => Wrapper(),
           "/home": (context) => HomeScreen(),
           "/login": (context) => LoginPage(),
+          "/unsplash": (context) => UnsplashPage(),
         },
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,

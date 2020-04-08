@@ -103,19 +103,13 @@ class MagpieImageSelector extends StatelessWidget {
 
   void _imageSelectorCamera() async {
     Navigator.pop(context);
-    var image = await ImagePicker.pickImage(
-      source: ImageSource.camera,
-      //maxHeight: ,
-      //maxWidth: ,
-    );
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
     changeImage(image);
   }
 
   void _imageSelectorGallery() async {
     Navigator.pop(context);
-    var image = await ImagePicker.pickImage(
-      source: ImageSource.gallery,
-    );
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     changeImage(image);
   }
 }

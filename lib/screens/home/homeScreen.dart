@@ -66,7 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     _userId = ModalRoute.of(context).settings.arguments;
-    print(_getUserId());
     return Scaffold(
       drawer: NavDrawer(userId: _getUserId()),
       appBar: AppBar(

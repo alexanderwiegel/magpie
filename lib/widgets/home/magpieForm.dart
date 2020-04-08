@@ -40,7 +40,7 @@ class MagpieForm extends StatelessWidget {
 
   String currentCreation;
   String worthText;
-  final DateFormat formatter = DateFormat("dd.MM.yyyy");
+  static final DateFormat formatter = DateFormat("dd.MM.yyyy");
 
   @override
   Widget build(BuildContext context) {
