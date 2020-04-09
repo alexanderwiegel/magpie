@@ -10,7 +10,7 @@ import '../sortMode.dart';
 class Nest extends StatefulWidget {
   int id;
   String userId;
-  File albumCover;
+  dynamic albumCover;
   String name;
   String note;
   int totalWorth;
@@ -32,28 +32,33 @@ class Nest extends StatefulWidget {
       this.sortMode,
       this.asc,
       this.onlyFavored});
-  /*
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'albumCover': albumCover,
+      'userId': userId,
+      'albumCover': albumCover.toString(),
       'name': name,
       'note': note,
-      'totalWorth': totalWorth,
-      'favored': favored,
-      'date': date,
-      'sortMode': sortMode,
-      'asc': asc
+      'totalWorth': totalWorth ?? 0,
+      'favored': favored == null ? 0 : favored ? -1 : 0,
+      'date': date.millisecondsSinceEpoch,
+      'sortMode': sortMode.toString(),
+      'asc': asc ? 1 : 0,
+      'onlyFavored': onlyFavored ? 1 : 0
     };
   }
-   */
 
   Nest.fromMap(dynamic obj) {
     this.id = obj["id"];
     this.userId = obj["userId"];
     String path = obj["albumCover"].toString();
-    path = path.substring(path.indexOf("s"), path.length - 2);
-    this.albumCover = File(path);
+    if (!path.startsWith("http")) {
+      path = path.substring(path.indexOf("s"), path.length - 1);
+      this.albumCover = File(path);
+    } else {
+      this.albumCover = path;
+    }
     this.name = obj["name"];
     this.note = obj["note"];
     this.totalWorth = obj["totalWorth"];
@@ -109,10 +114,9 @@ class _NestState extends State<Nest> {
     final Widget image = Material(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       clipBehavior: Clip.antiAlias,
-      child: Image.file(
-        widget.albumCover,
-        fit: BoxFit.cover,
-      ),
+      child: widget.albumCover.toString().startsWith("http")
+          ? Image.network(widget.albumCover, fit: BoxFit.cover)
+          : Image.file(widget.albumCover, fit: BoxFit.cover)
     );
 
     return GestureDetector(

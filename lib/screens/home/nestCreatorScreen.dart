@@ -1,12 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:magpie_app/models/nest.dart';
 import 'package:magpie_app/services/database_helper.dart';
+import 'package:magpie_app/widgets/home/magpieForm.dart';
 import 'package:magpie_app/widgets/home/magpiePhotoAlert.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import 'file:///A:/Alex/Downloads/magpie/lib/widgets/home/magpieForm.dart';
 
 import '../../sortMode.dart';
 
@@ -24,7 +21,7 @@ class _NestCreatorState extends State<NestCreator> {
   final _formKey = GlobalKey<FormState>();
 
   int _id;
-  File _albumCover;
+  dynamic _albumCover;
   String _name;
   String _note;
   DateTime _date = DateTime.now();
@@ -116,7 +113,7 @@ class _NestCreatorState extends State<NestCreator> {
       body: MagpieForm(
         changeImage: _changeImage,
         date: _date,
-        file: _albumCover,
+        photo: _albumCover,
         formKey: _formKey,
         isNest: true,
         nameEditingController: _nameEditingController,
@@ -147,7 +144,7 @@ class _NestCreatorState extends State<NestCreator> {
     }
   }
 
-  void _changeImage(var image) {
+  void _changeImage(dynamic image) {
     if (_albumCover != image) {
       setState(() {
         _albumCover = image;

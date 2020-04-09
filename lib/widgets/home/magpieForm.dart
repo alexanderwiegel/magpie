@@ -1,18 +1,15 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
-import 'file:///A:/Alex/Downloads/magpie/lib/widgets/home/magpieImageSelector.dart';
-
 import 'magpieFormField.dart';
+import 'magpieImageSelector.dart';
 
 // ignore: must_be_immutable
 class MagpieForm extends StatelessWidget {
   final Function changeImage;
   final DateTime date;
-  final File file;
+  final dynamic photo;
   final GlobalKey formKey;
   final TextEditingController nameEditingController;
   final bool isNest;
@@ -26,7 +23,7 @@ class MagpieForm extends StatelessWidget {
   MagpieForm({
     @required this.changeImage,
     @required this.date,
-    @required this.file,
+    @required this.photo,
     @required this.formKey,
     @required this.nameEditingController,
     @required this.isNest,
@@ -54,7 +51,7 @@ class MagpieForm extends StatelessWidget {
           MagpieImageSelector(
             changeImage: changeImage,
             context: context,
-            file: file,
+            photo: photo,
             updateStatus: updateStatus,
           ),
           MagpieFormField(

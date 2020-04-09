@@ -7,6 +7,15 @@ import '../services/database_helper.dart';
 
 // ignore: must_be_immutable
 class NestItem extends StatefulWidget {
+  int nestId;
+  int id;
+  dynamic photo;
+  String name;
+  String note;
+  int worth;
+  bool favored;
+  DateTime date;
+  
   NestItem(
       {@required this.nestId,
       this.id,
@@ -17,25 +26,16 @@ class NestItem extends StatefulWidget {
       this.favored,
       this.date});
 
-  int nestId;
-  int id;
-  File photo;
-  String name;
-  String note;
-  int worth;
-  bool favored;
-  DateTime date;
-
   Map<String, dynamic> toMap() {
     return {
       'nestId': nestId,
       'id': id,
-      'albumCover': photo,
+      'photo': photo.toString(),
       'name': name,
       'note': note,
       'worth': worth,
-      'favored': favored,
-      'date': date
+      'favored': favored == null ? 0 : favored ? -1 : 0,
+      'date': date.millisecondsSinceEpoch,
     };
   }
 
@@ -43,8 +43,12 @@ class NestItem extends StatefulWidget {
     this.nestId = obj["nestId"];
     this.id = obj["id"];
     String path = obj["photo"].toString();
-    path = path.substring(path.indexOf("s"), path.length - 2);
-    this.photo = File(path);
+    if (!path.startsWith("http")) {
+      path = path.substring(path.indexOf("s"), path.length - 1);
+      this.photo = File(path);
+    } else {
+      this.photo = path;
+    }
     this.name = obj["name"];
     this.note = obj["note"];
     this.worth = obj["worth"];
@@ -82,10 +86,9 @@ class _NestItemState extends State<NestItem> {
     final Widget image = Material(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       clipBehavior: Clip.antiAlias,
-      child: Image.file(
-        widget.photo,
-        fit: BoxFit.cover,
-      ),
+      child: widget.photo.toString().startsWith("http")
+          ? Image.network(widget.photo, fit: BoxFit.cover)
+          : Image.file(widget.photo, fit: BoxFit.cover)
     );
 
     return GestureDetector(

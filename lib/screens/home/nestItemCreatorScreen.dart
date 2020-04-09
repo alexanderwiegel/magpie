@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:magpie_app/widgets/home/magpiePhotoAlert.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -24,7 +22,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
   final _formKey = GlobalKey<FormState>();
 
   int _nestId;
-  File _photo;
+  dynamic _photo;
   String _name;
   String _note;
   int _worth;
@@ -109,7 +107,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
       body: MagpieForm(
         changeImage: _changeImage,
         date: _date,
-        file: _photo,
+        photo: _photo,
         formKey: _formKey,
         isNest: false,
         nameEditingController: _nameEditingController,

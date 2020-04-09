@@ -27,7 +27,6 @@ class Magpie extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.teal,
         ),
-        initialRoute: "/unsplash",
         routes: {
           "/": (context) => Wrapper(),
           "/home": (context) => HomeScreen(),

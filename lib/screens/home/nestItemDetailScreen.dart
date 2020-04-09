@@ -84,7 +84,7 @@ class _NestItemDetailState extends State<NestItemDetail> {
       body: MagpieForm(
         changeImage: _changeImage,
         date: widget.nestItem.date,
-        file: widget.nestItem.photo,
+        photo: widget.nestItem.photo,
         formKey: _formKey,
         isNest: false,
         nameEditingController: _nameEditingController,

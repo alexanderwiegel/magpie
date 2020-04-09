@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,13 +6,13 @@ import 'package:permission_handler/permission_handler.dart';
 class MagpieImageSelector extends StatelessWidget {
   final Function changeImage;
   final BuildContext context;
-  final File file;
+  final dynamic photo;
   final Function updateStatus;
 
   MagpieImageSelector({
     @required this.changeImage,
     @required this.context,
-    @required this.file,
+    @required this.photo,
     @required this.updateStatus,
   });
 
@@ -30,9 +28,9 @@ class MagpieImageSelector extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             clipBehavior: Clip.antiAlias,
-            child: file != null
-                ? Image.file(
-                    file,
+            child: photo != null
+                ? photo.toString().startsWith("http") ? Image.network(photo) : Image.file(
+              photo,
                     fit: BoxFit.cover,
                     width: 400.0,
                     height: 200.0,
@@ -55,36 +53,33 @@ class MagpieImageSelector extends StatelessWidget {
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
-                  GestureDetector(
-                      onTap: _askPermission,
-                      child: Row(
-                        children: [
-                          Icon(Icons.photo_camera, color: Colors.amber),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                          ),
-                          Text('Neues Bild aufnehmen'),
-                        ],
-                      )),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                  ),
-                  GestureDetector(
-                      onTap: _imageSelectorGallery,
-                      child: Row(
-                        children: [
-                          Icon(Icons.image, color: Colors.amber),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                          ),
-                          Text('Bild aus Galerie wählen'),
-                        ],
-                      )),
+                  option(_askPermission, Icons.photo_camera, 'Neues Bild aufnehmen'),
+                  Container(height: 1, width: 10, color: Colors.grey),
+                  option(_imageSelectorGallery, Icons.image, 'Bild aus Galerie wählen'),
+                  Container(height: 1, width: 10, color: Colors.grey),
+                  option(_imageSelectorUnsplash, Icons.web, 'Bild von Unsplash wählen'),
                 ],
               ),
             ),
           );
         });
+  }
+
+  Widget option(Function onTap, IconData icon, String text) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            children: [
+              Icon(icon, color: Colors.amber),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+              ),
+              Text(text)
+            ]
+          ),
+        ));
   }
 
   void _askPermission() {
@@ -110,6 +105,12 @@ class MagpieImageSelector extends StatelessWidget {
   void _imageSelectorGallery() async {
     Navigator.pop(context);
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    changeImage(image);
+  }
+
+  void _imageSelectorUnsplash() async {
+    Navigator.pop(context);
+    var image = await Navigator.pushNamed(context, "/unsplash");
     changeImage(image);
   }
 }
