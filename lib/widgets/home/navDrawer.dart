@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-
+import 'package:magpie_app/constants.dart' as Constants;
 import '../../services/auth.dart';
 
 class NavDrawer extends StatelessWidget {
+  final Color iconColor = Constants.COLOR1;
   final String userId;
   NavDrawer({this.userId});
 
@@ -20,37 +21,37 @@ class NavDrawer extends StatelessWidget {
               child: Text(
                 'Magpie',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.amber, fontSize: 20),
+                style: TextStyle(color: Constants.COLOR3, fontSize: 20),
               ),
             ),
             decoration: BoxDecoration(
-                color: Colors.teal,
+                color: Constants.COLOR1,
                 image: DecorationImage(
                     fit: BoxFit.fill,
                     image: AssetImage('pics/placeholder.jpg'))),
           ),
           ListTile(
-            leading: Icon(Icons.home),
+            leading: Icon(Icons.home, color: iconColor),
             title: Text('Übersicht'),
             onTap: () => navigate(context, "/home"),
           ),
           ListTile(
-            leading: Icon(Icons.insert_chart),
+            leading: Icon(Icons.insert_chart, color: iconColor),
             title: Text('Statistik'),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(
-            leading: Icon(Icons.account_circle),
+            leading: Icon(Icons.account_circle, color: iconColor),
             title: Text('Account'),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(
-            leading: Icon(Icons.settings),
+            leading: Icon(Icons.settings, color: iconColor),
             title: Text('Einstellungen'),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(
-              leading: Icon(Icons.exit_to_app),
+              leading: Icon(Icons.exit_to_app, color: iconColor),
               title: Text('Ausloggen'),
               onTap: () async {
                 //Navigator.of(context).pop();
@@ -67,7 +68,6 @@ class NavDrawer extends StatelessWidget {
 
     Navigator.popUntil(context, (route) {
       if (route.settings.name == routeName || route.settings.name == "/") {
-        print("Du befindest dich bereits auf $routeName");
         Navigator.pop(context);
         isNewRouteSameAsCurrent = true;
       }
@@ -75,7 +75,6 @@ class NavDrawer extends StatelessWidget {
     });
 
     if (!isNewRouteSameAsCurrent) {
-      print("Navigiere nun zu $routeName");
       Navigator.pushReplacementNamed(context, routeName, arguments: userId);
     }
   }

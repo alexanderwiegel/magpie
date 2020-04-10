@@ -1,13 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
+
+import 'package:magpie_app/constants.dart' as Constants;
 
 class MagpieImageSelector extends StatelessWidget {
   final Function changeImage;
   final BuildContext context;
   final dynamic photo;
   final Function updateStatus;
+  final Color color = Constants.COLOR1;
 
   MagpieImageSelector({
     @required this.changeImage,
@@ -29,13 +31,26 @@ class MagpieImageSelector extends StatelessWidget {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             clipBehavior: Clip.antiAlias,
             child: photo != null
-                ? photo.toString().startsWith("http") ? Image.network(photo) : Image.file(
-              photo,
+                ? photo.toString().startsWith("http")
+                  ? Image.network(
+                      photo,
+                      fit: BoxFit.cover,
+                      width: 400,
+                      height: 250,
+                    )
+                  : Image.file(
+                      photo,
+                      fit: BoxFit.cover,
+                      width: 400,
+                      height: 250,
+                    )
+                : Image.asset(
+                    "pics/placeholder.jpg",
                     fit: BoxFit.cover,
-                    width: 400.0,
-                    height: 200.0,
+                    width: 400,
+                    height: 250,
                   )
-                : Image.asset("pics/placeholder.jpg")),
+        ),
       ),
     );
   }
@@ -50,50 +65,62 @@ class MagpieImageSelector extends StatelessWidget {
         barrierDismissible: true,
         builder: (BuildContext context) {
           return AlertDialog(
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  option(_askPermission, Icons.photo_camera, 'Neues Bild aufnehmen'),
-                  Container(height: 1, width: 10, color: Colors.grey),
-                  option(_imageSelectorGallery, Icons.image, 'Bild aus Galerie wählen'),
-                  Container(height: 1, width: 10, color: Colors.grey),
-                  option(_imageSelectorUnsplash, Icons.web, 'Bild von Unsplash wählen'),
-                ],
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))
+            ),
+            contentPadding: const EdgeInsets.all(0),
+            content: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  border: Border.all(color: color, width: 4)
+              ),
+              child: SingleChildScrollView(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    option(_imageSelectorCamera, Icons.photo_camera,
+                        ["Bild mit", "Kamera", "aufnehmen"]),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Container(height: 150, width: 1, color: Colors.grey),
+                    ),
+                    option(_imageSelectorGallery, Icons.image,
+                        ["Bild aus", "Galerie", "wählen"]),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Container(height: 150, width: 1, color: Colors.grey),
+                    ),
+                    option(_imageSelectorUnsplash, Icons.web,
+                        ["Bild auf", "Unsplash", "suchen"]),
+                  ],
+                ),
               ),
             ),
           );
         });
   }
 
-  Widget option(Function onTap, IconData icon, String text) {
+  Widget option(Function onTap, IconData icon, List texts) {
     return GestureDetector(
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
+        child: Container(
+          width: 85,
+          child: Column(
             children: [
-              Icon(icon, color: Colors.amber),
+              Icon(icon, color: color, size: 60,),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.symmetric(vertical: 4),
               ),
-              Text(text)
+              Column(children: <Widget>[
+                Text(texts[0]),
+                Text(texts[1], style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(texts[2]),
+              ])
             ]
           ),
         ));
-  }
-
-  void _askPermission() {
-    PermissionHandler()
-        .requestPermissions([PermissionGroup.camera]).then(_onStatusRequested);
-  }
-
-  void _onStatusRequested(Map<PermissionGroup, PermissionStatus> value) {
-    final status = value[PermissionGroup.camera];
-    if (status == PermissionStatus.granted) {
-      _imageSelectorCamera();
-    } else {
-      updateStatus(status);
-    }
   }
 
   void _imageSelectorCamera() async {

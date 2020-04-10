@@ -9,7 +9,7 @@ import '../../widgets/home/magpieDeleteDialogue.dart';
 import '../../widgets/home/magpieForm.dart';
 
 class NestItemDetail extends StatefulWidget {
-  NestItemDetail({@required this.nestItem});
+  NestItemDetail({this.nestItem});
 
   final NestItem nestItem;
 

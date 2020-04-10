@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:magpie_app/constants.dart' as Constants;
 import '../../services/database_helper.dart';
 
 class MagpieDeleteDialogue {
@@ -43,7 +43,7 @@ class MagpieDeleteDialogue {
                     children: <Widget>[
                       Icon(
                         Icons.delete_forever,
-                        color: Colors.amber,
+                        color: Constants.COLOR2,
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -64,7 +64,7 @@ class MagpieDeleteDialogue {
                     children: <Widget>[
                       Icon(
                         Icons.cancel,
-                        color: Colors.amber,
+                        color: Constants.COLOR2,
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4),

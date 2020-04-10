@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
+import 'package:magpie_app/constants.dart' as Constants;
 import '../screens/home/nestItemsScreen.dart';
 import '../services/database_helper.dart';
 import '../sortMode.dart';
@@ -54,7 +54,7 @@ class Nest extends StatefulWidget {
     this.userId = obj["userId"];
     String path = obj["albumCover"].toString();
     if (!path.startsWith("http")) {
-      path = path.substring(path.indexOf("s"), path.length - 1);
+      path = path.substring(path.indexOf("/"), path.length - 1);
       this.albumCover = File(path);
     } else {
       this.albumCover = path;
@@ -136,7 +136,7 @@ class _NestState extends State<Nest> {
               child: Text(
                 widget.name,
                 style: TextStyle(
-                  color: Colors.amber,
+                  color: Constants.COLOR2,
                 ),
               ),
             ),
@@ -156,7 +156,7 @@ class _NestState extends State<Nest> {
               child: Text(
                 "${widget.totalWorth}€",
                 style: TextStyle(
-                  color: Colors.amber,
+                  color: Constants.COLOR2,
                 ),
               ),
             ),
@@ -174,11 +174,11 @@ class _NestState extends State<Nest> {
             icon: widget.favored
                 ? Icon(
                     Icons.favorite,
-                    color: Colors.amber,
+                    color: Constants.COLOR2,
                   )
                 : Icon(
                     Icons.favorite_border,
-                    color: Colors.amber,
+                    color: Constants.COLOR2,
                   ),
             onPressed: toggleFavored,
           ),

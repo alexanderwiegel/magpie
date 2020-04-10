@@ -21,17 +21,6 @@ class AuthService {
     return _auth.onAuthStateChanged.map(_userFromFirebaseUser);
   }
 
-  Future signInAnon() async {
-    try {
-      final AuthResult result = await _auth.signInAnonymously();
-      final FirebaseUser user = result.user;
-      return _userFromFirebaseUser(user);
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
-
   Future signInWithGoogle() async {
     try {
       final GoogleSignInAccount googleSignInAccount =
@@ -45,7 +34,8 @@ class AuthService {
       );
       final AuthResult result = await _auth.signInWithCredential(credential);
       final FirebaseUser user = result.user;
-      DatabaseHelper.instance.insertHome(user.uid);
+      await DatabaseHelper.instance.insertHome(user.uid);
+      // TODO: unterscheiden zwischen Login (update) und SignUp (insert)
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());
@@ -65,7 +55,8 @@ class AuthService {
           final AuthResult result =
               await _auth.signInWithCredential(credential);
           final FirebaseUser user = result.user;
-          DatabaseHelper.instance.insertHome(user.uid);
+          await DatabaseHelper.instance.insertHome(user.uid);
+          // TODO: unterscheiden zwischen Login (update) und SignUp (insert)
           return _userFromFirebaseUser(user);
           break;
         case FacebookLoginStatus.cancelledByUser:
@@ -108,7 +99,7 @@ class AuthService {
           email: email, password: password);
       final FirebaseUser user = result.user;
       await user.sendEmailVerification();
-      DatabaseHelper.instance.insertHome(user.uid);
+      await DatabaseHelper.instance.insertHome(user.uid);
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());

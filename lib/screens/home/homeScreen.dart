@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:magpie_app/widgets/home/magpieGridView.dart';
-
+import 'package:magpie_app/constants.dart' as Constants;
 import '../../models/nest.dart';
 import '../../services/database_helper.dart';
 import '../../sortMode.dart';
@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Icon _searchIcon = Icon(
     Icons.search,
-    color: Colors.amber,
+    color: Constants.COLOR2,
   );
   final TextEditingController _filter = new TextEditingController();
   String _searchText = "";
@@ -106,13 +106,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Constants.COLOR1,
         tooltip: "Neues Nest anlegen",
         onPressed: () {
           _openNestCreator();
         },
         child: Icon(
           Icons.add,
-          color: Colors.amber,
+          color: Constants.COLOR3,
         ),
       ),
     );

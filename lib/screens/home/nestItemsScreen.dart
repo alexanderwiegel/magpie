@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:magpie_app/widgets/home/magpieGridView.dart';
-
+import 'package:magpie_app/constants.dart' as Constants;
 import '../../models/nest.dart';
 import '../../models/nestItem.dart';
 import '../../services/database_helper.dart';
@@ -24,7 +24,7 @@ class _NestItemsState extends State<NestItems> {
 
   Icon _searchIcon = Icon(
     Icons.search,
-    color: Colors.amber,
+    color: Constants.COLOR2,
   );
   final TextEditingController _filter = new TextEditingController();
   String _searchText = "";
@@ -123,7 +123,7 @@ class _NestItemsState extends State<NestItems> {
         },
         child: Icon(
           Icons.add,
-          color: Colors.amber,
+          color: Constants.COLOR2,
         ),
       ),
     );

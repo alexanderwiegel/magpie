@@ -11,7 +11,7 @@ import '../../widgets/home/magpieForm.dart';
 class NestDetail extends StatefulWidget {
   Nest nest;
 
-  NestDetail({@required this.nest});
+  NestDetail({this.nest});
 
   @override
   _NestDetailState createState() => _NestDetailState();

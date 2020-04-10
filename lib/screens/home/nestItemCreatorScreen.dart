@@ -8,7 +8,7 @@ import '../../services/database_helper.dart';
 import '../../widgets/home/magpieForm.dart';
 
 class NestItemCreator extends StatefulWidget {
-  NestItemCreator({@required this.nest});
+  NestItemCreator({this.nest});
 
   final Nest nest;
 

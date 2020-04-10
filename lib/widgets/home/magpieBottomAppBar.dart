@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:magpie_app/constants.dart' as Constants;
 import '../../sortMode.dart';
 
 class MagpieBottomAppBar extends StatelessWidget {
@@ -11,6 +11,7 @@ class MagpieBottomAppBar extends StatelessWidget {
   final bool onlyFavored;
   final Icon searchIcon;
   final Widget searchTitle;
+  final Color color = Constants.COLOR3;
 
   MagpieBottomAppBar({
     @required this.searchPressed,
@@ -30,14 +31,14 @@ class MagpieBottomAppBar extends StatelessWidget {
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: BottomAppBar(
           clipBehavior: Clip.antiAlias,
-          color: Colors.teal,
+          color: Constants.COLOR1,
           shape: CircularNotchedRectangle(),
           notchMargin: 4.0,
           child: Row(children: <Widget>[
             PopupMenuButton<SortMode>(
               icon: Icon(
                 Icons.sort_by_alpha,
-                color: Colors.amber,
+                color: color,
               ),
               tooltip: "Sortiermodus auswählen",
               onSelected: (SortMode result) {
@@ -52,7 +53,7 @@ class MagpieBottomAppBar extends StatelessWidget {
               ],
             ),
             IconButton(
-              color: Colors.amber,
+              color: color,
               tooltip: "Nur Favoriten anzeigen",
               icon: onlyFavored
                   ? Icon(Icons.favorite)
@@ -60,7 +61,7 @@ class MagpieBottomAppBar extends StatelessWidget {
               onPressed: showFavorites,
             ),
             IconButton(
-              color: Colors.amber,
+              color: color,
               tooltip: "Nest suchen",
               padding: const EdgeInsets.only(left: 12.0),
               alignment: Alignment.centerLeft,
@@ -79,7 +80,7 @@ class MagpieBottomAppBar extends StatelessWidget {
         children: <Widget>[
           sortMode == value
               ? Icon(asc ? Icons.arrow_upward : Icons.arrow_downward,
-                  color: Colors.amber)
+                  color: Constants.COLOR2)
               : Icon(null),
           Padding(
             padding: const EdgeInsets.only(left: 2.0),

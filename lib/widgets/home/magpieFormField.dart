@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:magpie_app/constants.dart' as Constants;
 
 class MagpieFormField extends StatelessWidget {
   final OutlineInputBorder border;
@@ -37,7 +38,7 @@ class MagpieFormField extends StatelessWidget {
         decoration: InputDecoration(
           border: border,
           hintText: hintText,
-          icon: Icon(icon, color: Colors.amber),
+          icon: Icon(icon, color: Constants.COLOR2),
           labelText: labelText,
         ),
         initialValue: initialValue,

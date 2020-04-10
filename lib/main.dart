@@ -8,6 +8,7 @@ import 'models/user.dart';
 import 'screens/home/homeScreen.dart';
 import 'screens/wrapper.dart';
 import 'services/auth.dart';
+import 'package:magpie_app/constants.dart' as Constants;
 
 void main() {
   //DatabaseHelper.instance.clear();
@@ -25,13 +26,13 @@ class Magpie extends StatelessWidget {
         title: 'Magpie',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primarySwatch: Colors.teal,
+          primarySwatch: Constants.COLOR1,
         ),
         routes: {
           "/": (context) => Wrapper(),
           "/home": (context) => HomeScreen(),
           "/login": (context) => LoginPage(),
-          "/unsplash": (context) => UnsplashPage(),
+          "/unsplash": (context) => UnsplashPage()
         },
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,

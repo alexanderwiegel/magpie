@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:magpie_app/constants.dart' as Constants;
 
 class MagpieButton extends StatelessWidget {
   const MagpieButton({@required this.onPressed, @required this.title, @required this.icon});
@@ -10,7 +11,7 @@ class MagpieButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RawMaterialButton(
-      fillColor: Colors.teal,
+      fillColor: Constants.COLOR1,
       splashColor: Colors.teal[700],
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -22,7 +23,7 @@ class MagpieButton extends StatelessWidget {
           children: <Widget>[
             Icon(
               icon,
-              color: Colors.amber,
+              color: Constants.COLOR2,
             ),
             SizedBox(
               width: 8,
