@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:magpie_app/constants.dart' as Constants;
 import '../screens/home/nestItemDetailScreen.dart';
@@ -87,7 +88,9 @@ class _NestItemState extends State<NestItem> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       clipBehavior: Clip.antiAlias,
       child: widget.photo.toString().startsWith("http")
-          ? Image.network(widget.photo, fit: BoxFit.cover)
+          ? CachedNetworkImage(
+              imageUrl: widget.photo+"fit=crop&w=200&dpr=2",
+              fit: BoxFit.cover)
           : Image.file(widget.photo, fit: BoxFit.cover)
     );
 

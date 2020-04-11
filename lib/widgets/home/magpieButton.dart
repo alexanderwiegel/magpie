@@ -23,7 +23,7 @@ class MagpieButton extends StatelessWidget {
           children: <Widget>[
             Icon(
               icon,
-              color: Constants.COLOR2,
+              color: Colors.white,
             ),
             SizedBox(
               width: 8,

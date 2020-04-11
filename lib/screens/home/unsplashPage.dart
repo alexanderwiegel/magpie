@@ -16,12 +16,9 @@ class _UnsplashPageState extends State<UnsplashPage> {
   Color textColor = Constants.COLOR3;
   Color bgColor = Constants.COLOR1;
   String query = "Nest";
-  String routeBack;
 
   @override
   Widget build(BuildContext context) {
-    routeBack = ModalRoute.of(context).settings.arguments;
-
     return Scaffold(
       appBar: AppBar(
         title: RichText(
@@ -30,7 +27,7 @@ class _UnsplashPageState extends State<UnsplashPage> {
             TextSpan(
               text: "Unsplash",
               style: TextStyle(fontSize: 18, decoration: TextDecoration.underline),
-              recognizer: TapGestureRecognizer()..onTap = () async => await launch("https://unsplash.com?utm_source=Magpie&utm_medium=referral ")
+              recognizer: TapGestureRecognizer()..onTap = () async => await launch("https://unsplash.com?utm_source=Magpie&utm_medium=referral")
             )
           ],),
         ),

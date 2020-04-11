@@ -21,19 +21,17 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   DatabaseHelper db = DatabaseHelper.instance;
   String _userId;
+  Color iconColor = Constants.COLOR2;
 
   SortMode _sortMode = SortMode.SortByDate;
   bool _asc = true;
   bool _onlyFavored = false;
 
-  Icon _searchIcon = Icon(
-    Icons.search,
-    color: Constants.COLOR2,
-  );
-  final TextEditingController _filter = new TextEditingController();
+  Icon _searchIcon = Icon(Icons.search, color: Colors.white);
+  final TextEditingController _filter = TextEditingController();
   String _searchText = "";
-  List<Nest> _names = new List();
-  List<Nest> _filteredNames = new List();
+  List<Nest> _names = List();
+  List<Nest> _filteredNames = List();
   Widget _searchTitle = Text("");
 
   @override
@@ -175,17 +173,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void _searchPressed() {
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
-        this._searchIcon = new Icon(Icons.close);
-        this._searchTitle = new TextField(
-            style: TextStyle(color: Colors.white),
+        this._searchIcon = Icon(Icons.close, color: iconColor);
+        this._searchTitle = TextField(
+            style: TextStyle(color: iconColor),
             controller: _filter,
-            decoration: new InputDecoration(
+            decoration: InputDecoration(
               hintText: 'Suchen...',
-              hintStyle: TextStyle(color: Colors.white),
+              hintStyle: TextStyle(color: iconColor),
             ));
       } else {
-        this._searchIcon = new Icon(Icons.search);
-        this._searchTitle = new Text('');
+        this._searchIcon = Icon(Icons.search, color: iconColor);
+        this._searchTitle = Text('');
         _filteredNames = _names;
         _filter.clear();
       }
