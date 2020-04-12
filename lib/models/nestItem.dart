@@ -8,6 +8,7 @@ import '../services/database_helper.dart';
 
 // ignore: must_be_immutable
 class NestItem extends StatefulWidget {
+  String userId;
   int nestId;
   int id;
   dynamic photo;
@@ -17,31 +18,35 @@ class NestItem extends StatefulWidget {
   bool favored;
   DateTime date;
   
-  NestItem(
-      {@required this.nestId,
-      this.id,
-      this.photo,
-      @required this.name,
-      this.note,
-      this.worth,
-      this.favored,
-      this.date});
+  NestItem({
+    @required this.nestId,
+    this.userId,
+    this.id,
+    this.photo,
+    @required this.name,
+    this.note,
+    this.worth,
+    this.favored,
+    this.date
+  });
 
   Map<String, dynamic> toMap() {
     return {
       'nestId': nestId,
+      'userId': userId,
       'id': id,
       'photo': photo.toString(),
       'name': name,
       'note': note,
-      'worth': worth,
+      'worth': worth ?? 0,
       'favored': favored == null ? 0 : favored ? -1 : 0,
-      'date': date.millisecondsSinceEpoch,
+      'date': date.toIso8601String().substring(0, 10),
     };
   }
 
   NestItem.fromMap(dynamic obj) {
     this.nestId = obj["nestId"];
+    this.userId = obj["userId"];
     this.id = obj["id"];
     String path = obj["photo"].toString();
     if (!path.startsWith("http")) {
@@ -54,7 +59,7 @@ class NestItem extends StatefulWidget {
     this.note = obj["note"];
     this.worth = obj["worth"];
     this.favored = obj["favored"] == 0 ? false : true;
-    this.date = DateTime.fromMillisecondsSinceEpoch(obj["date"]);
+    this.date = DateTime.parse(obj["date"]);
   }
 
   @override
@@ -65,6 +70,7 @@ class _NestItemState extends State<NestItem> {
   void openNestItemDetailScreen() async {
     NestItem oldNestItem = NestItem(
         nestId: widget.nestId,
+        userId: widget.userId,
         id: widget.id,
         photo: widget.photo,
         name: widget.name,
@@ -113,7 +119,7 @@ class _NestItemState extends State<NestItem> {
               child: Text(
                 widget.name,
                 style: TextStyle(
-                  color: Constants.COLOR2,
+                  color: Colors.amber,
                 ),
               ),
             ),
@@ -129,7 +135,7 @@ class _NestItemState extends State<NestItem> {
               child: Text(
                 "${widget.worth}€",
                 style: TextStyle(
-                  color: Constants.COLOR2,
+                  color: Colors.amber,
                 ),
               ),
             ),
@@ -147,11 +153,11 @@ class _NestItemState extends State<NestItem> {
             icon: widget.favored
                 ? Icon(
                     Icons.favorite,
-                    color: Constants.COLOR2,
+                    color: Colors.amber,
                   )
                 : Icon(
                     Icons.favorite_border,
-                    color: Constants.COLOR2,
+                    color: Colors.amber,
                   ),
             onPressed: toggleFavored,
           ),
@@ -165,6 +171,7 @@ class _NestItemState extends State<NestItem> {
       widget.favored ^= true;
     });
     NestItem nestItem = NestItem(
+      userId: widget.userId,
       nestId: widget.nestId,
       id: widget.id,
       photo: widget.photo,

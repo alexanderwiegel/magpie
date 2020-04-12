@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:magpie_app/screens/authenticate/loginPage.dart';
 import 'package:magpie_app/screens/home/unsplashPage.dart';
+import 'package:magpie_app/screens/statistic/statistic.dart';
 import 'package:provider/provider.dart';
 
 import 'models/user.dart';
@@ -32,7 +33,8 @@ class Magpie extends StatelessWidget {
           "/": (context) => Wrapper(),
           "/home": (context) => HomeScreen(),
           "/login": (context) => LoginPage(),
-          "/unsplash": (context) => UnsplashPage()
+          "/unsplash": (context) => UnsplashPage(),
+          "/statistic": (context) => Statistic()
         },
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,

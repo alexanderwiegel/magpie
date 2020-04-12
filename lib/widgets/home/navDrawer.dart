@@ -38,7 +38,7 @@ class NavDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.insert_chart, color: iconColor),
             title: Text('Statistik'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => navigate(context, "/statistic"),
           ),
           ListTile(
             leading: Icon(Icons.account_circle, color: iconColor),
@@ -67,7 +67,7 @@ class NavDrawer extends StatelessWidget {
     bool isNewRouteSameAsCurrent = false;
 
     Navigator.popUntil(context, (route) {
-      if (route.settings.name == routeName || route.settings.name == "/") {
+      if (route.settings.name == routeName || route.settings.name == "/" && routeName == "/home") {
         Navigator.pop(context);
         isNewRouteSameAsCurrent = true;
       }

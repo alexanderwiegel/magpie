@@ -9,7 +9,6 @@ import '../../widgets/home/navDrawer.dart';
 import '../../widgets/home/startMessage.dart';
 import 'nestCreatorScreen.dart';
 
-// ignore: must_be_immutable
 class HomeScreen extends StatefulWidget {
   final String userId;
   HomeScreen({this.userId});
@@ -23,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String _userId;
   Color iconColor = Constants.COLOR2;
 
-  SortMode _sortMode = SortMode.SortByDate;
+  SortMode _sortMode = SortMode.SortById;
   bool _asc = true;
   bool _onlyFavored = false;
 
@@ -37,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   initState() {
     super.initState();
-    _buildNests();
   }
 
   _HomeScreenState() {
@@ -154,35 +152,19 @@ class _HomeScreenState extends State<HomeScreen> {
         fullscreenDialog: true));
   }
 
-  void _buildNests() async {
-    var homeStatus = await DatabaseHelper.instance.getHome(_getUserId());
-    if (homeStatus.length != 0) {
-      bool asc = homeStatus.first.values.elementAt(0) == 1 ? true : false;
-      bool onlyFav = homeStatus.first.values.elementAt(1) == 1 ? true : false;
-      String sortModeAsString = homeStatus.first.values.elementAt(2);
-      SortMode sortMode =
-          SortMode.values.firstWhere((e) => e.toString() == sortModeAsString);
-      setState(() {
-        _asc = asc;
-        _onlyFavored = onlyFav;
-        _sortMode = sortMode;
-      });
-    }
-  }
-
   void _searchPressed() {
     setState(() {
       if (this._searchIcon.icon == Icons.search) {
-        this._searchIcon = Icon(Icons.close, color: iconColor);
+        this._searchIcon = Icon(Icons.close, color: Colors.white);
         this._searchTitle = TextField(
             style: TextStyle(color: iconColor),
             controller: _filter,
             decoration: InputDecoration(
               hintText: 'Suchen...',
-              hintStyle: TextStyle(color: iconColor),
+              hintStyle: TextStyle(color: Colors.white),
             ));
       } else {
-        this._searchIcon = Icon(Icons.search, color: iconColor);
+        this._searchIcon = Icon(Icons.search, color: Colors.white);
         this._searchTitle = Text('');
         _filteredNames = _names;
         _filter.clear();

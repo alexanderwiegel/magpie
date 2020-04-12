@@ -65,6 +65,7 @@ class _NestItemCreatorState extends State<NestItemCreator> {
   void insertNestItem() async {
     _nestId = widget.nest.id;
     NestItem nestItem = NestItem(
+      userId: widget.nest.userId,
       nestId: _nestId,
       photo: _photo,
       name: _name,

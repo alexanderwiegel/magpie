@@ -65,7 +65,7 @@ class _NestCreatorState extends State<NestCreator> {
       date: _date,
       totalWorth: 0,
       favored: false,
-      sortMode: SortMode.SortByDate,
+      sortMode: SortMode.SortById,
       asc: true,
       onlyFavored: false,
     );
@@ -79,7 +79,7 @@ class _NestCreatorState extends State<NestCreator> {
       date: _date,
       totalWorth: 0,
       favored: false,
-      sortMode: SortMode.SortByDate,
+      sortMode: SortMode.SortById,
       asc: true,
       onlyFavored: false,
     ));

@@ -46,7 +46,7 @@ class MagpieBottomAppBar extends StatelessWidget {
               },
               initialValue: sortMode,
               itemBuilder: (BuildContext context) => <PopupMenuEntry<SortMode>>[
-                menuItem(SortMode.SortByDate, "Nach Erstelldatum sortieren"),
+                menuItem(SortMode.SortById, "Nach Erstelldatum sortieren"),
                 menuItem(SortMode.SortByName, "Nach Name sortieren"),
                 menuItem(SortMode.SortByWorth, "Nach Wert sortieren"),
                 menuItem(SortMode.SortByFavored, "Nach Favoriten sortieren"),
@@ -80,7 +80,7 @@ class MagpieBottomAppBar extends StatelessWidget {
         children: <Widget>[
           sortMode == value
               ? Icon(asc ? Icons.arrow_upward : Icons.arrow_downward,
-                  color: Constants.COLOR2)
+                  color: Colors.teal)
               : Icon(null),
           Padding(
             padding: const EdgeInsets.only(left: 2.0),

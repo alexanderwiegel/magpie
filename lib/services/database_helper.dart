@@ -9,7 +9,7 @@ import '../models/nestItem.dart';
 import '../sortMode.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "MagpiePrototype36.db";
+  static final _databaseName = "MagpiePrototype40.db";
   static final _databaseVersion = 6;
 
   static final home = 'Home';
@@ -65,7 +65,7 @@ class DatabaseHelper {
             $columnNote TEXT,
             $columnTotalWorth INTEGER,
             $columnFavored BOOL,
-            $columnDate INTEGER,
+            $columnDate TEXT,
             $columnSortMode TEXT,
             $columnAsc BOOL,
             $columnOnlyFavored BOOL
@@ -74,13 +74,14 @@ class DatabaseHelper {
     await db.execute('''
           CREATE TABLE $nestItems (
             $columnId INTEGER PRIMARY KEY,
+            $columnUserId TEXT NOT NULL,
             $columnNestId INTEGER,
             $columnPhoto BLOB,
             $columnName TEXT NOT NULL,
             $columnNote TEXT,
             $columnWorth INTEGER,
             $columnFavored BOOL,
-            $columnDate INTEGER
+            $columnDate TEXT
           )
           ''');
     await db.execute('''
@@ -101,8 +102,8 @@ class DatabaseHelper {
         return columnTotalWorth;
       case SortMode.SortByFavored:
         return columnFavored;
-      case SortMode.SortByDate:
-        return columnDate;
+      case SortMode.SortById:
+        return columnId;
       default:
         return columnId;
     }
@@ -185,10 +186,44 @@ class DatabaseHelper {
     return result;
   }
 
+  Future<int> getTotalItemCount(String userId) async {
+    final Database db = await database;
+    return Sqflite.firstIntValue(await db.rawQuery(
+        'SELECT COUNT(*) FROM $nestItems WHERE $columnUserId = ?', [userId]));
+  }
+
   Future<int> getNestItemCount(int id) async {
     final Database db = await database;
     return Sqflite.firstIntValue(await db.rawQuery(
         'SELECT COUNT(*) FROM $nestItems WHERE $columnNestId = ?', [id]));
+  }
+
+  Future getHistory(String userId) async {
+    final Database db = await database;
+    var result = await db.rawQuery("SELECT COUNT($columnId) FROM $nestItems GROUP BY $columnDate");
+    List<double> list = [];
+    list.add(0);
+    double sum = 0;
+    for (int i = 0; i < result.length; i++) {
+      sum += result[i].values.elementAt(0).toDouble();
+      list.add(sum);
+    }
+    return list;
+  }
+
+  Future getNestsWithItemCount(String userId) async {
+    final Database db = await database;
+    var result = await db.rawQuery(
+        "SELECT $nests.$columnName, "
+            "COUNT($nestItems.$columnId) FROM $nests INNER JOIN $nestItems "
+            "ON $nests.$columnId=$nestItems.$columnNestId "
+            "WHERE $nests.$columnUserId = ? "
+            "GROUP BY $nestItems.$columnNestId ORDER BY COUNT($nestItems.$columnId) DESC", [userId]);
+    List<String> list = [];
+    for (int i = 0; i < result.length; i++) {
+      list.add(result[i].values.toString());
+    }
+    return list;
   }
 
   Future<int> insert(Nest nest) async {
@@ -213,7 +248,7 @@ class DatabaseHelper {
     Map<String, dynamic> homeMap = {
       homeAsc: 1,
       homeOnlyFavored: 0,
-      homeSort: SortMode.SortByDate.toString(),
+      homeSort: SortMode.SortById.toString(),
       homeUserId: userId
     };
     return await dbClient.insert(home, homeMap,
@@ -228,17 +263,20 @@ class DatabaseHelper {
       homeOnlyFavored: onlyFavored ? 1 : 0,
       homeSort: sortMode.toString(),
     };
-    return await db.update(home, homeMap, where: "$homeUserId = ?", whereArgs: [userId]);
+    return await db.update(home, homeMap, where: "$homeUserId = ?",
+        whereArgs: [userId]);
   }
 
   Future<int> update(Nest nest) async {
     Database db = await instance.database;
-    return await db.update(nests, nest.toMap(), where: '$columnId = ?', whereArgs: [nest.id]);
+    return await db.update(nests, nest.toMap(), where: '$columnId = ?',
+        whereArgs: [nest.id]);
   }
 
   Future<int> updateItem(NestItem nestItem) async {
     Database db = await instance.database;
-    return await db.update(nestItems, nestItem.toMap(), where: '$columnId = ?', whereArgs: [nestItem.id]);
+    return await db.update(nestItems, nestItem.toMap(), where: '$columnId = ?',
+        whereArgs: [nestItem.id]);
   }
 
   Future<int> deleteNest(int id) async {

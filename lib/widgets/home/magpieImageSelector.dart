@@ -75,7 +75,7 @@ class MagpieImageSelector extends StatelessWidget {
             ),
             contentPadding: const EdgeInsets.all(0),
             content: Container(
-              padding: const EdgeInsets.all(6),
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -88,13 +88,13 @@ class MagpieImageSelector extends StatelessWidget {
                     option(_imageSelectorCamera, Icons.photo_camera,
                         ["Bild mit", "Kamera", "aufnehmen"]),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 1),
                       child: Container(height: 150, width: 1, color: Colors.grey),
                     ),
                     option(_imageSelectorGallery, Icons.image,
                         ["Bild aus", "Galerie", "wählen"]),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 1),
                       child: Container(height: 150, width: 1, color: Colors.grey),
                     ),
                     option(_imageSelectorUnsplash, Icons.web,

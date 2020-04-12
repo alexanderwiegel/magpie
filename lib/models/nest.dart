@@ -43,7 +43,7 @@ class Nest extends StatefulWidget {
       'note': note,
       'totalWorth': totalWorth ?? 0,
       'favored': favored == null ? 0 : favored ? -1 : 0,
-      'date': date.millisecondsSinceEpoch,
+      'date': date.toIso8601String().substring(0, 10),
       'sortMode': sortMode.toString(),
       'asc': asc ? 1 : 0,
       'onlyFavored': onlyFavored ? 1 : 0
@@ -64,7 +64,7 @@ class Nest extends StatefulWidget {
     this.note = obj["note"];
     this.totalWorth = obj["totalWorth"];
     this.favored = obj["favored"] == 0 ? false : true;
-    this.date = DateTime.fromMillisecondsSinceEpoch(obj["date"]);
+    this.date = DateTime.parse(obj["date"]);
     switch (obj["sortMode"]) {
       case "SortMode.SortByName":
         this.sortMode = SortMode.SortByName;
@@ -76,7 +76,7 @@ class Nest extends StatefulWidget {
         this.sortMode = SortMode.SortByFavored;
         break;
       case "SortMode.SortByDate":
-        this.sortMode = SortMode.SortByDate;
+        this.sortMode = SortMode.SortById;
     }
     this.asc = obj["asc"] == 0 ? false : true;
     this.onlyFavored = obj["onlyFavored"] == 0 ? false : true;
@@ -139,7 +139,7 @@ class _NestState extends State<Nest> {
               child: Text(
                 widget.name,
                 style: TextStyle(
-                  color: Constants.COLOR2,
+                  color: Colors.amber,
                 ),
               ),
             ),
@@ -159,7 +159,7 @@ class _NestState extends State<Nest> {
               child: Text(
                 "${widget.totalWorth}€",
                 style: TextStyle(
-                  color: Constants.COLOR2,
+                  color: Colors.amber,
                 ),
               ),
             ),
@@ -177,11 +177,11 @@ class _NestState extends State<Nest> {
             icon: widget.favored
                 ? Icon(
                     Icons.favorite,
-                    color: Constants.COLOR2,
+                    color: Colors.amber,
                   )
                 : Icon(
                     Icons.favorite_border,
-                    color: Constants.COLOR2,
+                    color: Colors.amber,
                   ),
             onPressed: toggleFavored,
           ),
