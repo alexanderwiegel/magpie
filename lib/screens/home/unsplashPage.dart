@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 import 'package:http/http.dart' as http;
 import 'package:magpie_app/constants.dart' as Constants;
 
@@ -27,7 +28,8 @@ class _UnsplashPageState extends State<UnsplashPage> {
             TextSpan(
               text: "Unsplash",
               style: TextStyle(fontSize: 18, decoration: TextDecoration.underline),
-              recognizer: TapGestureRecognizer()..onTap = () async => await launch("https://unsplash.com?utm_source=Magpie&utm_medium=referral")
+              recognizer: TapGestureRecognizer()..onTap = ()
+              => _openInWebview("https://unsplash.com?utm_source=Magpie&utm_medium=referral")
             )
           ],),
         ),
@@ -86,6 +88,19 @@ class _UnsplashPageState extends State<UnsplashPage> {
     );
   }
 
+  Future _openInWebview(String url) async {
+    if (await url_launcher.canLaunch(url)) {
+      Navigator.of(context).push(
+          MaterialPageRoute(
+              builder: (ctx) => WebviewScaffold(
+                initialChild: Center(child: CircularProgressIndicator()),
+                url: url,
+                appBar: AppBar(title: Text("Unsplash.com")),
+              )
+          ));
+    }
+  }
+
   Future<void> zoomInOnImage(photoInformation) {
     return showDialog(
         context: context,
@@ -140,8 +155,8 @@ class _UnsplashPageState extends State<UnsplashPage> {
                               decoration: TextDecoration.underline,
                               fontWeight: FontWeight.bold
                             ),
-                            recognizer: TapGestureRecognizer()..onTap = () async
-                            => await launch("https://unsplash.com/@${photoInformation["user"]["username"]}?utm_source=Magpie&utm_medium=referral")
+                            recognizer: TapGestureRecognizer()..onTap = ()
+                            => _openInWebview("https://unsplash.com/@${photoInformation["user"]["username"]}?utm_source=Magpie&utm_medium=referral")
                           )
                         ],),
                     ),
@@ -154,7 +169,7 @@ class _UnsplashPageState extends State<UnsplashPage> {
   }
 
   Future<Map> getPics() async {
-    String url = "https://api.unsplash.com/search/photos?query=$query&client_id=IdQYjoATojZnq4uJblpSYV7ryIrxdhfvPkjoI5wOENM";
+    String url = "https://api.unsplash.com/search/photos?query=$query&per_page=30&client_id=IdQYjoATojZnq4uJblpSYV7ryIrxdhfvPkjoI5wOENM";
     final response = await http.get(url);
     return response.statusCode == 200 ? json.decode(response.body) : null;
   }

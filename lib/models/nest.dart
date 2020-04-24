@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:magpie_app/constants.dart' as Constants;
 import '../screens/home/nestItemsScreen.dart';
 import '../services/database_helper.dart';
 import '../sortMode.dart';

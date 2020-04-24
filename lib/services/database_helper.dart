@@ -200,15 +200,18 @@ class DatabaseHelper {
 
   Future getHistory(String userId) async {
     final Database db = await database;
-    var result = await db.rawQuery("SELECT COUNT($columnId) FROM $nestItems GROUP BY $columnDate");
-    List<double> list = [];
-    list.add(0);
-    double sum = 0;
+    var result = await db.rawQuery("SELECT COUNT($columnId), $columnDate FROM $nestItems GROUP BY $columnDate");
+    List dates = [];
+    List count = [];
+    //dates.add(DateTime.parse(result[0].values.elementAt(1)));
+    //count.add(0);
+    double sum = 0.0;
     for (int i = 0; i < result.length; i++) {
       sum += result[i].values.elementAt(0).toDouble();
-      list.add(sum);
+      count.add(sum);
+      dates.add(DateTime.parse(result[i].values.elementAt(1)));
     }
-    return list;
+    return [count, dates];
   }
 
   Future getNestsWithItemCount(String userId) async {
