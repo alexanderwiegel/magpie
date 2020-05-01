@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:magpie_app/constants.dart' as Constants;
 import 'package:path_provider/path_provider.dart';
 
@@ -37,25 +36,24 @@ class MagpieImageSelector extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             child: photo != null
                 ? photo.toString().startsWith("http")
-                  ? CachedNetworkImage(
-                      imageUrl: photo+"&fit=crop&w=400&dpr=2",
-                      fit: BoxFit.cover,
-                      width: 400,
-                      height: 250,
-                    )
-                  : Image.file(
-                      photo,
-                      fit: BoxFit.cover,
-                      width: 400,
-                      height: 250,
-                    )
+                    ? CachedNetworkImage(
+                        imageUrl: photo + "&fit=crop&w=400&dpr=2",
+                        fit: BoxFit.cover,
+                        width: 400,
+                        height: 250,
+                      )
+                    : Image.file(
+                        photo,
+                        fit: BoxFit.cover,
+                        width: 400,
+                        height: 250,
+                      )
                 : Image.asset(
                     "pics/placeholder.jpg",
                     fit: BoxFit.cover,
                     width: 400,
                     height: 250,
-                  )
-        ),
+                  )),
       ),
     );
   }
@@ -71,16 +69,14 @@ class MagpieImageSelector extends StatelessWidget {
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(10))
-            ),
+                borderRadius: BorderRadius.all(Radius.circular(10))),
             contentPadding: const EdgeInsets.all(0),
             content: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.all(Radius.circular(10)),
-                  border: Border.all(color: color, width: 4)
-              ),
+                  border: Border.all(color: color, width: 4)),
               child: SingleChildScrollView(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -89,13 +85,15 @@ class MagpieImageSelector extends StatelessWidget {
                         ["Bild mit", "Kamera", "aufnehmen"]),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 1),
-                      child: Container(height: 150, width: 1, color: Colors.grey),
+                      child:
+                          Container(height: 150, width: 1, color: Colors.grey),
                     ),
                     option(_imageSelectorGallery, Icons.image,
                         ["Bild aus", "Galerie", "wählen"]),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 1),
-                      child: Container(height: 150, width: 1, color: Colors.grey),
+                      child:
+                          Container(height: 150, width: 1, color: Colors.grey),
                     ),
                     option(_imageSelectorUnsplash, Icons.web,
                         ["Bild auf", "Unsplash", "suchen"]),
@@ -112,37 +110,38 @@ class MagpieImageSelector extends StatelessWidget {
         onTap: onTap,
         child: Container(
           width: 85,
-          child: Column(
-            children: [
-              Icon(icon, color: color, size: 60,),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-              ),
-              Column(children: <Widget>[
-                Text(texts[0]),
-                Text(texts[1], style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(texts[2]),
-              ])
-            ]
-          ),
+          child: Column(children: [
+            Icon(
+              icon,
+              color: color,
+              size: 60,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+            ),
+            Column(children: <Widget>[
+              Text(texts[0]),
+              Text(texts[1], style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(texts[2]),
+            ])
+          ]),
         ));
   }
 
   Future<File> compressFile(File file, String targetPath) async {
     var result = await FlutterImageCompress.compressAndGetFile(
-        file.path, targetPath+"minW400minH250.jpg",
-      minWidth: 400,
-      minHeight: 250,
-      quality: 100
-    );
+        file.path, targetPath + "minW400minH250.jpg",
+        minWidth: 400, minHeight: 250, quality: 100);
     return result;
   }
 
   void _imageSelectorCamera() async {
     Navigator.pop(context);
     var file = await ImagePicker.pickImage(source: ImageSource.camera);
-    file = await compressFile(file, file.path.substring(0, file.path.length-4));
-    changeImage(file);
+    var compressedFile =
+        await compressFile(file, file.path.substring(0, file.path.length - 4));
+    file.deleteSync();
+    changeImage(compressedFile);
   }
 
   void _imageSelectorGallery() async {
@@ -150,10 +149,14 @@ class MagpieImageSelector extends StatelessWidget {
     var file = await ImagePicker.pickImage(source: ImageSource.gallery);
     var targetDirectory = await getExternalStorageDirectory();
     var targetPath = targetDirectory.toString();
-    targetPath = targetPath.toString().substring(targetPath.indexOf("/"), targetPath.length-1)+"/";
+    targetPath = targetPath
+            .toString()
+            .substring(targetPath.indexOf("/"), targetPath.length - 1) +
+        "/";
     var fileName = file.toString();
-    fileName = fileName.substring(fileName.lastIndexOf("/")+1, fileName.lastIndexOf("."));
-    file = await compressFile(file, targetPath+fileName);
+    fileName = fileName.substring(
+        fileName.lastIndexOf("/") + 1, fileName.lastIndexOf("."));
+    file = await compressFile(file, targetPath + fileName);
     changeImage(file);
   }
 
