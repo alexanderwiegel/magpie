@@ -94,6 +94,7 @@ class _NestItemDetailState extends State<NestItemDetail> {
         worthEditingController: _worthEditingController,
         worthVisible: true,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: MagpieButton(
         onPressed: () => _magpieDeleteDialogue.displayDeleteDialogue(
             context, false, widget.nestItem.id),

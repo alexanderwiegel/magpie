@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:magpie_app/SizeConfig.dart';
 
 class StartMessage extends StatelessWidget {
   final message;
@@ -6,10 +7,11 @@ class StartMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //MediaQueryData queryData = MediaQuery.of(context);
     return Text(
       message,
-      style: TextStyle(fontSize: 16),
+      style: TextStyle(
+          fontSize:
+              SizeConfig.isTablet ? SizeConfig.hori * 2 : SizeConfig.hori * 4),
     );
   }
 }

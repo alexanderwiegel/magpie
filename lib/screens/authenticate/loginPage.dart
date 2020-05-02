@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:magpie_app/SizeConfig.dart';
 import 'package:magpie_app/services/auth.dart';
 
 import 'bubble_indication_painter.dart';
@@ -68,10 +69,12 @@ class _LoginPageState extends State<LoginPage>
         },
         child: SingleChildScrollView(
           child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height >= 775.0
-                ? MediaQuery.of(context).size.height
-                : loading ? MediaQuery.of(context).size.height : 775.0,
+            width: SizeConfig.screenWidth,
+            height: SizeConfig.screenHeight >= 775.0
+                ? SizeConfig.screenHeight
+                : loading
+                    ? SizeConfig.screenHeight
+                    : SizeConfig.screenHeight * 1.1,
             decoration: BoxDecoration(
               gradient: linearGradient(Theme.Colors.loginGradientEnd,
                   Theme.Colors.loginGradientStart),
@@ -81,53 +84,73 @@ class _LoginPageState extends State<LoginPage>
                     color: Colors.teal,
                     child: Center(
                         child: CircularProgressIndicator(
-                      backgroundColor: Colors.white,
-                    )))
+                            backgroundColor: Colors.white)))
                 : Column(
                     mainAxisSize: MainAxisSize.max,
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(top: 50.0),
+                        padding: EdgeInsets.only(top: SizeConfig.vert * 5),
                         child: Image.asset(
                           "pics/logo.png",
-                          width: 100.0,
-                          height: 100.0,
+                          width: SizeConfig.isTablet
+                              ? SizeConfig.vert * 22
+                              : SizeConfig.hori * 30,
+                          height: SizeConfig.isTablet
+                              ? SizeConfig.vert * 22
+                              : SizeConfig.hori * 30,
                           fit: BoxFit.fill,
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 20.0),
-                        child: _buildMenuBar(context),
+                        padding: EdgeInsets.only(
+                            top: SizeConfig.isTablet
+                                ? SizeConfig.vert * 2
+                                : SizeConfig.vert),
+                        child: SizeConfig.isTablet
+                            ? Container()
+                            : _buildMenuBar(context),
                       ),
-                      Expanded(
-                        flex: 2,
-                        child: PageView(
-                          controller: _pageController,
-                          onPageChanged: (i) {
-                            if (i == 0) {
-                              setState(() {
-                                right = Colors.white;
-                                left = Colors.black;
-                              });
-                            } else if (i == 1) {
-                              setState(() {
-                                right = Colors.black;
-                                left = Colors.white;
-                              });
-                            }
-                          },
-                          children: <Widget>[
-                            ConstrainedBox(
-                              constraints: const BoxConstraints.expand(),
-                              child: _buildSignIn(context),
+                      SizeConfig.isTablet
+                          ? Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                SizedBox(
+                                    width: SizeConfig.hori * 50,
+                                    child: _buildSignIn(context)),
+                                SizedBox(
+                                    width: SizeConfig.hori * 50,
+                                    child: _buildSignUp(context)),
+                              ],
+                            )
+                          : Expanded(
+                              //flex: 2,
+                              child: PageView(
+                                controller: _pageController,
+                                onPageChanged: (i) {
+                                  if (i == 0) {
+                                    setState(() {
+                                      right = Colors.white;
+                                      left = Colors.black;
+                                    });
+                                  } else if (i == 1) {
+                                    setState(() {
+                                      right = Colors.black;
+                                      left = Colors.white;
+                                    });
+                                  }
+                                },
+                                children: <Widget>[
+                                  ConstrainedBox(
+                                    constraints: const BoxConstraints.expand(),
+                                    child: _buildSignIn(context),
+                                  ),
+                                  ConstrainedBox(
+                                    constraints: const BoxConstraints.expand(),
+                                    child: _buildSignUp(context),
+                                  ),
+                                ],
+                              ),
                             ),
-                            ConstrainedBox(
-                              constraints: const BoxConstraints.expand(),
-                              child: _buildSignUp(context),
-                            ),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
           ),
@@ -148,12 +171,6 @@ class _LoginPageState extends State<LoginPage>
   @override
   void initState() {
     super.initState();
-
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-
     _pageController = PageController();
 
     nameError = errorMessage("Bitte gib einen Benutzernamen an");
@@ -169,23 +186,20 @@ class _LoginPageState extends State<LoginPage>
     FocusScope.of(context).requestFocus(FocusNode());
     _scaffoldKey.currentState?.removeCurrentSnackBar();
     _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(
-        value,
-        textAlign: TextAlign.center,
-        style: style().copyWith(color: Colors.white),
-      ),
-      backgroundColor: Colors.teal,
-      duration: Duration(seconds: 3),
-    ));
+        content: Text(value,
+            textAlign: TextAlign.center,
+            style: style().copyWith(color: Colors.white)),
+        backgroundColor: Colors.teal,
+        duration: Duration(seconds: 3)));
   }
 
   Widget _buildMenuBar(BuildContext context) {
     return Container(
-      width: 300.0,
-      height: 50.0,
+      width: 300,
+      height: 50,
       decoration: BoxDecoration(
         color: Color(0x552B2B2B),
-        borderRadius: BorderRadius.all(Radius.circular(25.0)),
+        borderRadius: BorderRadius.all(Radius.circular(25)),
       ),
       child: CustomPaint(
         painter: TabIndicationPainter(pageController: _pageController),
@@ -202,27 +216,29 @@ class _LoginPageState extends State<LoginPage>
 
   Widget _buildSignIn(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 23.0),
+      padding: EdgeInsets.only(top: SizeConfig.isTablet ? 0 : 23),
       child: Form(
         key: _signInKey,
-        child: Column(
-          children: <Widget>[
-            Stack(
-              alignment: Alignment.topCenter,
-              overflow: Overflow.visible,
-              children: <Widget>[
-                Card(
-                  elevation: 2.0,
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Container(
-                    width: 300.0,
-                    height: 195.0,
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
+        child: Column(children: <Widget>[
+          Column(
+            children: <Widget>[
+              Card(
+                elevation: 2,
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Container(
+                  width: SizeConfig.isTablet
+                      ? SizeConfig.hori * 40
+                      : SizeConfig.hori * 80,
+                  height: SizeConfig.isTablet
+                      ? SizeConfig.hori * 16
+                      : SizeConfig.vert * 25,
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: Padding(
                           padding: formFieldPadding(),
                           child: TextFormField(
                             validator: (val) => validate(
@@ -241,8 +257,10 @@ class _LoginPageState extends State<LoginPage>
                             ),
                           ),
                         ),
-                        line(),
-                        Padding(
+                      ),
+                      line(),
+                      Expanded(
+                        child: Padding(
                           padding: formFieldPadding(),
                           child: TextFormField(
                             validator: (val) => validate(
@@ -250,100 +268,102 @@ class _LoginPageState extends State<LoginPage>
                             focusNode: myFocusNodePasswordLogin,
                             controller: loginPasswordController,
                             obscureText: _obscureTextLogin,
+                            style: style().copyWith(color: Colors.black),
                             decoration: InputDecoration(
                               border: InputBorder.none,
                               icon: icon(FontAwesomeIcons.lock),
                               hintText: "Passwort",
                               suffixIcon: toggleEyeIcon(
                                   _toggleLogin, _obscureTextLogin),
+                              hintStyle: style(),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                footerButton(
-                    175,
-                    "LOGIN",
-                    _signInKey,
-                    signInErrors,
-                    loginEmailController.text,
-                    loginPasswordController.text,
-                    "Email oder Passwort ungültig")
-              ],
-            ),
-            showErrors(signInErrors, 10),
-            FlatButton(
-                onPressed: () {
-                  validate(loginEmailController.text.isEmpty, resetErrors,
-                      resetPasswordError);
-                },
-                child: Text(
-                  "Passwort vergessen?",
-                  style: style().copyWith(
-                    decoration: TextDecoration.underline,
-                    color: Colors.white,
-                  ),
-                )),
-            showErrors(resetErrors, 0),
-            Visibility(
-              visible: loginEmailController.text.isNotEmpty &&
-                      resetErrors.length == 0
-                  ? true
-                  : false,
-              child: FlatButton(
-                  onPressed: () async {
-                    setState(() => loading = true);
-                    dynamic result =
-                        await _auth.resetPassword(loginEmailController.text);
-                    if (result == null) {
-                      setState(() => loading = false);
-                      showInSnackBar(
-                          "Es wurde ein Link zum Zurücksetzen deines Passworts an deine Emailadresse gesendet");
-                    }
+              ),
+              footerButton(
+                  SizeConfig.vert,
+                  "LOGIN",
+                  _signInKey,
+                  signInErrors,
+                  loginEmailController.text,
+                  loginPasswordController.text,
+                  "Email oder Passwort ungültig"),
+              showErrors(signInErrors, 10),
+              FlatButton(
+                  onPressed: () {
+                    validate(loginEmailController.text.isEmpty, resetErrors,
+                        resetPasswordError);
                   },
                   child: Text(
-                    "Passwort zurücksetzen",
+                    "Passwort vergessen?",
                     style: style().copyWith(
                       decoration: TextDecoration.underline,
                       color: Colors.white,
                     ),
                   )),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 10.0),
-              child: Row(
+              showErrors(resetErrors, 0),
+              Visibility(
+                visible: loginEmailController.text.isNotEmpty &&
+                        resetErrors.length == 0
+                    ? true
+                    : false,
+                child: FlatButton(
+                    onPressed: () async {
+                      setState(() => loading = true);
+                      dynamic result =
+                          await _auth.resetPassword(loginEmailController.text);
+                      if (result == null) {
+                        setState(() => loading = false);
+                        showInSnackBar(
+                            "Es wurde ein Link zum Zurücksetzen deines Passworts an deine Emailadresse gesendet");
+                      }
+                    },
+                    child: Text(
+                      "Passwort zurücksetzen",
+                      style: style().copyWith(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white,
+                      ),
+                    )),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    fadingLine(Colors.white10, Colors.white),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                      child: Text(
+                        "oder",
+                        style: style().copyWith(color: Colors.white),
+                      ),
+                    ),
+                    fadingLine(Colors.white, Colors.white10),
+                  ],
+                ),
+              ),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  fadingLine(Colors.white10, Colors.white),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Text(
-                      "oder",
-                      style: style().copyWith(color: Colors.white),
-                    ),
-                  ),
-                  fadingLine(Colors.white, Colors.white10),
+                  socialIcon("Facebook", FontAwesomeIcons.facebookF),
+                  socialIcon("Google", FontAwesomeIcons.google),
                 ],
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                socialIcon("Facebook", FontAwesomeIcons.facebookF),
-                socialIcon("Google", FontAwesomeIcons.google),
-              ],
-            ),
-          ],
-        ),
+            ],
+          ),
+        ]),
       ),
     );
   }
 
   Widget socialIcon(String socialNetworkName, IconData socialNetworkIcon) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: GestureDetector(
         onTap: () async {
           setState(() => loading = true);
@@ -364,7 +384,7 @@ class _LoginPageState extends State<LoginPage>
           }
         },
         child: Container(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(15),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white,
@@ -383,7 +403,9 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Icon icon(IconData iconData) {
-    return Icon(iconData, size: 19, color: Colors.black);
+    return Icon(iconData,
+        size: SizeConfig.isTablet ? SizeConfig.vert * 3 : SizeConfig.hori * 5,
+        color: Colors.black);
   }
 
   EdgeInsets formFieldPadding() {
@@ -391,25 +413,25 @@ class _LoginPageState extends State<LoginPage>
   }
 
   TextStyle style() {
-    return TextStyle(fontSize: 16); //fontFamily: "WorkSansSemiBold"
+    return TextStyle(
+        fontSize: SizeConfig.isTablet
+            ? SizeConfig.vert * 3
+            : SizeConfig.hori * 4); //fontFamily: "WorkSansSemiBold"
   }
 
   Container line() {
     return Container(
-      width: 250.0,
-      height: 1.0,
-      color: Colors.grey[400],
-    );
+        width: SizeConfig.hori * 100, height: 1, color: Colors.grey[400]);
   }
 
   Container fadingLine(Color leftColor, Color rightColor) {
     return Container(
-      decoration: BoxDecoration(
-        gradient: linearGradient(leftColor, rightColor),
-      ),
-      width: 100.0,
-      height: 1.0,
-    );
+        decoration: BoxDecoration(
+          gradient: linearGradient(leftColor, rightColor),
+        ),
+        width:
+            SizeConfig.isTablet ? SizeConfig.hori * 15 : SizeConfig.hori * 30,
+        height: 1);
   }
 
   Widget headerButton(String text, Function onPressed, Color color) {
@@ -422,7 +444,7 @@ class _LoginPageState extends State<LoginPage>
           text,
           style: TextStyle(
             color: color,
-            fontSize: 16.0,
+            fontSize: 16,
             //fontFamily: "WorkSansSemiBold"
           ),
         ),
@@ -435,17 +457,17 @@ class _LoginPageState extends State<LoginPage>
     return Container(
       margin: EdgeInsets.only(top: margin),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        borderRadius: BorderRadius.all(Radius.circular(5)),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: Theme.Colors.loginGradientStart,
-            offset: Offset(1.0, 6.0),
-            blurRadius: 20.0,
+            offset: Offset(1, 6),
+            blurRadius: 20,
           ),
           BoxShadow(
             color: Theme.Colors.loginGradientEnd,
-            offset: Offset(1.0, 6.0),
-            blurRadius: 20.0,
+            offset: Offset(1, 6),
+            blurRadius: 20,
           ),
         ],
         gradient: linearGradient(
@@ -455,13 +477,12 @@ class _LoginPageState extends State<LoginPage>
           highlightColor: Colors.transparent,
           splashColor: Theme.Colors.loginGradientEnd,
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 42.0),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 42),
             child: Text(
               text,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 25.0,
+                fontSize: 25,
                 //fontFamily: "WorkSansBold"
               ),
             ),
@@ -484,9 +505,9 @@ class _LoginPageState extends State<LoginPage>
   LinearGradient linearGradient(Color leftColor, Color rightColor) {
     return LinearGradient(
         colors: [leftColor, rightColor],
-        begin: const FractionalOffset(0.0, 0.0),
+        begin: const FractionalOffset(0, 0),
         end: const FractionalOffset(1.2, 1.2),
-        stops: [0.0, 1.0],
+        stops: [0, 1],
         tileMode: TileMode.clamp);
   }
 
@@ -494,7 +515,10 @@ class _LoginPageState extends State<LoginPage>
     return Text(
       text,
       textAlign: TextAlign.center,
-      style: TextStyle(color: Colors.amber),
+      style: TextStyle(
+          color: Colors.amber,
+          fontSize:
+              SizeConfig.isTablet ? SizeConfig.vert * 2 : SizeConfig.hori * 3),
     );
   }
 
@@ -511,120 +535,130 @@ class _LoginPageState extends State<LoginPage>
 
   Widget _buildSignUp(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 23.0),
+      padding: EdgeInsets.only(top: SizeConfig.isTablet ? 0 : 23),
       child: Form(
         key: _signUpKey,
         child: Column(
           children: <Widget>[
-            Stack(
-              alignment: Alignment.topCenter,
-              overflow: Overflow.visible,
+            Column(
               children: <Widget>[
                 Card(
-                  elevation: 2.0,
+                  elevation: 2,
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Container(
-                    width: 300.0,
-                    height: 360.0,
+                    width: SizeConfig.isTablet
+                        ? SizeConfig.hori * 40
+                        : SizeConfig.hori * 80,
+                    height: SizeConfig.isTablet
+                        ? SizeConfig.hori * 31
+                        : SizeConfig.vert * 50,
                     child: Column(
                       children: <Widget>[
-                        Padding(
-                          padding: formFieldPadding(),
-                          child: TextFormField(
-                            validator: (val) =>
-                                validate(val.isEmpty, signUpErrors, nameError),
-                            focusNode: myFocusNodeName,
-                            controller: signUpNameController,
-                            keyboardType: TextInputType.text,
-                            textCapitalization: TextCapitalization.words,
-                            style: style().copyWith(color: Colors.black),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              icon: icon(FontAwesomeIcons.user),
-                              hintText: "Benutzername",
-                              hintStyle: style(),
+                        Expanded(
+                          child: Padding(
+                            padding: formFieldPadding(),
+                            child: TextFormField(
+                              validator: (val) => validate(
+                                  val.isEmpty, signUpErrors, nameError),
+                              focusNode: myFocusNodeName,
+                              controller: signUpNameController,
+                              keyboardType: TextInputType.text,
+                              textCapitalization: TextCapitalization.words,
+                              style: style().copyWith(color: Colors.black),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                icon: icon(FontAwesomeIcons.user),
+                                hintText: "Benutzername",
+                                hintStyle: style(),
+                              ),
                             ),
                           ),
                         ),
                         line(),
-                        Padding(
-                          padding: formFieldPadding(),
-                          child: TextFormField(
-                            validator: (val) => validate(
-                                !emailRegEx
-                                    .hasMatch(signUpEmailController.text),
-                                signUpErrors,
-                                emailError),
-                            focusNode: myFocusNodeEmail,
-                            controller: signUpEmailController,
-                            keyboardType: TextInputType.emailAddress,
-                            style: style().copyWith(color: Colors.black),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              icon: icon(FontAwesomeIcons.envelope),
-                              hintText: "Emailadresse",
-                              hintStyle: style(),
+                        Expanded(
+                          child: Padding(
+                            padding: formFieldPadding(),
+                            child: TextFormField(
+                              validator: (val) => validate(
+                                  !emailRegEx
+                                      .hasMatch(signUpEmailController.text),
+                                  signUpErrors,
+                                  emailError),
+                              focusNode: myFocusNodeEmail,
+                              controller: signUpEmailController,
+                              keyboardType: TextInputType.emailAddress,
+                              style: style().copyWith(color: Colors.black),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                icon: icon(FontAwesomeIcons.envelope),
+                                hintText: "Emailadresse",
+                                hintStyle: style(),
+                              ),
                             ),
                           ),
                         ),
                         line(),
-                        Padding(
-                          padding: formFieldPadding(),
-                          child: TextFormField(
-                            validator: (val) => validate(
-                                val.length < 6, signUpErrors, passwordError),
-                            focusNode: myFocusNodePassword,
-                            controller: signUpPasswordController,
-                            obscureText: _obscureTextSignUp,
-                            style: style().copyWith(color: Colors.black),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              icon: icon(FontAwesomeIcons.lock),
-                              hintText: "Passwort",
-                              hintStyle: style(),
-                              suffixIcon: toggleEyeIcon(
-                                  _toggleSignUp, _obscureTextSignUp),
+                        Expanded(
+                          child: Padding(
+                            padding: formFieldPadding(),
+                            child: TextFormField(
+                              validator: (val) => validate(
+                                  val.length < 6, signUpErrors, passwordError),
+                              focusNode: myFocusNodePassword,
+                              controller: signUpPasswordController,
+                              obscureText: _obscureTextSignUp,
+                              style: style().copyWith(color: Colors.black),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                icon: icon(FontAwesomeIcons.lock),
+                                hintText: "Passwort",
+                                hintStyle: style(),
+                                suffixIcon: toggleEyeIcon(
+                                    _toggleSignUp, _obscureTextSignUp),
+                              ),
                             ),
                           ),
                         ),
                         line(),
-                        Padding(
-                          padding: formFieldPadding(),
-                          child: TextFormField(
-                            validator: (val) => validate(
-                                val != signUpPasswordController.text,
-                                signUpErrors,
-                                repeatPasswordError),
-                            controller: signUpConfirmPasswordController,
-                            obscureText: _obscureTextSignUpConfirm,
-                            style: style().copyWith(color: Colors.black),
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              icon: icon(FontAwesomeIcons.lock),
-                              hintText: "Passwort wiederholen",
-                              hintStyle: style(),
-                              suffixIcon: toggleEyeIcon(_toggleSignUpConfirm,
-                                  _obscureTextSignUpConfirm),
+                        Expanded(
+                          child: Padding(
+                            padding: formFieldPadding(),
+                            child: TextFormField(
+                              validator: (val) => validate(
+                                  val != signUpPasswordController.text,
+                                  signUpErrors,
+                                  repeatPasswordError),
+                              controller: signUpConfirmPasswordController,
+                              obscureText: _obscureTextSignUpConfirm,
+                              style: style().copyWith(color: Colors.black),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                icon: icon(FontAwesomeIcons.lock),
+                                hintText: "Passwort wiederholen",
+                                hintStyle: style(),
+                                suffixIcon: toggleEyeIcon(_toggleSignUpConfirm,
+                                    _obscureTextSignUpConfirm),
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
-                footerButton(
-                    340,
-                    "REGISTRIEREN",
-                    _signUpKey,
-                    signUpErrors,
-                    signUpEmailController.text,
-                    signUpPasswordController.text,
-                    "Bitte fülle alle Felder korrekt aus")
+                )
               ],
             ),
+            footerButton(
+                SizeConfig.vert,
+                "REGISTRIEREN",
+                _signUpKey,
+                signUpErrors,
+                signUpEmailController.text,
+                signUpPasswordController.text,
+                "Bitte fülle alle Felder korrekt aus"),
             showErrors(signUpErrors, 10),
           ],
         ),

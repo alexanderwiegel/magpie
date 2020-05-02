@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:magpie_app/SizeConfig.dart';
 import 'package:magpie_app/models/nest.dart';
 import 'package:magpie_app/models/nestItem.dart';
 
@@ -20,7 +21,7 @@ class MagpieGridView extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
-        crossAxisCount: 2,
+        crossAxisCount: SizeConfig.isTablet ? 5 : 2,
         childAspectRatio: 1.05,
         children: _filterList());
   }

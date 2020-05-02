@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:magpie_app/widgets/home/magpieGridView.dart';
 import 'package:magpie_app/constants.dart' as Constants;
+import 'package:magpie_app/widgets/home/magpieGridView.dart';
+
 import '../../models/nest.dart';
 import '../../services/database_helper.dart';
 import '../../sortMode.dart';
@@ -65,9 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       drawer: NavDrawer(userId: _getUserId()),
       appBar: AppBar(
-        title: Text(
-          "Übersicht",
-        ),
+        title: Text("Übersicht"),
       ),
       body: FutureBuilder<List<Nest>>(
         future: db.getNests(_getUserId()),

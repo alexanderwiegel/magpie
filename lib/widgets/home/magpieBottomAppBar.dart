@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:magpie_app/SizeConfig.dart';
 import 'package:magpie_app/constants.dart' as Constants;
+
 import '../../sortMode.dart';
 
 class MagpieBottomAppBar extends StatelessWidget {
@@ -24,6 +26,11 @@ class MagpieBottomAppBar extends StatelessWidget {
     @required this.searchTitle,
   });
 
+  final iconSize =
+      SizeConfig.isTablet ? SizeConfig.vert * 3 : SizeConfig.hori * 6;
+  final textSize =
+      SizeConfig.isTablet ? SizeConfig.vert * 2 : SizeConfig.hori * 4;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -39,6 +46,7 @@ class MagpieBottomAppBar extends StatelessWidget {
               icon: Icon(
                 Icons.sort_by_alpha,
                 color: color,
+                size: iconSize,
               ),
               tooltip: "Sortiermodus auswählen",
               onSelected: (SortMode result) {
@@ -58,6 +66,7 @@ class MagpieBottomAppBar extends StatelessWidget {
               icon: onlyFavored
                   ? Icon(Icons.favorite)
                   : Icon(Icons.favorite_border),
+              iconSize: iconSize,
               onPressed: showFavorites,
             ),
             IconButton(
@@ -66,6 +75,7 @@ class MagpieBottomAppBar extends StatelessWidget {
               padding: const EdgeInsets.only(left: 12.0),
               alignment: Alignment.centerLeft,
               icon: searchIcon,
+              iconSize: iconSize,
               onPressed: searchPressed,
             ),
             Expanded(child: searchTitle)
@@ -80,12 +90,12 @@ class MagpieBottomAppBar extends StatelessWidget {
         children: <Widget>[
           sortMode == value
               ? Icon(asc ? Icons.arrow_upward : Icons.arrow_downward,
-                  color: Colors.teal)
+                  color: Colors.teal, size: iconSize)
               : Icon(null),
           Padding(
             padding: const EdgeInsets.only(left: 2.0),
           ),
-          Text(txt)
+          Text(txt, style: TextStyle(fontSize: textSize))
         ],
       ),
     );

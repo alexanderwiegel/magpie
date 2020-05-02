@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:magpie_app/constants.dart' as Constants;
 import 'package:magpie_app/screens/authenticate/loginPage.dart';
 import 'package:magpie_app/screens/home/unsplashPage.dart';
 import 'package:magpie_app/screens/statistic/statistic.dart';
@@ -9,7 +10,6 @@ import 'models/user.dart';
 import 'screens/home/homeScreen.dart';
 import 'screens/wrapper.dart';
 import 'services/auth.dart';
-import 'package:magpie_app/constants.dart' as Constants;
 
 void main() {
   //DatabaseHelper.instance.clear();

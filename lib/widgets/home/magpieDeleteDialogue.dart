@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:magpie_app/SizeConfig.dart';
 import 'package:magpie_app/constants.dart' as Constants;
+
 import '../../services/database_helper.dart';
 
 class MagpieDeleteDialogue {
@@ -32,55 +34,53 @@ class MagpieDeleteDialogue {
                   isNest
                       ? "Dieses Nest für immer löschen?"
                       : "Diesen Gegenstand für immer löschen?",
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(
+                      color: Colors.red,
+                      fontSize: SizeConfig.isTablet
+                          ? SizeConfig.hori * 2
+                          : SizeConfig.hori * 4),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
-                GestureDetector(
-                  onTap: () => _delete(context, isNest, id),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.delete_forever,
-                        color: Constants.COLOR2,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                      ),
-                      Text(
-                        "Ja, ich bin mir sicher.",
-                        style: TextStyle(),
-                      ),
-                    ],
-                  ),
-                ),
+                option(() => _delete(context, isNest, id), Icons.delete_forever,
+                    "Ja, ich bin mir sicher."),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                 ),
-                GestureDetector(
-                  onTap: () => Navigator.of(context).pop(),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.cancel,
-                        color: Constants.COLOR2,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                      ),
-                      Text(
-                        "Nein, lieber doch nicht.",
-                        style: TextStyle(),
-                      ),
-                    ],
-                  ),
-                ),
+                option(() => Navigator.of(context).pop(), Icons.cancel,
+                    "Nein, lieber doch nicht.")
               ],
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget option(Function onTap, IconData icon, String text) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        children: <Widget>[
+          Icon(
+            icon,
+            size:
+                SizeConfig.isTablet ? SizeConfig.hori * 3 : SizeConfig.hori * 4,
+            color: Constants.COLOR2,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+          ),
+          Text(
+            text,
+            style: TextStyle(
+                fontSize: SizeConfig.isTablet
+                    ? SizeConfig.hori * 2
+                    : SizeConfig.hori * 4),
+          ),
+        ],
+      ),
     );
   }
 }

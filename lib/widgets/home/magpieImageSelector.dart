@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:magpie_app/SizeConfig.dart';
 import 'package:magpie_app/constants.dart' as Constants;
 import 'package:path_provider/path_provider.dart';
 
@@ -76,25 +77,17 @@ class MagpieImageSelector extends StatelessWidget {
               decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.all(Radius.circular(10)),
-                  border: Border.all(color: color, width: 4)),
+                  border: Border.all(color: color, width: SizeConfig.vert / 2)),
               child: SingleChildScrollView(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     option(_imageSelectorCamera, Icons.photo_camera,
                         ["Bild mit", "Kamera", "aufnehmen"]),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 1),
-                      child:
-                          Container(height: 150, width: 1, color: Colors.grey),
-                    ),
+                    line(),
                     option(_imageSelectorGallery, Icons.image,
                         ["Bild aus", "Galerie", "wählen"]),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 1),
-                      child:
-                          Container(height: 150, width: 1, color: Colors.grey),
-                    ),
+                    line(),
                     option(_imageSelectorUnsplash, Icons.web,
                         ["Bild auf", "Unsplash", "suchen"]),
                   ],
@@ -105,27 +98,45 @@ class MagpieImageSelector extends StatelessWidget {
         });
   }
 
+  Widget line() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: SizeConfig.hori),
+      child:
+          Container(height: SizeConfig.vert * 20, width: 1, color: Colors.grey),
+    );
+  }
+
   Widget option(Function onTap, IconData icon, List texts) {
-    return GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 85,
-          child: Column(children: [
-            Icon(
-              icon,
-              color: color,
-              size: 60,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-            ),
-            Column(children: <Widget>[
-              Text(texts[0]),
-              Text(texts[1], style: TextStyle(fontWeight: FontWeight.bold)),
-              Text(texts[2]),
-            ])
-          ]),
-        ));
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(5),
+        child: GestureDetector(
+            onTap: onTap,
+            child: Column(children: [
+              Icon(
+                icon,
+                color: color,
+                size: SizeConfig.isTablet
+                    ? SizeConfig.vert * 13
+                    : SizeConfig.hori * 15,
+              ),
+              Column(children: <Widget>[
+                text(texts[0], 0),
+                text(texts[1], 1),
+                text(texts[2], 2),
+              ])
+            ])),
+      ),
+    );
+  }
+
+  Text text(String text, int index) {
+    return Text(text,
+        style: TextStyle(
+            fontWeight: index == 1 ? FontWeight.bold : FontWeight.normal,
+            fontSize: SizeConfig.isTablet
+                ? SizeConfig.vert * 3
+                : SizeConfig.hori * 4));
   }
 
   Future<File> compressFile(File file, String targetPath) async {

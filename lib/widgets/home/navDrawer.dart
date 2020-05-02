@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:magpie_app/SizeConfig.dart';
 import 'package:magpie_app/constants.dart' as Constants;
+
 import '../../services/auth.dart';
 
 class NavDrawer extends StatelessWidget {
@@ -30,34 +32,43 @@ class NavDrawer extends StatelessWidget {
                     fit: BoxFit.fill,
                     image: AssetImage('pics/placeholder.jpg'))),
           ),
+          option(Icons.home, "Übersicht", () => navigate(context, "/home")),
+          option(Icons.insert_chart, "Statistik",
+              () => navigate(context, "/statistic")),
+          option(Icons.account_circle, "Account",
+              () => {Navigator.of(context).pop()}),
+          option(Icons.settings, "Einstellungen",
+              () => {Navigator.of(context).pop()}),
+          option(Icons.exit_to_app, "Ausloggen", () async {
+            //Navigator.of(context).pop();
+            navigate(context, "/");
+            await _auth.signOut();
+          })
+        ],
+      ),
+    );
+  }
+
+  Widget option(IconData icon, String title, Function onTap) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: SizeConfig.hori),
+      child: Column(
+        children: <Widget>[
           ListTile(
-            leading: Icon(Icons.home, color: iconColor),
-            title: Text('Übersicht'),
-            onTap: () => navigate(context, "/home"),
+            leading: Icon(icon,
+                color: iconColor,
+                size: SizeConfig.isTablet
+                    ? SizeConfig.vert * 4
+                    : SizeConfig.hori * 6),
+            title: Text(title,
+                style: TextStyle(
+                    fontSize: SizeConfig.isTablet
+                        ? SizeConfig.vert * 2.5
+                        : SizeConfig.hori * 4)),
+            onTap: onTap,
           ),
-          ListTile(
-            leading: Icon(Icons.insert_chart, color: iconColor),
-            title: Text('Statistik'),
-            onTap: () => navigate(context, "/statistic"),
-          ),
-          ListTile(
-            leading: Icon(Icons.account_circle, color: iconColor),
-            title: Text('Account'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-            leading: Icon(Icons.settings, color: iconColor),
-            title: Text('Einstellungen'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          ListTile(
-              leading: Icon(Icons.exit_to_app, color: iconColor),
-              title: Text('Ausloggen'),
-              onTap: () async {
-                //Navigator.of(context).pop();
-                navigate(context, "/");
-                await _auth.signOut();
-              }),
+          Container(
+              height: 1, width: SizeConfig.hori * 100, color: Colors.grey[200])
         ],
       ),
     );
@@ -67,7 +78,8 @@ class NavDrawer extends StatelessWidget {
     bool isNewRouteSameAsCurrent = false;
 
     Navigator.popUntil(context, (route) {
-      if (route.settings.name == routeName || route.settings.name == "/" && routeName == "/home") {
+      if (route.settings.name == routeName ||
+          route.settings.name == "/" && routeName == "/home") {
         Navigator.pop(context);
         isNewRouteSameAsCurrent = true;
       }

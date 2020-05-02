@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:magpie_app/SizeConfig.dart';
 import 'package:magpie_app/constants.dart' as Constants;
 
 class MagpieFormField extends StatelessWidget {
@@ -38,7 +39,11 @@ class MagpieFormField extends StatelessWidget {
         decoration: InputDecoration(
           border: border,
           hintText: hintText,
-          icon: Icon(icon, color: Constants.COLOR2),
+          icon: Icon(icon,
+              color: Constants.COLOR2,
+              size: SizeConfig.isTablet
+                  ? SizeConfig.hori * 2.5
+                  : SizeConfig.hori * 5),
           labelText: labelText,
         ),
         initialValue: initialValue,
@@ -48,6 +53,10 @@ class MagpieFormField extends StatelessWidget {
         onChanged: onChanged,
         textCapitalization: TextCapitalization.sentences,
         validator: validate,
+        style: TextStyle(
+            fontSize: SizeConfig.isTablet
+                ? SizeConfig.hori * 2
+                : SizeConfig.hori * 4),
       ),
     );
   }

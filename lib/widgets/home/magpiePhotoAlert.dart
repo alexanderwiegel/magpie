@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:magpie_app/SizeConfig.dart';
 
 class MagpiePhotoAlert {
   void displayPhotoAlert(BuildContext context) async {
@@ -15,6 +16,10 @@ class MagpiePhotoAlert {
             child: Text(
               "Du musst ein eigenes Bild benutzen.",
               textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: SizeConfig.isTablet
+                      ? SizeConfig.hori * 2
+                      : SizeConfig.hori * 4),
             ),
           ),
         );

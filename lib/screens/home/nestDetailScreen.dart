@@ -87,6 +87,7 @@ class _NestDetailState extends State<NestDetail> {
         updateStatus: _updateStatus,
         worthVisible: true,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: MagpieButton(
         onPressed: () => _magpieDeleteDialogue.displayDeleteDialogue(
             context, true, widget.nest.id),
