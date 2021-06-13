@@ -6,7 +6,7 @@ import 'package:magpie_app/screens/home/unsplashPage.dart';
 import 'package:magpie_app/screens/statistic/statistic.dart';
 import 'package:provider/provider.dart';
 
-import 'models/user.dart';
+import 'models/magpieUser.dart';
 import 'screens/home/homeScreen.dart';
 import 'screens/wrapper.dart';
 import 'services/auth.dart';
@@ -21,7 +21,8 @@ class Magpie extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     precacheImage(AssetImage("pics/placeholder.jpg"), context);
-    return StreamProvider<User>.value(
+    return StreamProvider<MagpieUser>.value(
+      initialData: MagpieUser(uid: ""),
       value: AuthService().user,
       child: MaterialApp(
         title: 'Magpie',

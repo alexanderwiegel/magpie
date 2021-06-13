@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../models/user.dart';
+import '../models/magpieUser.dart';
 import 'database_helper.dart';
 
 class AuthService {
@@ -13,12 +13,12 @@ class AuthService {
       //    "426743660967-bfff2c6p98l0nnl43jv3qhjcpj62ejjm.apps.googleusercontent.com"
       );
 
-  User _userFromFirebaseUser(FirebaseUser user) {
-    return user != null ? User(uid: user.uid) : null;
+  MagpieUser _userFromFirebaseUser(User user) {
+    return user != null ? MagpieUser(uid: user.uid) : null;
   }
 
-  Stream<User> get user {
-    return _auth.onAuthStateChanged.map(_userFromFirebaseUser);
+  Stream<MagpieUser> get user {
+    return _auth.authStateChanges().map(_userFromFirebaseUser);
   }
 
   Future signInWithGoogle() async {
@@ -28,12 +28,12 @@ class AuthService {
       if (googleSignInAccount == null) return 0;
       final GoogleSignInAuthentication googleSignInAuthentication =
           await googleSignInAccount.authentication;
-      final AuthCredential credential = GoogleAuthProvider.getCredential(
+      final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
         idToken: googleSignInAuthentication.idToken,
       );
-      final AuthResult result = await _auth.signInWithCredential(credential);
-      final FirebaseUser user = result.user;
+      final UserCredential result = await _auth.signInWithCredential(credential);
+      final User user = result.user;
       await DatabaseHelper.instance.insertHome(user.uid);
       // TODO: unterscheiden zwischen Login (update) und SignUp (insert)
       return _userFromFirebaseUser(user);
@@ -51,10 +51,10 @@ class AuthService {
         case FacebookLoginStatus.loggedIn:
           final FacebookAccessToken token = facebookLoginResult.accessToken;
           final AuthCredential credential =
-              FacebookAuthProvider.getCredential(accessToken: token.token);
-          final AuthResult result =
+              FacebookAuthProvider.credential(token.token);
+          final UserCredential result =
               await _auth.signInWithCredential(credential);
-          final FirebaseUser user = result.user;
+          final User user = result.user;
           await DatabaseHelper.instance.insertHome(user.uid);
           // TODO: unterscheiden zwischen Login (update) und SignUp (insert)
           return _userFromFirebaseUser(user);
@@ -83,9 +83,9 @@ class AuthService {
 
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      final AuthResult result = await _auth.signInWithEmailAndPassword(
+      final UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      final FirebaseUser user = result.user;
+      final User user = result.user;
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());
@@ -95,9 +95,9 @@ class AuthService {
 
   Future registerWithEmailAndPassword(String email, String password) async {
     try {
-      final AuthResult result = await _auth.createUserWithEmailAndPassword(
+      final UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      final FirebaseUser user = result.user;
+      final User user = result.user;
       await user.sendEmailVerification();
       await DatabaseHelper.instance.insertHome(user.uid);
       return _userFromFirebaseUser(user);

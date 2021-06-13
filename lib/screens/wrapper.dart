@@ -4,7 +4,7 @@ import 'package:magpie_app/SizeConfig.dart';
 import 'package:magpie_app/screens/authenticate/loginPage.dart';
 import 'package:provider/provider.dart';
 
-import '../models/user.dart';
+import '../models/magpieUser.dart';
 import 'home/homeScreen.dart';
 
 class Wrapper extends StatelessWidget {
@@ -15,7 +15,7 @@ class Wrapper extends StatelessWidget {
         ? SystemChrome.setPreferredOrientations(
             [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight])
         : SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    final user = Provider.of<User>(context);
+    final user = Provider.of<MagpieUser>(context);
     return user == null ? LoginPage() : HomeScreen(userId: user.uid);
   }
 }
