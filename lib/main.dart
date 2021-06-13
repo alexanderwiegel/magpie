@@ -4,7 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:magpie_app/constants.dart' as Constants;
 import 'package:magpie_app/screens/authenticate/loginPage.dart';
 import 'package:magpie_app/screens/home/unsplashPage.dart';
-import 'package:magpie_app/screens/statistic/statistic.dart';
+//import 'package:magpie_app/screens/statistic/statistic.dart';
 import 'package:provider/provider.dart';
 
 import 'models/magpieUser.dart';
