@@ -177,7 +177,9 @@ class _UnsplashPageState extends State<UnsplashPage> {
   Future<Map> getPics() async {
     String url =
         "https://api.unsplash.com/search/photos?query=$query&per_page=30&client_id=IdQYjoATojZnq4uJblpSYV7ryIrxdhfvPkjoI5wOENM";
-    final response = await http.get(url);
+    // error: The argument type 'String' can't be assigned to the parameter type 'Uri'.
+    //final response = await http.get(url);
+    final response = await http.get(Uri(path: url));
     return response.statusCode == 200 ? json.decode(response.body) : null;
   }
 }

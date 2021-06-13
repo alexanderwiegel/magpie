@@ -148,7 +148,9 @@ class MagpieImageSelector extends StatelessWidget {
 
   void _imageSelectorCamera() async {
     Navigator.pop(context);
-    var file = await ImagePicker.pickImage(source: ImageSource.camera);
+    final picker = ImagePicker();
+    var pickedFile = await picker.getImage(source: ImageSource.camera);
+    File file = File(pickedFile.path);
     var compressedFile =
         await compressFile(file, file.path.substring(0, file.path.length - 4));
     file.deleteSync();
@@ -157,7 +159,9 @@ class MagpieImageSelector extends StatelessWidget {
 
   void _imageSelectorGallery() async {
     Navigator.pop(context);
-    var file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    final picker = ImagePicker();
+    var pickedFile = await picker.getImage(source: ImageSource.gallery);
+    File file = File(pickedFile.path);
     var targetDirectory = await getExternalStorageDirectory();
     var targetPath = targetDirectory.toString();
     targetPath = targetPath

@@ -207,7 +207,9 @@ class DatabaseHelper {
     //count.add(0);
     double sum = 0.0;
     for (int i = 0; i < result.length; i++) {
-      sum += result[i].values.elementAt(0).toDouble();
+      // error: toDouble() undefined for Object
+      //sum += result[i].values.elementAt(0).toDouble();
+      sum += result[i].values.elementAt(0);
       count.add(sum);
       dates.add(DateTime.parse(result[i].values.elementAt(1)));
     }

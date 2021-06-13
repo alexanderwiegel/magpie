@@ -30,6 +30,7 @@ class _LoginPageState extends State<LoginPage>
   Text repeatPasswordError;
   Text resetPasswordError;
 
+  // TODO: Regex auch für ai.hs-fulda.de freischalten
   RegExp emailRegEx = RegExp(
       r"^[^.@-]*(?:(?:[\wäöüÄÖÜ]+\-?)+[^.@-]*\.?[^.@-]*)*[^.@-]*@[^.@-]*\.?(?:(?:[\wäöüÄÖÜ]+\-?)+[^.@-]*\.[^.@-])+[\wäöüÄÖÜ]{0,3}$");
 

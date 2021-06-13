@@ -39,11 +39,9 @@ class _NestCreatorState extends State<NestCreator> {
   @override
   void initState() {
     super.initState();
-
-    PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.camera)
-        .then(_updateStatus);
-
+    // PermissionHandler()
+    //     .checkPermissionStatus(PermissionGroup.camera)
+    //     .then(_updateStatus);
     _nameEditingController = TextEditingController(text: _name);
     _noteEditingController = TextEditingController(text: _note);
   }

@@ -73,7 +73,9 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               (await getTemporaryDirectory()).path,
               '${DateTime.now()}.png',
             );
-            await _controller.takePicture(path);
+            // error: Too many positional arguments: 0 expected, but 1 found.
+            //await _controller.takePicture(path);
+            await _controller.takePicture();
             Navigator.push(
               context,
               MaterialPageRoute(

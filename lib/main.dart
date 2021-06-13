@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:magpie_app/constants.dart' as Constants;
@@ -11,8 +12,10 @@ import 'screens/home/homeScreen.dart';
 import 'screens/wrapper.dart';
 import 'services/auth.dart';
 
-void main() {
+void main() async {
   //DatabaseHelper.instance.clear();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(Magpie());
   //DatabaseHelper.instance.vacuum();
 }
@@ -35,7 +38,7 @@ class Magpie extends StatelessWidget {
           "/home": (context) => HomeScreen(),
           "/login": (context) => LoginPage(),
           "/unsplash": (context) => UnsplashPage(),
-          "/statistic": (context) => Statistic()
+          //"/statistic": (context) => Statistic()
         },
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,

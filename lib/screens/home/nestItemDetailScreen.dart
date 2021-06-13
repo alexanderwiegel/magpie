@@ -37,9 +37,9 @@ class _NestItemDetailState extends State<NestItemDetail> {
   @override
   void initState() {
     super.initState();
-    PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.camera)
-        .then(_updateStatus);
+    // PermissionHandler()
+    //     .checkPermissionStatus(PermissionGroup.camera)
+    //     .then(_updateStatus);
   }
 
   void _updateStatus(PermissionStatus value) {
