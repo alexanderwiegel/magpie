@@ -155,7 +155,7 @@ class _UnsplashPageState extends State<UnsplashPage> {
                                     color: textColor,
                                     fontWeight: FontWeight.bold)),
                             TextSpan(
-                                text: photoInformation["user"]["name"],
+                                text: utf8convert(photoInformation["user"]["name"]),
                                 style: TextStyle(
                                     color: textColor,
                                     fontSize: 18,
@@ -174,12 +174,16 @@ class _UnsplashPageState extends State<UnsplashPage> {
         });
   }
 
+  String utf8convert(String text) {
+    List<int> bytes = text.toString().codeUnits;
+    return utf8.decode(bytes);
+  }
+
   Future<Map> getPics() async {
-    String url =
+    var url =
         "https://api.unsplash.com/search/photos?query=$query&per_page=30&client_id=IdQYjoATojZnq4uJblpSYV7ryIrxdhfvPkjoI5wOENM";
     // error: The argument type 'String' can't be assigned to the parameter type 'Uri'.
-    //final response = await http.get(url);
-    final response = await http.get(Uri(path: url));
+    final response = await http.get(Uri.parse(url));
     return response.statusCode == 200 ? json.decode(response.body) : null;
   }
 }
