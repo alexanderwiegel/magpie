@@ -149,6 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
           return NestCreator(userId: _getUserId());
         },
         fullscreenDialog: true));
+    setState(() {});
   }
 
   void _searchPressed() {
