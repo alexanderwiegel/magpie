@@ -94,12 +94,13 @@ class DatabaseHelper {
           ''');
   }
 
-  String getColumnToSortBy(SortMode sortMode) {
+  String getColumnToSortBy(SortMode sortMode, bool insideNest) {
+    var worthType = insideNest ? columnWorth : columnTotalWorth;
     switch (sortMode) {
       case SortMode.SortByName:
         return columnName;
       case SortMode.SortByWorth:
-        return columnTotalWorth;
+        return worthType;
       case SortMode.SortByFavored:
         return columnFavored;
       case SortMode.SortById:
@@ -117,7 +118,7 @@ class DatabaseHelper {
     String sortModeAsString = homeStatus.first.values.elementAt(2);
     SortMode sortMode =
         SortMode.values.firstWhere((e) => e.toString() == sortModeAsString);
-    String sortModeSql = getColumnToSortBy(sortMode);
+    String sortModeSql = getColumnToSortBy(sortMode, false);
     String order = asc ? "ASC" : "DESC";
     String where = "$columnUserId = ?";
     List whereArgs = [userId];
@@ -136,7 +137,7 @@ class DatabaseHelper {
 
   Future<List<NestItem>> getNestItems(Nest nest) async {
     final Database db = await database;
-    String sortModeSql = getColumnToSortBy(nest.sortMode);
+    String sortModeSql = getColumnToSortBy(nest.sortMode, true);
     String order = nest.asc ? "ASC" : "DESC";
     String where = "$columnNestId = ?";
     List whereArgs = [nest.id];
