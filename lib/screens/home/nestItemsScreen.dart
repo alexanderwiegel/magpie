@@ -175,6 +175,7 @@ class _NestItemsState extends State<NestItems> {
           return NestItemCreator(nest: widget.nest);
         },
         fullscreenDialog: true));
+    setState(() {});
   }
 
   Future<List<Future<NestItem>>> _buildNestItems() async {
