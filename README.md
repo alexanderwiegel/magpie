@@ -1,4 +1,4 @@
 # Magpie
-![grafik](https://user-images.githubusercontent.com/51864122/127488205-64b9307f-528a-4e7f-acea-cad1b1ba8681.png)
+![Folie1](https://user-images.githubusercontent.com/51864122/127488345-9c7e9a51-ec83-4ecd-ad29-513365d6a3e5.PNG)
 
 ## Was ist Magpie?
